@@ -1,0 +1,110 @@
+# Runs on every push and pull request.
+# - backend/ and frontend/: install, unit tests, build (each skipped until that folder exists)
+# - tests/: API + security acceptance tests from the Software Test Plan, run against the
+#   backend started in test mode with a throwaway MongoDB, then the RTM is written to the job summary.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  frontend:
+    name: Frontend — unit tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for frontend
+        id: detect
+        run: |
+          if [ -f frontend/package.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::frontend/ not found yet — skipping frontend checks"; fi
+      - uses: actions/setup-node@v4
+        if: steps.detect.outputs.present == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - if: steps.detect.outputs.present == 'true'
+        working-directory: frontend
+        run: |
+          npm ci
+          npm test --if-present
+          npm run build --if-present
+
+  acceptance:
+    name: Backend unit tests + API/security acceptance tests
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+    env:
+      MONGO_URL: mongodb://localhost:27017/vps_test
+      PAYMENT_WEBHOOK_SECRET: ci_webhook_secret
+      JWT_SECRET: ci_jwt_secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Check for backend
+        id: detect
+        run: |
+          if [ -f backend/package.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"
+          else echo "::warning::backend/ not found yet — API tests will be reported as not run"; fi
+
+      - name: Backend — install and unit tests
+        if: steps.detect.outputs.present == 'true'
+        working-directory: backend
+        run: |
+          npm ci
+          npm test --if-present
+
+      - name: Backend — start in test mode
+        if: steps.detect.outputs.present == 'true'
+        working-directory: backend
+        env:
+          NODE_ENV: test
+          PORT: 4000
+        run: |
+          nohup npm start > "$GITHUB_WORKSPACE/backend.log" 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fs http://localhost:4000/api/health > /dev/null && exit 0
+            sleep 1
+          done
+          echo "::error::backend did not answer /api/health within 60 s"
+          cat "$GITHUB_WORKSPACE/backend.log"
+          exit 1
+
+      - name: Acceptance tests
+        working-directory: tests
+        env:
+          API_URL: ${{ steps.detect.outputs.present == 'true' && 'http://localhost:4000' || '' }}
+          BACKEND_LOG: ${{ steps.detect.outputs.present == 'true' && format('{0}/backend.log', github.workspace) || '' }}
+        run: |
+          npm ci
+          npm run test:ci
+
+      - name: Requirements Traceability Matrix
+        if: always()
+        working-directory: tests
+        run: test -f results/jest-results.json && npm run --silent rtm
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            tests/results/
+            backend.log
+          if-no-files-found: ignore

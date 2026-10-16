@@ -1,0 +1,6 @@
+node_modules/
+tests/results/
+*.jtl
+backend.log
+.env
+.DS_Store
