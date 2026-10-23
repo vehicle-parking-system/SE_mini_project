@@ -69,6 +69,28 @@ describeApi("Security", () => {
     expect([401, 403]).toContain((await api.get(C.transactions, { token: forged })).status);
   });
 
+  test("TC-Sec-04 [VPS-SR-003]: an admin-created attendant has the attendant role and is denied driver and admin functions", async () => {
+    const created = await api.post(C.adminAttendants, { name: "Gate Staff", email: "gate@test.vps", password: "Gate@12345" },
+      { token: tokens.admin });
+    expect(OK).toContain(created.status);
+    const token = await login("gate@test.vps", "Gate@12345");
+
+    expect((await api.get(C.me, { token })).body.user.role).toBe("ATTENDANT");
+    expect((await api.post(C.myVehicles, { plateNumber: "KA01ZZ0001", vehicleType: "CAR" }, { token })).status).toBe(403);
+    expect((await api.get(C.auditLogs, { token })).status).toBe(403);
+    expect((await api.post(C.adminAttendants, { name: "Y", email: "y@test.vps", password: "Y@1234567" }, { token })).status).toBe(403);
+
+    const denied = await api.get(`${C.auditLogs}?event=ACCESS_DENIED`, { token: tokens.admin });
+    expect(denied.body.logs.length).toBeGreaterThanOrEqual(3);
+  });
+
+  test("TC-Sec-04 [VPS-SR-003]: self-registration cannot create staff accounts", async () => {
+    const res = await api.post(C.register, { name: "Sneaky", email: "sneaky@test.vps", phone: "9000000002",
+      password: PASSWORD, role: "ADMIN" });
+    expect(OK).toContain(res.status);
+    expect((await api.get(C.transactions, { token: res.body.token })).status).toBe(403);
+  });
+
   test("TC-Sec-06 [VPS-SR-005]: account locks after 5 failed logins and an alert is logged", async () => {
     for (let i = 0; i < 5; i++) expect((await api.post(C.login, { email: "driver@test.vps", password: "wrong" })).status).toBe(401);
     const locked = await api.post(C.login, { email: "driver@test.vps", password: PASSWORD });
@@ -77,6 +99,32 @@ describeApi("Security", () => {
 
     const logs = await api.get(`${C.auditLogs}?event=ACCOUNT_LOCKED`, { token: tokens.admin });
     expect(logs.body.logs.length).toBeGreaterThanOrEqual(1);
+  });
+  test("TC-Sec-06 [VPS-SR-005]: each failed attempt is logged and the owner is notified of the lock", async () => {
+    for (let i = 0; i < 5; i++) await api.post(C.login, { email: "driver@test.vps", password: "wrong" });
+
+    const failed = await api.get(`${C.auditLogs}?event=LOGIN_FAILED`, { token: tokens.admin });
+    expect(failed.body.logs.filter((l) => l.actorId === ids.driver)).toHaveLength(5);
+    const sent = await api.get(C.test.notifications);
+    expect(sent.body.notifications).toEqual(
+      expect.arrayContaining([expect.objectContaining({ to: "driver@test.vps", type: "ACCOUNT_LOCKED" })]));
+  });
+
+  test("TC-Sec-06 [VPS-SR-005]: parallel guessing cannot get more than 5 password checks", async () => {
+    const results = await Promise.all(Array.from({ length: 20 }, (_, i) =>
+      api.post(C.login, { email: "driver@test.vps", password: `Guess@${i}xyz` })));
+    expect(results.filter((r) => r.status === 401)).toHaveLength(5);
+    expect((await api.post(C.login, { email: "driver@test.vps", password: PASSWORD })).status).not.toBe(200);
+  });
+
+  test("TC-Sec-06 [VPS-SR-005]: an admin sees the locked account and can unlock it", async () => {
+    for (let i = 0; i < 5; i++) await api.post(C.login, { email: "driver@test.vps", password: "wrong" });
+    const locked = await api.get(C.lockedAccounts, { token: tokens.admin });
+    expect(locked.body.users.map((u) => u.id)).toEqual([ids.driver]);
+
+    expect((await api.post(C.unlockUser(ids.driver), undefined, { token: tokens.driver2 })).status).toBe(403);
+    expect((await api.post(C.unlockUser(ids.driver), undefined, { token: tokens.admin })).status).toBe(204);
+    expect((await api.post(C.login, { email: "driver@test.vps", password: PASSWORD })).status).toBe(200);
   });
 });
 

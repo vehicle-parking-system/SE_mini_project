@@ -22,6 +22,8 @@ On every push and pull request, `.github/workflows/ci.yml`:
 
 Until `backend/` exists, the API tests are reported as *not run* and the pipeline stays green.
 
+Suites for modules that haven't been built yet are listed in [`pending.js`](pending.js). They are skipped and show as *not run* in the RTM, so they don't fail every PR. When a module is implemented, remove its line from `pending.js` in the same PR. From then on, its tests run and must pass. To run a pending suite while building it, set `RUN_PENDING=1`.
+
 ## What the backend must provide
 
 The tests follow the API in SAD §4.3 (`/api/entry`, `/api/exit`, `/api/reservations` and their error codes). The other endpoints are assumptions, and **every path is listed in [`contract.js`](contract.js)**. If the backend uses different paths, change them there rather than in the tests.
