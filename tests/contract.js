@@ -11,6 +11,13 @@ module.exports = {
   // Auth & Access Control
   register: "/api/auth/register", // POST {name, email, phone, password, vehicles:[{plateNumber, vehicleType}]}
   login: "/api/auth/login", //       POST {email, password} -> {token, user:{id, role}} | 401 | 423 when locked
+  //                                  register -> 201 {token, user, vehicles}; 400 invalid fields, 409 email or plate taken
+
+  // Driver profile & vehicles (User & Vehicle Management)
+  me: "/api/users/me", //                      GET -> {user, vehicles}; PATCH {name?, phone?} -> {user, vehicles}
+  myPassword: "/api/users/me/password", //     POST {currentPassword, newPassword} -> 204
+  myVehicles: "/api/users/me/vehicles", //     POST {plateNumber, vehicleType} -> 201 {vehicle}
+  myVehicle: (id) => `/api/users/me/vehicles/${id}`, // DELETE -> 204
 
   // Reservation Management (SAD §4.3)
   availableSlots: "/api/slots/available", // GET ?facilityId&zoneId&vehicleType&startTime&endTime -> {slots:[{slotId}]}

@@ -29,6 +29,7 @@ const api = {
   post: (p, body, o = {}) => request("POST", p, { ...o, body }),
   put: (p, body, o = {}) => request("PUT", p, { ...o, body }),
   patch: (p, body, o = {}) => request("PATCH", p, { ...o, body }),
+  delete: (p, o) => request("DELETE", p, o),
 };
 
 const OK = [200, 201];
