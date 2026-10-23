@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const clock = require("../clock");
+const notifications = require("../notifications");
 const { createAccount } = require("../accounts");
 
 const router = express.Router();
@@ -13,6 +14,7 @@ router.post("/reset", async (req, res) => {
   await mongoose.connection.db.dropDatabase();
   await Promise.all(Object.values(mongoose.models).map((m) => m.syncIndexes()));
   clock.reset();
+  notifications.clear();
 
   const ids = {};
   for (const u of req.body?.users ?? []) {
@@ -27,6 +29,11 @@ router.post("/reset", async (req, res) => {
 router.post("/clock", (req, res) => {
   clock.set(req.body.now);
   res.json({ now: clock.now().toISOString() });
+});
+
+// GET /api/test/notifications -> {notifications:[{to, channel, type, data, at}]}
+router.get("/notifications", (_req, res) => {
+  res.json({ notifications: notifications.sent() });
 });
 
 module.exports = router;

@@ -43,6 +43,9 @@ export const api = {
   removeVehicle: (id) => request("DELETE", `/api/users/me/vehicles/${id}`),
   listAttendants: () => request("GET", "/api/admin/attendants"),
   createAttendant: (details) => request("POST", "/api/admin/attendants", details),
+  lockedAccounts: () => request("GET", "/api/admin/locked-accounts"),
+  unlockUser: (id) => request("POST", `/api/admin/users/${id}/unlock`),
+  auditLogs: (events) => request("GET", `/api/admin/audit-logs?event=${encodeURIComponent(events.join(","))}`),
 };
 
 export const ROLE_LABELS = { DRIVER: "Driver", ATTENDANT: "Attendant", ADMIN: "Admin" };

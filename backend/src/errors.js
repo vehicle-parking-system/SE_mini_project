@@ -13,5 +13,6 @@ const unauthorized = (message = "Authentication required") => new ApiError(401, 
 const forbidden = (message = "You do not have permission to do this") => new ApiError(403, "FORBIDDEN", message);
 const notFound = (message = "Not found") => new ApiError(404, "NOT_FOUND", message);
 const conflict = (message) => new ApiError(409, "CONFLICT", message);
+const locked = (message) => new ApiError(423, "ACCOUNT_LOCKED", message);
 
-module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict };
+module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict, locked };

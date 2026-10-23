@@ -8,6 +8,7 @@ const { authorize } = require("./middleware/auth");
 function createApp() {
   const app = express();
   app.disable("x-powered-by");
+  app.set("trust proxy", config.trustProxy);
   app.use(express.json({ limit: "100kb" }));
 
   // Access log: method, path and status only — never bodies, query strings or headers (VPS-NF-003).

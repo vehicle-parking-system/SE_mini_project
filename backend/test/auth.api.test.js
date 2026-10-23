@@ -1,4 +1,4 @@
-// Registration, login and profile management against a real MongoDB.
+// Registration, login, lockout and profile management against a real MongoDB.
 // Uses MONGO_URL with its own database name; skipped when MONGO_URL is not set.
 const mongoose = require("mongoose");
 const request = require("supertest");
@@ -90,6 +90,21 @@ describeDb("driver registration, login and profile", () => {
       expect(unknown.status).toBe(401);
       expect(wrong.body.error.message).toBe(unknown.body.error.message);
     });
+
+    test("locks the account after 5 consecutive failures, then unlocks after the lock period", async () => {
+      for (let i = 0; i < 5; i++) expect((await login(driver.email, "Wrong1234")).status).toBe(401);
+      expect((await login()).status).toBe(423);
+
+      clock.set(new Date(Date.now() + 16 * 60000));
+      expect((await login()).status).toBe(200);
+    });
+
+    test("a successful login resets the failure count", async () => {
+      for (let i = 0; i < 4; i++) await login(driver.email, "Wrong1234");
+      expect((await login()).status).toBe(200);
+      for (let i = 0; i < 4; i++) await login(driver.email, "Wrong1234");
+      expect((await login()).status).toBe(200);
+    });
   });
 
   describe("profile", () => {
@@ -139,5 +154,10 @@ describeDb("driver registration, login and profile", () => {
       expect((await login()).status).toBe(401);
       expect((await login(driver.email, "NewSecret1")).status).toBe(200);
     });
+  });
+
+  test("audit logs are admin-only", async () => {
+    const { body: { token } } = await register();
+    expect((await api.get("/api/admin/audit-logs").set("authorization", `Bearer ${token}`)).status).toBe(403);
   });
 });

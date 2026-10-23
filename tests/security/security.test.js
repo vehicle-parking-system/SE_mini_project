@@ -100,6 +100,32 @@ describeApi("Security", () => {
     const logs = await api.get(`${C.auditLogs}?event=ACCOUNT_LOCKED`, { token: tokens.admin });
     expect(logs.body.logs.length).toBeGreaterThanOrEqual(1);
   });
+  test("TC-Sec-06 [VPS-SR-005]: each failed attempt is logged and the owner is notified of the lock", async () => {
+    for (let i = 0; i < 5; i++) await api.post(C.login, { email: "driver@test.vps", password: "wrong" });
+
+    const failed = await api.get(`${C.auditLogs}?event=LOGIN_FAILED`, { token: tokens.admin });
+    expect(failed.body.logs.filter((l) => l.actorId === ids.driver)).toHaveLength(5);
+    const sent = await api.get(C.test.notifications);
+    expect(sent.body.notifications).toEqual(
+      expect.arrayContaining([expect.objectContaining({ to: "driver@test.vps", type: "ACCOUNT_LOCKED" })]));
+  });
+
+  test("TC-Sec-06 [VPS-SR-005]: parallel guessing cannot get more than 5 password checks", async () => {
+    const results = await Promise.all(Array.from({ length: 20 }, (_, i) =>
+      api.post(C.login, { email: "driver@test.vps", password: `Guess@${i}xyz` })));
+    expect(results.filter((r) => r.status === 401)).toHaveLength(5);
+    expect((await api.post(C.login, { email: "driver@test.vps", password: PASSWORD })).status).not.toBe(200);
+  });
+
+  test("TC-Sec-06 [VPS-SR-005]: an admin sees the locked account and can unlock it", async () => {
+    for (let i = 0; i < 5; i++) await api.post(C.login, { email: "driver@test.vps", password: "wrong" });
+    const locked = await api.get(C.lockedAccounts, { token: tokens.admin });
+    expect(locked.body.users.map((u) => u.id)).toEqual([ids.driver]);
+
+    expect((await api.post(C.unlockUser(ids.driver), undefined, { token: tokens.driver2 })).status).toBe(403);
+    expect((await api.post(C.unlockUser(ids.driver), undefined, { token: tokens.admin })).status).toBe(204);
+    expect((await api.post(C.login, { email: "driver@test.vps", password: PASSWORD })).status).toBe(200);
+  });
 });
 
 describeDb("Security — database review", () => {

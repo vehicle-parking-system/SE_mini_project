@@ -128,3 +128,14 @@ legend .muted { font-weight: 400; }
 }
 .staff-list { list-style: none; padding: 0; margin: 0; }
 .staff-list li { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid var(--border); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 600; }
+.event { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; font-weight: 600; }
+.event.ACCOUNT_LOCKED, .event.LOGIN_BLOCKED { color: var(--danger); }
+.event.ACCOUNT_UNLOCKED { color: var(--success-text); }
+.card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.card-header h2 { margin: 0; }
+.stack { display: flex; flex-direction: column; gap: 20px; }
