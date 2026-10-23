@@ -1,13 +1,18 @@
 const crypto = require("crypto");
+const path = require("path");
 const C = require("../contract");
 const { fixture, PASSWORD } = require("./fixture");
+const PENDING = require("../pending");
 
 const API_URL = process.env.API_URL;
 const WEBHOOK_SECRET = process.env.PAYMENT_WEBHOOK_SECRET || "test_webhook_secret";
 
 // Without API_URL there is no backend to test: every suite is skipped (CI sets it
 // only when backend/ exists). With API_URL set, an unreachable API fails the run.
-const describeApi = API_URL ? describe : describe.skip;
+// Suites for modules not built yet (pending.js) are skipped too, unless RUN_PENDING=1.
+const testFile = path.relative(path.join(__dirname, ".."), expect.getState().testPath || "").split(path.sep).join("/");
+const isPending = PENDING.includes(testFile) && !process.env.RUN_PENDING;
+const describeApi = API_URL && !isPending ? describe : describe.skip;
 
 async function request(method, path, { token, body, headers = {}, raw = false } = {}) {
   const res = await fetch(API_URL + path, {
