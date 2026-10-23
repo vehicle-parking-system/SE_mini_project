@@ -43,4 +43,16 @@ async function createAccount({ name, email, phone, password, role = "DRIVER", ve
   }
 }
 
-module.exports = { createAccount, addVehicles };
+// Creates the first ADMIN from ADMIN_EMAIL / ADMIN_PASSWORD (and optional ADMIN_NAME) if no
+// account with that email exists. Self-registration only ever creates drivers, so this is
+// how an installation gets its first administrator.
+async function ensureAdmin({ email, password, name = "Administrator" }) {
+  if (!email || !password) return null;
+  const existing = await User.findOne({ email: email.trim().toLowerCase() });
+  // never promote an existing non-admin account (someone may have registered that email first)
+  if (existing) return existing.role === "ADMIN" ? existing : null;
+  const { user } = await createAccount({ name, email: email.trim().toLowerCase(), password, role: "ADMIN" });
+  return user;
+}
+
+module.exports = { createAccount, addVehicles, ensureAdmin };

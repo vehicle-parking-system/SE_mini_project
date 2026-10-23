@@ -41,7 +41,14 @@ export const api = {
   changePassword: (currentPassword, newPassword) => request("POST", "/api/users/me/password", { currentPassword, newPassword }),
   addVehicle: (vehicle) => request("POST", "/api/users/me/vehicles", vehicle),
   removeVehicle: (id) => request("DELETE", `/api/users/me/vehicles/${id}`),
+  listAttendants: () => request("GET", "/api/admin/attendants"),
+  createAttendant: (details) => request("POST", "/api/admin/attendants", details),
+  lockedAccounts: () => request("GET", "/api/admin/locked-accounts"),
+  unlockUser: (id) => request("POST", `/api/admin/users/${id}/unlock`),
+  auditLogs: (events) => request("GET", `/api/admin/audit-logs?event=${encodeURIComponent(events.join(","))}`),
 };
+
+export const ROLE_LABELS = { DRIVER: "Driver", ATTENDANT: "Attendant", ADMIN: "Admin" };
 
 export const VEHICLE_TYPES = [
   { value: "CAR", label: "Car" },

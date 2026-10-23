@@ -48,8 +48,10 @@ module.exports = {
   adminFacilities: "/api/admin/facilities", // POST {name, openTime, closeTime, zones:[{name, slots:[{number, vehicleType, distance}]}]}
   adminSlot: (id) => `/api/admin/slots/${id}`, // PATCH {active:false}
   adminRates: "/api/admin/rates", // PUT {facilityId, zoneId, vehicleType, ratePerHour}
-  adminAttendants: "/api/admin/attendants", // POST {name, email, password}
-  auditLogs: "/api/admin/audit-logs", // GET ?event=MANUAL_OVERRIDE|ACCOUNT_LOCKED -> {logs:[{event, actorId, ...}]}
+  adminAttendants: "/api/admin/attendants", // POST {name, email, password, phone?} -> 201 {user}; GET -> {users}
+  auditLogs: "/api/admin/audit-logs", // GET ?event=MANUAL_OVERRIDE|ACCOUNT_LOCKED[,...] -> {logs:[{event, actorId, ...}]}
+  lockedAccounts: "/api/admin/locked-accounts", // GET -> {users:[{id, email, failedLoginAttempts, lockedUntil, ...}]}
+  unlockUser: (id) => `/api/admin/users/${id}/unlock`, // POST -> 204; 404 if not locked
   report: (type) => `/api/reports/${type}`, // GET occupancy|revenue|usage ?facilityId&from&to&format=json|csv
 
   // Test-support hooks. The backend must expose these ONLY when NODE_ENV=test.
