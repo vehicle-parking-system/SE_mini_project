@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const config = require("./config");
 const logger = require("./logger");
 const { ApiError } = require("./errors");
+const { authorize } = require("./middleware/auth");
 
 function createApp() {
   const app = express();
@@ -18,12 +19,16 @@ function createApp() {
     next();
   });
 
+  // Every /api request passes the RBAC policy before reaching a route.
+  app.use("/api", authorize);
+
   app.get("/api/health", (_req, res) => {
     res.json({ status: "ok", db: mongoose.connection.readyState === 1 ? "up" : "down" });
   });
 
   app.use("/api/auth", require("./routes/auth"));
   app.use("/api/users", require("./routes/users"));
+  app.use("/api/admin", require("./routes/admin"));
   if (config.isTest) app.use("/api/test", require("./routes/test"));
 
   app.use("/api", (_req, _res, next) => next(new ApiError(404, "NOT_FOUND", "No such endpoint")));

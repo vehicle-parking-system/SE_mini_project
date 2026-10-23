@@ -69,6 +69,28 @@ describeApi("Security", () => {
     expect([401, 403]).toContain((await api.get(C.transactions, { token: forged })).status);
   });
 
+  test("TC-Sec-04 [VPS-SR-003]: an admin-created attendant has the attendant role and is denied driver and admin functions", async () => {
+    const created = await api.post(C.adminAttendants, { name: "Gate Staff", email: "gate@test.vps", password: "Gate@12345" },
+      { token: tokens.admin });
+    expect(OK).toContain(created.status);
+    const token = await login("gate@test.vps", "Gate@12345");
+
+    expect((await api.get(C.me, { token })).body.user.role).toBe("ATTENDANT");
+    expect((await api.post(C.myVehicles, { plateNumber: "KA01ZZ0001", vehicleType: "CAR" }, { token })).status).toBe(403);
+    expect((await api.get(C.auditLogs, { token })).status).toBe(403);
+    expect((await api.post(C.adminAttendants, { name: "Y", email: "y@test.vps", password: "Y@1234567" }, { token })).status).toBe(403);
+
+    const denied = await api.get(`${C.auditLogs}?event=ACCESS_DENIED`, { token: tokens.admin });
+    expect(denied.body.logs.length).toBeGreaterThanOrEqual(3);
+  });
+
+  test("TC-Sec-04 [VPS-SR-003]: self-registration cannot create staff accounts", async () => {
+    const res = await api.post(C.register, { name: "Sneaky", email: "sneaky@test.vps", phone: "9000000002",
+      password: PASSWORD, role: "ADMIN" });
+    expect(OK).toContain(res.status);
+    expect((await api.get(C.transactions, { token: res.body.token })).status).toBe(403);
+  });
+
   test("TC-Sec-06 [VPS-SR-005]: account locks after 5 failed logins and an alert is logged", async () => {
     for (let i = 0; i < 5; i++) expect((await api.post(C.login, { email: "driver@test.vps", password: "wrong" })).status).toBe(401);
     const locked = await api.post(C.login, { email: "driver@test.vps", password: PASSWORD });

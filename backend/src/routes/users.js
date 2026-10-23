@@ -1,15 +1,14 @@
-// Driver profile and vehicle management for the logged-in user.
+// Profile and vehicle management for the logged-in user. Access is checked by the
+// RBAC policy (permissions.js): any role may manage its profile, only drivers have vehicles.
 const express = require("express");
 const User = require("../models/User");
 const Vehicle = require("../models/Vehicle");
 const auth = require("../auth");
-const { authenticate } = require("../middleware/auth");
 const { addVehicles } = require("../accounts");
 const { badRequest, conflict, notFound } = require("../errors");
 const { MAX_VEHICLES, validateProfileUpdate, validatePasswordChange, validateVehicle } = require("../validation");
 
 const router = express.Router();
-router.use(authenticate);
 
 async function profile(user) {
   const vehicles = await Vehicle.find({ owner: user._id }).sort({ createdAt: 1 });

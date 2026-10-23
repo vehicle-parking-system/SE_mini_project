@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, VEHICLE_TYPES } from "../api";
+import { api, ROLE_LABELS, VEHICLE_TYPES } from "../api";
 import { useAuth } from "../auth";
 import Field from "../components/Field";
 
@@ -155,13 +155,19 @@ export default function Profile() {
   return (
     <main className="page">
       <header className="page-header">
-        <h1>Hello, {user.name.split(" ")[0]}</h1>
-        <p className="muted">Keep your details and vehicles up to date so bookings and gate entry go smoothly.</p>
+        <h1>Hello, {user.name.split(" ")[0]} <span className="role-badge">{ROLE_LABELS[user.role]}</span></h1>
+        <p className="muted">
+          {user.role === "DRIVER"
+            ? "Keep your details and vehicles up to date so bookings and gate entry go smoothly."
+            : "Keep your account details up to date."}
+        </p>
       </header>
       {error && <p className="notice error" role="alert">{error}</p>}
       <div className="grid">
         <DetailsCard user={user} onSaved={(data) => { setUser(data.user); setVehicles(data.vehicles); }} />
-        {vehicles ? <VehiclesCard vehicles={vehicles} onChanged={load} /> : <section className="card muted">Loading vehicles…</section>}
+        {user.role === "DRIVER" && (vehicles
+          ? <VehiclesCard vehicles={vehicles} onChanged={load} />
+          : <section className="card muted">Loading vehicles…</section>)}
         <PasswordCard />
       </div>
     </main>

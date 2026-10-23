@@ -74,6 +74,22 @@ function validateRegistration(body = {}) {
   };
 }
 
+// POST /api/admin/attendants {name, email, password, phone?}
+function validateStaffAccount(body = {}) {
+  const errors = {};
+  nameErrors(errors, body.name);
+  check(errors, "email", EMAIL_RE.test(normalizeEmail(body.email)) && body.email.length <= 254, "Enter a valid email address");
+  passwordErrors(errors, body.password);
+  if (body.phone !== undefined && body.phone !== "") phoneErrors(errors, body.phone);
+  fail(errors);
+  return {
+    name: body.name.trim(),
+    email: normalizeEmail(body.email),
+    password: body.password,
+    ...(body.phone && { phone: normalizePhone(body.phone) }),
+  };
+}
+
 function validateLogin(body = {}) {
   const errors = {};
   check(errors, "email", isString(body.email) && body.email.trim() !== "", "Email is required");
@@ -109,6 +125,6 @@ function validateVehicle(body = {}) {
 }
 
 module.exports = {
-  VEHICLE_TYPES, MAX_VEHICLES, validateRegistration, validateLogin, validateProfileUpdate,
+  VEHICLE_TYPES, MAX_VEHICLES, validateRegistration, validateStaffAccount, validateLogin, validateProfileUpdate,
   validatePasswordChange, validateVehicle,
 };

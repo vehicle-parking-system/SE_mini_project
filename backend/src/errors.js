@@ -10,7 +10,8 @@ class ApiError extends Error {
 
 const badRequest = (message, details) => new ApiError(400, "VALIDATION_ERROR", message, details);
 const unauthorized = (message = "Authentication required") => new ApiError(401, "UNAUTHORIZED", message);
+const forbidden = (message = "You do not have permission to do this") => new ApiError(403, "FORBIDDEN", message);
 const notFound = (message = "Not found") => new ApiError(404, "NOT_FOUND", message);
 const conflict = (message) => new ApiError(409, "CONFLICT", message);
 
-module.exports = { ApiError, badRequest, unauthorized, notFound, conflict };
+module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict };

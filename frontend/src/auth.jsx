@@ -58,11 +58,23 @@ export function AuthProvider({ children }) {
 
 export const useAuth = () => useContext(AuthContext);
 
-export function RequireAuth({ children }) {
+// Guards a page: logged-out users go to /login; with `roles`, other roles see a
+// "not permitted" message. This only shapes the UI — the API enforces the same rules.
+export function RequireAuth({ roles, children }) {
   const { user, loading } = useAuth();
   const location = useLocation();
   if (loading) return <p className="muted center">Loading…</p>;
   if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (roles && !roles.includes(user.role)) {
+    return (
+      <main className="page">
+        <div className="card">
+          <h1>Not permitted</h1>
+          <p className="muted">Your account doesn't have access to this page.</p>
+        </div>
+      </main>
+    );
+  }
   return children;
 }
 
