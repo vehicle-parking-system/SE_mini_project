@@ -1,5 +1,8 @@
 // Login security & account lockout (VPS-SR-005) against a real MongoDB.
 // Uses MONGO_URL with its own database name; skipped when MONGO_URL is not set.
+// The per-IP limit is raised so these per-account tests aren't throttled first
+// (all requests come from one IP); it has its own tests in ratelimit.api.test.js.
+process.env.LOGIN_IP_MAX_FAILURES = "1000";
 const mongoose = require("mongoose");
 const request = require("supertest");
 const { createApp } = require("../src/app");
@@ -60,7 +63,11 @@ describeDb("login security & account lockout", () => {
 
     const [lock] = await events("ACCOUNT_LOCKED");
     expect(lock.details.failedAttempts).toBe(5);
-    expect(notifications.sent()).toEqual([expect.objectContaining({ to: EMAIL, channel: "EMAIL", type: "ACCOUNT_LOCKED" })]);
+    expect(notifications.sent()).toEqual([
+      expect.objectContaining({ to: EMAIL, channel: "EMAIL", type: "ACCOUNT_LOCKED" }),
+      expect.objectContaining({ to: "admin@example.com", type: "ADMIN_ACCOUNT_LOCKED",
+        data: expect.objectContaining({ email: EMAIL, lockNumber: 1 }) }),
+    ]);
 
     // even the correct password is refused while locked, and the password isn't checked
     const res = await login(PASSWORD);
@@ -77,7 +84,7 @@ describeDb("login security & account lockout", () => {
     expect(results.filter((r) => r.status === 423)).toHaveLength(25);
     expect(await events("LOGIN_FAILED")).toHaveLength(5);
     expect(await events("ACCOUNT_LOCKED")).toHaveLength(1);
-    expect(notifications.sent()).toHaveLength(1);
+    expect(notifications.sent().map((n) => n.type)).toEqual(["ACCOUNT_LOCKED", "ADMIN_ACCOUNT_LOCKED"]);
     expect((await login(PASSWORD)).status).toBe(423);
   });
 
@@ -106,6 +113,56 @@ describeDb("login security & account lockout", () => {
     expect(failed).toHaveLength(6);
     expect(failed[0].details.reason).toBe("UNKNOWN_EMAIL");
     expect(await events("ACCOUNT_LOCKED")).toHaveLength(0);
+  });
+
+  describe("escalating locks", () => {
+    const minutesLocked = async () => {
+      const { lockedUntil } = await User.findOne({ email: EMAIL });
+      return Math.round((lockedUntil - clock.now()) / 60000);
+    };
+    // moves the clock to just after the current lock ends
+    const expire = async () => {
+      const { lockedUntil } = await User.findOne({ email: EMAIL });
+      clock.set(new Date(lockedUntil.getTime() + 60000));
+    };
+
+    test("each lock in a row lasts longer: 15 min, 1 hour, then 24 hours", async () => {
+      await fail(5);
+      expect(await minutesLocked()).toBe(15);
+      await expire();
+      await fail(5);
+      expect(await minutesLocked()).toBe(60);
+      expect((await login(PASSWORD)).body.error.message).toMatch(/try again in 1 hour\./);
+      await expire();
+      await fail(5);
+      expect(await minutesLocked()).toBe(1440);
+      expect((await login(PASSWORD)).body.error.message).toMatch(/try again in 24 hours\./);
+      await expire();
+      await fail(5);
+      expect(await minutesLocked()).toBe(1440); // the last entry repeats
+
+      const locks = await events("ACCOUNT_LOCKED");
+      expect(locks.map((l) => l.details.lockNumber).sort()).toEqual([1, 2, 3, 4]);
+    });
+
+    test("a successful login resets the escalation", async () => {
+      await fail(5);
+      await expire();
+      expect((await login(PASSWORD)).status).toBe(200);
+      await fail(5);
+      expect(await minutesLocked()).toBe(15);
+    });
+
+    test("an admin unlock resets the escalation", async () => {
+      await fail(5);
+      await expire();
+      await fail(5);
+      expect(await minutesLocked()).toBe(60);
+      const user = await User.findOne({ email: EMAIL });
+      await asAdmin(api.post(`/api/admin/users/${user.id}/unlock`));
+      await fail(5);
+      expect(await minutesLocked()).toBe(15);
+    });
   });
 
   describe("admin", () => {

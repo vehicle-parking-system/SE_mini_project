@@ -37,6 +37,7 @@ function createApp() {
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, _next) => {
     if (err instanceof ApiError) {
+      if (err.headers) res.set(err.headers);
       return res.status(err.status).json({ error: { code: err.code, message: err.message, details: err.details } });
     }
     if (err.type === "entity.parse.failed") {

@@ -3,7 +3,7 @@
 const fs = require("fs");
 const { MongoClient } = require("mongodb");
 const C = require("../contract");
-const { describeApi, api, OK, resetAndLogin, login, enterVehicle } = require("../helpers/api");
+const { describeApi, api, OK, resetAndLogin, login, setClock, enterVehicle } = require("../helpers/api");
 const { PASSWORD } = require("../helpers/fixture");
 
 const SANDBOX_CARD = "4111111111111111";
@@ -115,6 +115,38 @@ describeApi("Security", () => {
       api.post(C.login, { email: "driver@test.vps", password: `Guess@${i}xyz` })));
     expect(results.filter((r) => r.status === 401)).toHaveLength(5);
     expect((await api.post(C.login, { email: "driver@test.vps", password: PASSWORD })).status).not.toBe(200);
+  });
+
+  test("TC-Sec-06 [VPS-SR-005]: a repeat lock lasts longer (15 min, then 1 hour) and admins are alerted", async () => {
+    const fail5 = async () => { for (let i = 0; i < 5; i++) await api.post(C.login, { email: "driver@test.vps", password: "wrong" }); };
+    const lockedFor = async (now) => {
+      const res = await api.post(C.login, { email: "driver@test.vps", password: PASSWORD });
+      expect(res.status).toBe(423);
+      return Math.round((Date.parse(res.body.error.details.lockedUntil) - Date.parse(now)) / 60000);
+    };
+
+    await fail5();
+    expect(await lockedFor("2026-11-02T10:00:00+05:30")).toBe(15);
+    await setClock("2026-11-02T10:20:00+05:30"); // first lock over
+    await fail5();
+    expect(await lockedFor("2026-11-02T10:20:00+05:30")).toBe(60);
+
+    const sent = (await api.get(C.test.notifications)).body.notifications;
+    expect(sent.filter((n) => n.to === "admin@test.vps" && n.type === "ADMIN_ACCOUNT_LOCKED")).toHaveLength(2);
+  });
+
+  test("TC-Sec-06 [VPS-SR-005]: one client trying many accounts (credential stuffing) is throttled with 429", async () => {
+    for (let i = 0; i < 20; i++) {
+      expect((await api.post(C.login, { email: `victim${i}@test.vps`, password: "Guess@1234" })).status).toBe(401);
+    }
+    const res = await api.post(C.login, { email: "driver2@test.vps", password: PASSWORD });
+    expect(res.status).toBe(429);
+    expect(Number(res.headers.get("retry-after"))).toBeGreaterThan(0);
+
+    const logs = await api.get(`${C.auditLogs}?event=LOGIN_RATE_LIMITED`, { token: tokens.admin });
+    expect(logs.body.logs).toHaveLength(1);
+    const sent = (await api.get(C.test.notifications)).body.notifications;
+    expect(sent).toEqual(expect.arrayContaining([expect.objectContaining({ to: "admin@test.vps", type: "ADMIN_LOGIN_RATE_LIMITED" })]));
   });
 
   test("TC-Sec-06 [VPS-SR-005]: an admin sees the locked account and can unlock it", async () => {

@@ -11,6 +11,7 @@ module.exports = {
   // Auth & Access Control
   register: "/api/auth/register", // POST {name, email, phone, password, vehicles:[{plateNumber, vehicleType}]}
   login: "/api/auth/login", //       POST {email, password} -> {token, user:{id, role}} | 401 | 423 when locked
+  //                                  | 429 + Retry-After when the client IP has too many failed logins
   //                                  register -> 201 {token, user, vehicles}; 400 invalid fields, 409 email or plate taken
 
   // Driver profile & vehicles (User & Vehicle Management)
