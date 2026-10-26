@@ -7,19 +7,42 @@ import { formatDay, formatTime } from "../time";
 
 const ACTIVE = ["HELD", "CONFIRMED"];
 
-function Booking({ booking, onCancelled, highlight }) {
+function Booking({ booking, onChanged, highlight }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
   const tz = booking.timezone;
   const status = RESERVATION_STATUS[booking.status] ?? { label: booking.status };
   const active = ACTIVE.includes(booking.status);
 
-  async function cancel() {
-    if (!window.confirm(`Cancel your booking for slot ${booking.slotNumber}?`)) return;
+  const refundable = booking.refundableUntil && Date.now() <= Date.parse(booking.refundableUntil);
+
+  // Online payment for the booking: the sandbox checkout gives a token, the gateway confirms it
+  async function pay() {
     setBusy(true);
     setError(null);
     try {
-      onCancelled(await api.cancelReservation(booking.reservationId));
+      await api.pay({ reservationId: booking.reservationId, method: "ONLINE", gatewayToken: SANDBOX_GATEWAY_TOKEN });
+      for (let i = 0; i < 20; i++) {
+        await new Promise((r) => setTimeout(r, 1500));
+        const updated = (await api.myReservations()).reservations.find((b) => b.reservationId === booking.reservationId);
+        if (updated && updated.status !== "HELD") return onChanged(updated);
+      }
+      setError("The payment is taking longer than usual. Check back in a minute.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function cancel() {
+    const refundNote = booking.status !== "CONFIRMED" ? ""
+      : refundable ? ` You'll get ${formatMoney(booking.price)} back.` : " It's too late for a refund.";
+    if (!window.confirm(`Cancel your booking for slot ${booking.slotNumber}?${refundNote}`)) return;
+    setBusy(true);
+    setError(null);
+    try {
+      onChanged(await api.cancelReservation(booking.reservationId));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,7 +70,17 @@ function Booking({ booking, onCancelled, highlight }) {
           </p>
         )}
         {error && <p className="notice error" role="alert">{error}</p>}
-        {active && <button className="btn link danger" onClick={cancel} disabled={busy}>{busy ? "Cancelling…" : "Cancel booking"}</button>}
+        {booking.status === "CONFIRMED" && (
+          <p className="muted small">
+            {refundable ? `Free cancellation until ${formatTime(booking.refundableUntil, tz)}.` : "No refund if cancelled now."}
+          </p>
+        )}
+        <div className="booking-actions">
+          {booking.status === "HELD" && booking.price > 0 && (
+            <button className="btn primary small" onClick={pay} disabled={busy}>{busy ? "Please wait…" : `Pay ${formatMoney(booking.price)} online`}</button>
+          )}
+          {active && <button className="btn link danger" onClick={cancel} disabled={busy}>Cancel booking</button>}
+        </div>
       </div>
       {active && booking.qrCode && (
         <QrCode value={booking.qrCode} label={`Entry code for booking ${booking.slotNumber}`} />
@@ -146,7 +179,7 @@ export default function Bookings() {
       ) : (
         <ul className="booking-list">
           {upcoming.map((b) => (
-            <Booking key={b.reservationId} booking={b} onCancelled={replace}
+            <Booking key={b.reservationId} booking={b} onChanged={replace}
               highlight={b.reservationId === justBooked?.reservationId} />
           ))}
         </ul>
@@ -179,7 +212,7 @@ export default function Bookings() {
         <section className="past-bookings">
           <h2>Past and cancelled</h2>
           <ul className="booking-list">
-            {past.map((b) => <Booking key={b.reservationId} booking={b} onCancelled={replace} />)}
+            {past.map((b) => <Booking key={b.reservationId} booking={b} onChanged={replace} />)}
           </ul>
         </section>
       )}

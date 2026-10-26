@@ -95,6 +95,7 @@ export const api = {
   pay: (body) => request("POST", "/api/payments", body),
   scanTicket: (qrCode) => request("POST", "/api/tickets/scan", { qrCode }),
   sessions: (params) => request("GET", `/api/sessions?${new URLSearchParams(params)}`),
+  transactions: (params = {}) => request("GET", `/api/admin/transactions?${new URLSearchParams(params)}`),
   listAttendants: () => request("GET", "/api/admin/attendants"),
   createAttendant: (details) => request("POST", "/api/admin/attendants", details),
   lockedAccounts: () => request("GET", "/api/admin/locked-accounts"),

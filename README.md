@@ -36,9 +36,10 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/sessions` | Staff. `?facilityId&status=ACTIVE\|CLOSED` → parking sessions, latest first |
 | `GET /api/slots/:id` | Staff. A slot's live status: `AVAILABLE`, `OCCUPIED`, `RESERVED` or `INACTIVE` |
 | `POST /api/exit` | Staff. `{gateId, sessionId \| qrCode \| plateNumber}` → `{duration, amount, paid, paymentStatus: CONFIRMED}` and the barrier opens, or `402 {amount (still due), total, paid, paymentStatus: UNPAID\|PENDING}` until confirmed payments cover the fee. 400 for invalid fields or ticket, 404 for an unknown gate or session, 409 if the vehicle already left or is at another facility |
-| `POST /api/payments` | Driver (`ONLINE`, own session) or attendant (`AT_GATE`). `{sessionId, method, gatewayToken}` → `201 {paymentId, amount, status: PENDING, gatewayRef}`. The amount is what's owed now; 409 if nothing is owed |
+| `POST /api/payments` | Driver (`ONLINE`, own session or booking) or attendant (`AT_GATE`, sessions). `{sessionId \| reservationId, method, gatewayToken}` → `201 {paymentId, amount, status: PENDING, gatewayRef}`. The amount is what's owed now, or the booking's price; 409 if nothing is owed |
 | `POST /api/payments/webhook` | Public, authenticated by its signature. `{paymentId, status: CONFIRMED\|FAILED}` with `x-razorpay-signature` (hex HMAC-SHA256 of the raw body with `PAYMENT_WEBHOOK_SECRET`). 401 for a bad signature; a replayed event is ignored |
 | `GET /api/payments/:id` | A payment's status (drivers: their own) |
+| `GET /api/admin/transactions` | Admin only. `?type=PAYMENT\|REFUND&from&to` → every payment and refund with its `gatewayRef` |
 | `GET /api/receipts/:id` | Staff (any) or the driver (own). `{number, plateNumber, entryTime, exitTime, duration, chargedHours, ratePerHour, amount, payments}` |
 | `GET /api/users/me/receipts` | The user's exit receipts, latest first |
 | `GET /api/events` | Any logged-in user. `?facilityId` → `text/event-stream` of live `slot` and `availability` events |
@@ -125,6 +126,14 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Live events.** Every slot change (entry, exit, booking, cancellation) is published on an event bus ([`backend/src/events.js`](backend/src/events.js)) and pushed to open `GET /api/events` streams. The Gate page refreshes occupancy and the vehicle list as soon as anything changes at its facility, and a driver's search results update as soon as a slot is taken or freed. Both keep their 30-second refresh as a fallback.
 - The stream is authenticated like every endpoint. The web app reads it with `fetch`, so the token travels in the `Authorization` header and never in a URL, and reconnects with backoff.
 - The bus is in-process. With several API instances, publish through a shared broker such as Redis pub/sub instead.
+
+**Secure Payment Tokenization (VPS-SR-004) and online payments (VPS-F-030 to VPS-F-032).**
+
+- **Card data never enters the system.** The browser checkout or the card terminal gives card details to the gateway and gets a single-use `tok_…` token back. The API takes only that token, passes it to the gateway once and discards it, and stores the gateway's own reference (`pay_…`, `rfnd_…`).
+- **Card data is refused.** [`middleware/cardData.js`](backend/src/middleware/cardData.js) runs before every route, including unauthenticated ones. It refuses with 400 `CARD_DATA_REJECTED` any body that has a card field (`cardNumber`, `cvv`, `expiry`, …) or a value that looks like a card number (13–19 digits, a card-scheme prefix, Luhn-valid). Refused data is never processed, stored or logged; the refusal is logged with its path only. The security tests check the database and the log for card numbers.
+- **Paying for a booking.** A driver pays the booking's price (its window × the rate) online from **My bookings**. Once the gateway confirms, the booking is `CONFIRMED` and a `BOOKING_CONFIRMED` notification is sent. A payment that lands after the booking lapsed or was cancelled is refunded automatically. At the exit, the prepaid amount counts towards the fee, so only an overstay is charged.
+- **Refund policy (VPS-F-031).** A paid booking cancelled at least the facility's `refundCutoffMinutes` (60) before its start is refunded in full and becomes `REFUNDED`. Later, it becomes `CANCELLED` with no refund. My bookings shows the free-cancellation deadline.
+- **Transaction log (VPS-F-032).** Every payment and refund is a record with type, method, amount, status, gateway reference and time. Admins see them on the **Payments** page (`GET /api/admin/transactions`).
 
 **Exit Receipt (VPS-F-013).** In [`backend/src/receipts.js`](backend/src/receipts.js):
 

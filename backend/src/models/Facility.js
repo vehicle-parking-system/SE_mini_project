@@ -8,6 +8,8 @@ const facilitySchema = new mongoose.Schema({
   openTime: { type: String, required: true, match: /^([01]\d|2[0-3]):[0-5]\d$/ },
   closeTime: { type: String, required: true, match: /^([01]\d|2[0-3]):[0-5]\d$/ },
   reservationGraceMinutes: { type: Number, default: 15 },
+  // a paid booking cancelled at least this long before its start is refunded in full
+  refundCutoffMinutes: { type: Number, default: 60 },
 }, { timestamps: true });
 
 facilitySchema.methods.toPublic = function toPublic(zones = [], gates) {

@@ -4,6 +4,7 @@ const config = require("./config");
 const logger = require("./logger");
 const { ApiError } = require("./errors");
 const { authorize } = require("./middleware/auth");
+const { rejectCardData } = require("./middleware/cardData");
 
 function createApp() {
   const app = express();
@@ -21,7 +22,9 @@ function createApp() {
     next();
   });
 
-  // Every /api request passes the RBAC policy before reaching a route.
+  // Card data is refused before anything else looks at the request (PCI scope, VPS-SR-004),
+  // then every /api request passes the RBAC policy before reaching a route.
+  app.use("/api", rejectCardData);
   app.use("/api", authorize);
 
   app.get("/api/health", (_req, res) => {

@@ -28,6 +28,12 @@ async function createCharge({ paymentId, amount, token }) {
   return { gatewayRef };
 }
 
+// Refunds a confirmed payment in full -> {gatewayRef} of the refund
+async function createRefund({ paymentId, paymentRef, amount }) {
+  logger.info("gateway refund created", { paymentId, amount });
+  return { gatewayRef: `rfnd_${crypto.createHash("sha256").update(paymentRef).digest("hex").slice(0, 20)}` };
+}
+
 // Webhook signature: hex HMAC-SHA256 of the raw request body with PAYMENT_WEBHOOK_SECRET.
 function verifySignature(rawBody, signature) {
   if (!rawBody || typeof signature !== "string" || !/^[0-9a-f]{64}$/i.test(signature)) return false;
@@ -35,4 +41,4 @@ function verifySignature(rawBody, signature) {
   return crypto.timingSafeEqual(expected, Buffer.from(signature, "hex"));
 }
 
-module.exports = { createCharge, verifySignature, setEventHandler };
+module.exports = { createCharge, createRefund, verifySignature, setEventHandler };

@@ -11,6 +11,7 @@ import Search from "./pages/Search";
 import Bookings from "./pages/Bookings";
 import Gate from "./pages/Gate";
 import ReceiptPage from "./pages/ReceiptPage";
+import Transactions from "./pages/Transactions";
 import "./styles.css";
 
 function NavBar() {
@@ -24,6 +25,7 @@ function NavBar() {
           {user.role === "DRIVER" && <Link to="/bookings">My bookings</Link>}
           {user.role !== "DRIVER" && <Link to="/gate">Gate</Link>}
           {user.role === "ADMIN" && <Link to="/admin/staff">Staff</Link>}
+          {user.role === "ADMIN" && <Link to="/admin/transactions">Payments</Link>}
           {user.role === "ADMIN" && <Link to="/admin/security">Security</Link>}
           <Link to="/profile">My profile</Link>
           <button className="btn link" onClick={logout}>Log out</button>
@@ -51,6 +53,7 @@ function App() {
         <Route path="/receipts/:id" element={<RequireAuth><ReceiptPage /></RequireAuth>} />
         <Route path="/gate" element={<RequireAuth roles={["ATTENDANT", "ADMIN"]}><Gate /></RequireAuth>} />
         <Route path="/admin/staff" element={<RequireAuth roles={["ADMIN"]}><Staff /></RequireAuth>} />
+        <Route path="/admin/transactions" element={<RequireAuth roles={["ADMIN"]}><Transactions /></RequireAuth>} />
         <Route path="/admin/security" element={<RequireAuth roles={["ADMIN"]}><Security /></RequireAuth>} />
         <Route path="*" element={<Navigate to="/profile" replace />} />
       </Routes>

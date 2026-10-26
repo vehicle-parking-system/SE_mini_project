@@ -7,6 +7,7 @@ const Zone = require("./models/Zone");
 const Slot = require("./models/Slot");
 
 // def: {key?, name, openTime, closeTime, timezone?, address?, reservationGraceMinutes?,
+//       refundPolicy?: {fullRefundIfCancelledMinutesBefore},
 //       gates?: [{key?, name?, type: ENTRY|EXIT}],
 //       rates?: [{zone?: <zone key>, vehicleType, ratePerHour}]  (no zone: facility-wide)
 //       zones: [{key?, name, slots: [{key?, number, vehicleType, distance?, status?}]}]}
@@ -17,6 +18,7 @@ async function createFacility(def) {
   const facility = await Facility.create({
     name: fields.name, address: fields.address, timezone: fields.timezone, openTime: fields.openTime,
     closeTime: fields.closeTime, reservationGraceMinutes: fields.reservationGraceMinutes,
+    refundCutoffMinutes: fields.refundPolicy?.fullRefundIfCancelledMinutesBefore,
   });
   const ids = key ? { [key]: facility.id } : {};
 

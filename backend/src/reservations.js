@@ -13,6 +13,7 @@ const Vehicle = require("./models/Vehicle");
 const Zone = require("./models/Zone");
 const { notify } = require("./notifications");
 const events = require("./events");
+const payments = require("./payments");
 const { windowErrors, checkWindow, loadFacility, freeSlots, isId } = require("./slotSearch");
 const { badRequest, conflict, notFound } = require("./errors");
 
@@ -73,11 +74,18 @@ async function present(reservations) {
     Slot.find({ _id: { $in: ids("slot") } }), Zone.find({ _id: { $in: ids("zone") } }),
     Facility.find({ _id: { $in: ids("facility") } }), Vehicle.find({ _id: { $in: ids("vehicle") } }),
   ].map((q) => q.then(byId)));
-  return reservations.map((r) => ({
+  const prices = await Promise.all(reservations.map((r) => payments.bookingPrice(r)));
+  return reservations.map((r, i) => ({
     ...r.toPublic({ slot: slots[r.slot], zone: zones[r.zone], facility: facilities[r.facility], vehicle: vehicles[r.vehicle] }),
     qrCode: CANCELLABLE.includes(r.status) ? qr.bookingCode(r.id) : null,
+    price: prices[i],
+    // a paid booking cancelled before this is refunded in full (VPS-F-031)
+    refundableUntil: r.status === "CONFIRMED" ? refundDeadline(r, facilities[r.facility]).toISOString() : null,
   }));
 }
+
+const refundDeadline = (reservation, facility) =>
+  new Date(reservation.startTime.getTime() - (facility?.refundCutoffMinutes ?? 60) * 60000);
 const presentOne = async (r) => (await present([r]))[0];
 
 async function createReservation(user, body) {
@@ -144,22 +152,30 @@ async function listReservations(user) {
 }
 
 // A held or confirmed booking can be cancelled by its driver or an admin, which frees the slot.
+// Refund policy (VPS-F-031): a paid booking cancelled at least the facility's refundCutoffMinutes
+// before its start is refunded in full and becomes REFUNDED; later, it is CANCELLED without a refund.
 async function cancelReservation(user, id) {
   await expireHolds();
   const existing = await findVisible(user, id);
-  const reservation = await Reservation.findOneAndUpdate(
+  const now = clock.now();
+  const facility = await Facility.findById(existing.facility);
+  const refund = existing.status === "CONFIRMED" && now <= refundDeadline(existing, facility);
+  let reservation = await Reservation.findOneAndUpdate(
     { _id: existing._id, status: { $in: CANCELLABLE } },
-    { status: "CANCELLED", cancelledAt: clock.now() },
+    { status: "CANCELLED", cancelledAt: now },
     { new: true },
   );
   if (!reservation) throw conflict(`This booking is ${existing.status.toLowerCase()} and can't be cancelled`);
+  if (refund && (await payments.refundBooking(reservation, "CANCELLED_IN_TIME")).length) {
+    reservation = await Reservation.findByIdAndUpdate(reservation._id, { status: "REFUNDED" }, { new: true });
+  }
 
   events.publish({ type: "availability", facilityId: reservation.facility, reason: "CANCELLED" });
   if (user.role === "ADMIN") {
     await AuditLog.create({ event: "RESERVATION_CANCELLED", actorId: user._id, at: clock.now(),
       details: { reservationId: reservation.id } });
   }
-  logger.info("reservation cancelled", { reservationId: reservation.id, by: user.id });
+  logger.info("reservation cancelled", { reservationId: reservation.id, by: user.id, status: reservation.status });
   return presentOne(reservation);
 }
 
