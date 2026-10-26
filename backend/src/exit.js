@@ -1,13 +1,14 @@
 // Vehicle exit (VPS-F-010 to VPS-F-013). At an exit gate the vehicle is identified by its
 // session, entry ticket or plate, and the fee for its stay is calculated from the rate kept
-// on its session. Until the fee is paid the barrier stays closed: 402 with the amount due.
+// on its session. Payment verification (VPS-F-011): the barrier opens only once payments
+// confirmed by the gateway cover the fee; until then, 402 with the amount still due.
 const clock = require("./clock");
 const hardware = require("./hardware");
 const logger = require("./logger");
 const qr = require("./qr");
 const Gate = require("./models/Gate");
 const Session = require("./models/Session");
-const pricing = require("./pricing");
+const payments = require("./payments");
 const { isId } = require("./slotSearch");
 const { PLATE_RE, normalizePlate } = require("./validation");
 const { badRequest, conflict, notFound, paymentRequired } = require("./errors");
@@ -49,11 +50,30 @@ async function processExit(user, body) {
   if (session.status !== "ACTIVE") throw conflict("This vehicle has already left");
   if (!session.facility.equals(gate.facility)) throw conflict("This vehicle is parked at another facility");
 
-  const quote = pricing.quote(session, clock.now());
-  hardware.display(gate.id, `Please pay ₹${quote.amount}`);
-  logger.info("exit: payment required", { sessionId: session.id, gateId: gate.id, amount: quote.amount });
-  throw paymentRequired(`Payment of ₹${quote.amount} is required before the barrier opens`,
-    { sessionId: session.id, ...quote, paid: 0, paymentStatus: "PENDING" });
+  const now = clock.now();
+  const { quote, total, paid, due, pending } = await payments.balance(session, now);
+  if (due > 0) {
+    // PENDING: a payment is waiting for the gateway's confirmation; UNPAID: nothing has been paid for it
+    const paymentStatus = pending.length ? "PENDING" : "UNPAID";
+    hardware.display(gate.id, paymentStatus === "PENDING" ? "Waiting for payment confirmation" : `Please pay ₹${due}`);
+    logger.info("exit: payment required", { sessionId: session.id, gateId: gate.id, due, paymentStatus });
+    throw paymentRequired(`Payment of ₹${due} is required before the barrier opens`,
+      { sessionId: session.id, ...quote, amount: due, total, paid, paymentStatus });
+  }
+
+  // Paid: close the session (once, however many exit requests race) and open the barrier.
+  const closed = await Session.findOneAndUpdate(
+    { _id: session._id, status: "ACTIVE" },
+    { status: "CLOSED", exitTime: now, exitGate: gate._id, duration: quote.duration, amount: total, paid },
+    { new: true },
+  );
+  if (!closed) throw conflict("This vehicle has already left");
+  hardware.display(gate.id, "Thank you. Drive safely");
+  hardware.openBarrier(gate.id);
+  logger.info("vehicle exited", { sessionId: closed.id, gateId: gate.id, amount: total });
+  return { sessionId: closed.id, plateNumber: closed.plateNumber, entryTime: closed.entryTime.toISOString(),
+    exitTime: now.toISOString(), duration: quote.duration, chargedHours: quote.chargedHours, ratePerHour: quote.ratePerHour,
+    amount: total, paid, paymentStatus: total === 0 ? "NOT_REQUIRED" : "CONFIRMED" };
 }
 
 module.exports = { processExit, findSession };

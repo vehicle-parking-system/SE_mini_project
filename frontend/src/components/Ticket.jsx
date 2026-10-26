@@ -15,7 +15,7 @@ export default function Ticket({ session, facilityName, timezone, onPrint }) {
           <dt>Entered</dt><dd>{formatDay(session.entryTime, timezone)}, {formatTime(session.entryTime, timezone)}</dd>
           <dt>Gate</dt><dd>{session.gateName}</dd>
           {session.fee && (
-            <><dt>So far</dt><dd>{formatMoney(session.fee.amount)} for {formatDuration(session.fee.duration)} <span className="muted">({formatMoney(session.ratePerHour)}/h)</span></dd></>
+            <><dt>So far</dt><dd>{formatMoney(session.fee.total)} for {formatDuration(session.fee.duration)} <span className="muted">({formatMoney(session.ratePerHour)}/h{session.fee.paid > 0 && `, ${formatMoney(session.fee.paid)} paid`})</span></dd></>
           )}
         </dl>
         <p className="muted small">Scan this ticket at the exit gate.</p>

@@ -35,7 +35,10 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `POST /api/entry` | Staff. `{gateId, source: ANPR\|QR\|MANUAL, plateNumber \| qrCode, vehicleType?}` → `201` session. 400 for invalid fields or an invalid ticket, 409 if no slot is free, the vehicle is already inside, or the booking can't be used now |
 | `GET /api/sessions` | Staff. `?facilityId&status=ACTIVE\|CLOSED` → parking sessions, latest first |
 | `GET /api/slots/:id` | Staff. A slot's live status: `AVAILABLE`, `OCCUPIED`, `RESERVED` or `INACTIVE` |
-| `POST /api/exit` | Staff. `{gateId, sessionId \| qrCode \| plateNumber}` → `402 {amount, duration, chargedHours, ratePerHour, paid, paymentStatus}` while the fee is unpaid. 400 for invalid fields or ticket, 404 for an unknown gate or session, 409 if the vehicle already left or is at another facility |
+| `POST /api/exit` | Staff. `{gateId, sessionId \| qrCode \| plateNumber}` → `{duration, amount, paid, paymentStatus: CONFIRMED}` and the barrier opens, or `402 {amount (still due), total, paid, paymentStatus: UNPAID\|PENDING}` until confirmed payments cover the fee. 400 for invalid fields or ticket, 404 for an unknown gate or session, 409 if the vehicle already left or is at another facility |
+| `POST /api/payments` | Driver (`ONLINE`, own session) or attendant (`AT_GATE`). `{sessionId, method, gatewayToken}` → `201 {paymentId, amount, status: PENDING, gatewayRef}`. The amount is what's owed now; 409 if nothing is owed |
+| `POST /api/payments/webhook` | Public, authenticated by its signature. `{paymentId, status: CONFIRMED\|FAILED}` with `x-razorpay-signature` (hex HMAC-SHA256 of the raw body with `PAYMENT_WEBHOOK_SECRET`). 401 for a bad signature; a replayed event is ignored |
+| `GET /api/payments/:id` | A payment's status (drivers: their own) |
 | `POST /api/tickets/scan` | Staff. `{qrCode}` → the session the entry ticket belongs to; 400 "Invalid ticket" otherwise |
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
 | `GET /api/occupancy/:facilityId` | Staff. `{capacity, occupied, booked, free, full, byVehicleType, byZone}` (inactive slots excluded) |
@@ -101,8 +104,17 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 
 - **Rate cards** give an hourly rate per vehicle type, either for one zone or facility-wide. A zone's own rate wins.
 - The rate is looked up when the vehicle enters and **kept on its session**. A rate change therefore applies to vehicles that enter after it, never to one already parked. With no rate configured, parking is free and a warning is logged.
-- **Fee = started hours × rate.** The duration runs from entry to the moment of calculation, rounded to the nearest minute, and every started hour is charged in full (30 min → 1 h, 61 min → 2 h). This is the rounding rule assumed in `tests/README.md`.
-- At an exit gate (`POST /api/exit`), the vehicle is found by its session, its entry ticket or its plate. Until the fee is paid the response is 402 with the quote, the display asks for the amount and the barrier stays closed. A parked vehicle's session also shows its `fee` so far: on the Gate page's exit panel, and on the driver's ticket.
+- **Fee = started hours × rate.** The duration runs from entry to the moment of calculation, rounded to the nearest minute, and every started hour is charged in full (30 min → 1 h, 61 min → 2 h). The first hour starts on entry, so at least one hour is charged. This is the rounding rule assumed in `tests/README.md`.
+- At an exit gate (`POST /api/exit`), the vehicle is found by its session, its entry ticket or its plate. A parked vehicle's session also shows its `fee`: the total so far, what's paid and what's still due.
+
+**Payment Verification before Exit (VPS-F-011).** In [`backend/src/payments.js`](backend/src/payments.js) and [`exit.js`](backend/src/exit.js):
+
+- The attendant takes payment at the gate (**Take card payment** on the Gate page), or the driver pays online from their ticket on **My bookings**. A payment holds only the gateway's reference (`pay_…`), never the token or any card details.
+- **A payment counts only once the gateway confirms it** with a webhook signed with `PAYMENT_WEBHOOK_SECRET`. A bad or missing signature gets 401 and changes nothing. Only a `PENDING` payment can change, so a replayed or late event is ignored.
+- **The barrier opens only when confirmed payments cover the fee.** Until then the exit gets 402: `UNPAID`, or `PENDING` while a payment awaits confirmation, and the display shows "Please pay ₹…" or "Waiting for payment confirmation". Once paid, the session is closed (exit time, billed duration, amount) and the barrier opens, exactly once however many exit requests race.
+- After paying, the driver has `EXIT_GRACE_MINUTES` (15) to leave before further time is charged.
+- **Sandbox gateway.** No real gateway is connected yet. [`paymentGateway.js`](backend/src/paymentGateway.js) accepts any `tok_…` token. Outside tests it sends its own signed confirmation after a moment (`PAYMENT_SANDBOX_AUTOCONFIRM`), so the app works end to end. `tok_sandbox_decline` is declined.
+- Releasing the slot when the vehicle leaves is the next story.
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 

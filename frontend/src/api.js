@@ -52,6 +52,7 @@ export const api = {
   enter: (entry) => request("POST", "/api/entry", entry),
   occupancy: (facilityId) => request("GET", `/api/occupancy/${facilityId}`),
   exit: (body) => request("POST", "/api/exit", body),
+  pay: (body) => request("POST", "/api/payments", body),
   scanTicket: (qrCode) => request("POST", "/api/tickets/scan", { qrCode }),
   sessions: (params) => request("GET", `/api/sessions?${new URLSearchParams(params)}`),
   listAttendants: () => request("GET", "/api/admin/attendants"),
@@ -60,6 +61,10 @@ export const api = {
   unlockUser: (id) => request("POST", `/api/admin/users/${id}/unlock`),
   auditLogs: (events) => request("GET", `/api/admin/audit-logs?event=${encodeURIComponent(events.join(","))}`),
 };
+
+// No real payment gateway is connected yet: the sandbox accepts this token in place of the one
+// its checkout (or the card terminal at the gate) would produce, and confirms the payment itself.
+export const SANDBOX_GATEWAY_TOKEN = "tok_sandbox_visa";
 
 export const formatMoney = (amount) => `₹${Number(amount).toLocaleString("en-IN")}`;
 

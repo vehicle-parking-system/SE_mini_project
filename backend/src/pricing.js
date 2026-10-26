@@ -2,13 +2,14 @@
 //
 // - Duration is measured from entry to exit and rounded to the nearest minute.
 // - Every started hour is charged in full: 30 min = 1 h, 61 min = 2 h (tests/README.md,
-//   "Fee rounding"; the SRS only says "within rounding rules").
+//   "Fee rounding"; the SRS only says "within rounding rules"). The first hour starts on
+//   entry, so even a stay of a few seconds is one hour.
 // - The rate is looked up when the vehicle enters and kept on its session, so a later rate
 //   change applies to vehicles that enter after it, never to one already parked.
 const Rate = require("./models/Rate");
 
 const durationMinutes = (from, to) => Math.max(0, Math.round((to.getTime() - from.getTime()) / 60000));
-const chargedHours = (minutes) => Math.ceil(minutes / 60);
+const chargedHours = (minutes) => Math.max(1, Math.ceil(minutes / 60));
 const feeFor = (minutes, ratePerHour) => chargedHours(minutes) * ratePerHour;
 
 // The hourly rate for a vehicle type in a zone: the zone's own rate, else the facility-wide

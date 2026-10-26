@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, formatDuration, formatMoney, VEHICLE_TYPES } from "../api";
+import { api, formatDuration, formatMoney, SANDBOX_GATEWAY_TOKEN, VEHICLE_TYPES } from "../api";
 import Ticket from "../components/Ticket";
 import { formatTime } from "../time";
 
 const GATE_KEY = "vps.gate";
+const CONFIRM_POLL_MS = 1500;
+const CONFIRM_POLL_TRIES = 20;
 const REFRESH_MS = 30000;
 const SOURCES = [
   { value: "ANPR", label: "ANPR" },
@@ -98,25 +100,57 @@ function EntryPanel({ gate, facility, onEntered }) {
   );
 }
 
-// Vehicle exit (VPS-F-010): find the vehicle by its entry ticket or plate and show the fee for its stay.
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Vehicle exit (VPS-F-010, VPS-F-011): find the vehicle by its entry ticket or plate, show the
+// fee, take payment at the gate, and open the barrier once the gateway has confirmed it.
 function ExitPanel({ gate, onChanged }) {
   const [by, setBy] = useState("QR");
   const [value, setValue] = useState("");
   const [result, setResult] = useState(null); // {kind: "due"|"done"|"error", ...}
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(null); // what is in progress, as text
+
+  // -> the exit result; 402 becomes {kind: "due", ...}
+  async function tryExit(lookup) {
+    try {
+      return { kind: "done", ...(await api.exit({ gateId: gate.id, ...lookup })) };
+    } catch (err) {
+      return err.status === 402 ? { kind: "due", ...err.data } : { kind: "error", text: err.message };
+    }
+  }
 
   async function onSubmit(e) {
     e.preventDefault();
-    setBusy(true);
+    setBusy("Checking…");
     setResult(null);
+    const outcome = await tryExit(by === "QR" ? { qrCode: value } : { plateNumber: value });
+    setResult(outcome);
+    if (outcome.kind === "done") setValue("");
+    setBusy(null);
+    onChanged();
+  }
+
+  // Card payment at the gate, then wait for the gateway's confirmation and open the barrier.
+  async function takePayment() {
+    const { sessionId } = result;
+    setBusy("Waiting for the card terminal…");
     try {
-      const done = await api.exit({ gateId: gate.id, ...(by === "QR" ? { qrCode: value } : { plateNumber: value }) });
-      setResult({ kind: "done", ...done });
-      setValue("");
+      await api.pay({ sessionId, method: "AT_GATE", gatewayToken: SANDBOX_GATEWAY_TOKEN });
+      setBusy("Waiting for payment confirmation…");
+      for (let i = 0; i < CONFIRM_POLL_TRIES; i++) {
+        await sleep(CONFIRM_POLL_MS);
+        const outcome = await tryExit({ sessionId });
+        if (outcome.kind !== "due" || outcome.paymentStatus !== "PENDING") {
+          setResult(outcome.kind === "due" ? { ...outcome, failed: true } : outcome);
+          if (outcome.kind === "done") setValue("");
+          return;
+        }
+      }
+      setResult({ ...result, paymentStatus: "PENDING" });
     } catch (err) {
-      setResult(err.status === 402 ? { kind: "due", ...err.data } : { kind: "error", text: err.message });
+      setResult({ kind: "error", text: err.message });
     } finally {
-      setBusy(false);
+      setBusy(null);
       onChanged();
     }
   }
@@ -135,17 +169,27 @@ function ExitPanel({ gate, onChanged }) {
         <input id="exitLookup" value={value} autoComplete="off" placeholder={by === "QR" ? "Scan or paste the ticket" : "KA01AB1234"}
           onChange={(e) => setValue(by === "QR" ? e.target.value : e.target.value.toUpperCase())} />
       </div>
-      <button className="btn primary" disabled={busy || !value.trim()}>{busy ? "Checking…" : "Calculate fee"}</button>
+      <button className="btn primary" disabled={Boolean(busy) || !value.trim()}>Calculate fee</button>
+      {busy && <p className="muted gate-result" role="status">{busy}</p>}
 
       {result?.kind === "error" && <p className="notice error gate-result" role="alert">{result.text}</p>}
-      {result?.kind === "due" && (
+      {result?.kind === "due" && !busy && (
         <div className="fee gate-result" role="status">
           <p className="fee-amount">{formatMoney(result.amount)} <span className="muted">due</span></p>
           <p className="muted">
             {formatDuration(result.duration)} parked · {result.chargedHours} h × {formatMoney(result.ratePerHour)}
             {result.paid > 0 && <> · {formatMoney(result.paid)} already paid</>}
           </p>
-          <p className="muted small">The barrier opens once the fee is paid.</p>
+          {result.failed && <p className="notice error">The payment was declined. Try another card.</p>}
+          {result.paymentStatus === "PENDING" && !result.failed
+            ? <p className="muted small">A payment is waiting for the gateway&apos;s confirmation. Check again in a moment.</p>
+            : <button type="button" className="btn primary" onClick={takePayment}>Take card payment</button>}
+        </div>
+      )}
+      {result?.kind === "done" && (
+        <div className="notice success gate-result" role="status">
+          <strong>Barrier opened.</strong> {result.plateNumber} · {formatDuration(result.duration)} ·{" "}
+          {result.paymentStatus === "NOT_REQUIRED" ? "no charge" : `${formatMoney(result.amount)} paid`}
         </div>
       )}
     </form>

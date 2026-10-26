@@ -17,6 +17,7 @@ const { ENTRY_SOURCES } = Session;
 const { expireHolds } = require("./reservations");
 const { notify } = require("./notifications");
 const pricing = require("./pricing");
+const payments = require("./payments");
 const { isId } = require("./slotSearch");
 const { localParts, localInstant } = require("./time");
 const { VEHICLE_TYPES, PLATE_RE, normalizePlate } = require("./validation");
@@ -117,17 +118,18 @@ const releaseSlot = (slot) => Slot.updateOne({ _id: slot._id, status: "OCCUPIED"
 
 // Sessions with their slot, zone and entry gate, as the API returns them. A session that is
 // still active carries its entry ticket: a signed QR code (VPS-F-004) scanned at the exit,
-// and what it would cost to leave now (`fee`, see pricing.js).
+// and what leaving now would cost (`fee`: amount still due, total, paid; see payments.js).
 async function presentSessions(sessions) {
   const ids = (field) => [...new Set(sessions.map((s) => s[field].toString()))];
   const byId = (docs) => Object.fromEntries(docs.map((d) => [d.id, d]));
   const [slots, zones, gates] = await Promise.all([
     Slot.find({ _id: { $in: ids("slot") } }), Zone.find({ _id: { $in: ids("zone") } }), Gate.find({ _id: { $in: ids("entryGate") } }),
   ].map((q) => q.then(byId)));
+  const fees = await payments.feesFor(sessions.filter((s) => s.status === "ACTIVE"));
   return sessions.map((s) => ({
     ...s.toPublic({ slot: slots[s.slot], zone: zones[s.zone], gate: gates[s.entryGate] }),
     ticketQr: s.status === "ACTIVE" ? qr.ticketCode(s.id) : null,
-    fee: s.status === "ACTIVE" ? pricing.quote(s, clock.now()) : null,
+    fee: fees[s.id] ?? null,
   }));
 }
 const presentSession = async (s) => (await presentSessions([s]))[0];

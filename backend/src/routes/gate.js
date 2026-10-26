@@ -22,8 +22,9 @@ router.post("/tickets/scan", async (req, res) => {
 });
 
 // POST /api/exit {gateId, sessionId | qrCode | plateNumber}
-// 402 PAYMENT_REQUIRED {amount, duration, chargedHours, ratePerHour, paymentStatus} while the fee is unpaid
-// (the barrier stays closed); 400 invalid fields or ticket, 404 unknown gate or session, 409 already left
+// -> {sessionId, entryTime, exitTime, duration, amount, paid, paymentStatus: CONFIRMED|NOT_REQUIRED} and the barrier opens
+// 402 PAYMENT_REQUIRED {amount (still due), total, paid, duration, paymentStatus: UNPAID|PENDING} until confirmed
+// payments cover the fee; 400 invalid fields or ticket, 404 unknown gate or session, 409 already left
 router.post("/exit", async (req, res) => {
   res.json(await exit.processExit(req.user, req.body));
 });

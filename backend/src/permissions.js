@@ -47,6 +47,7 @@ const RULES = [
 
   // Payments: drivers pay online, attendants take at-gate payments
   ["POST", "/api/payments", [DRIVER, ATTENDANT]],
+  ["GET", "/api/payments/:id", ANY_USER], //   drivers: only their own
 
   // Admin Console and reports
   ["*", "/api/admin/*", [ADMIN]],

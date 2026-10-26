@@ -22,7 +22,7 @@ describe("fee rules", () => {
     expect(pricing.durationMinutes(t0, after(-5000))).toBe(0);
   });
 
-  test.each([[0, 0], [1, 1], [30, 1], [60, 1], [61, 2], [120, 2], [165, 3]])(
+  test.each([[0, 1], [1, 1], [30, 1], [60, 1], [61, 2], [120, 2], [165, 3]])(
     "%i minutes are charged as %i started hour(s)", (minutes, hours) => {
       expect(pricing.chargedHours(minutes)).toBe(hours);
       expect(pricing.feeFor(minutes, 40)).toBe(hours * 40);
@@ -107,7 +107,7 @@ describeDb("rate cards and the exit quote", () => {
     const res = await exit({ sessionId: entry.body.sessionId });
     expect(res.status).toBe(402);
     expect(res.body).toEqual(expect.objectContaining({ sessionId: entry.body.sessionId, duration: 61, chargedHours: 2,
-      ratePerHour: 50, amount: 100, paid: 0, paymentStatus: "PENDING" }));
+      ratePerHour: 50, amount: 100, total: 100, paid: 0, paymentStatus: "UNPAID" }));
     expect(res.body.error.code).toBe("PAYMENT_REQUIRED");
     expect(hardware.sent().filter((c) => c.gateId === ids.out)).toEqual([
       expect.objectContaining({ command: "DISPLAY", message: "Please pay ₹100" })]);
@@ -117,7 +117,7 @@ describeDb("rate cards and the exit quote", () => {
     const entry = await enter("KA05XY0001");
     clock.set(minutesLater(30));
     const session = await api.get(`/api/sessions/${entry.body.sessionId}`).set("authorization", `Bearer ${token}`);
-    expect(session.body.fee).toEqual(expect.objectContaining({ duration: 30, amount: 50 }));
+    expect(session.body.fee).toEqual(expect.objectContaining({ duration: 30, amount: 50, total: 50, paid: 0, paymentStatus: "UNPAID" }));
   });
 
   test("the vehicle can be found by session, entry ticket or plate", async () => {
