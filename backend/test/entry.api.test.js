@@ -120,13 +120,14 @@ describeDb("vehicle entry", () => {
       expect((await enter({ plateNumber: "KA05XY0001" })).body.slotNumber).toBe("A-02");
     });
 
-    test("no free slot of the type: 409, the barrier stays closed", async () => {
+    test("no free slot of the type: 409 Facility Full, the barrier stays closed", async () => {
       await enter({ plateNumber: "KA05XY0001" });
       await enter({ plateNumber: "KA05XY0002" });
       hardware.clear();
       const res = await enter({ plateNumber: "KA05XY0003" });
       expect(res.status).toBe(409);
-      expect(commands("OPEN")).toHaveLength(0);
+      expect(res.body.error).toEqual({ code: "FACILITY_FULL", message: "Facility Full: no free car slot" });
+      expect(commands()).toEqual([expect.objectContaining({ command: "DISPLAY", message: "Facility Full" })]);
       expect((await enter({ plateNumber: "KA05XY0003", vehicleType: "BIKE" })).body.slotNumber).toBe("A-B1");
     });
   });

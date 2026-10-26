@@ -43,6 +43,7 @@ function EntryPanel({ gate, onEntered }) {
     } catch (err) {
       setErrors(err.details || {});
       setResult({ kind: "error", text: err.message });
+      onEntered(); // a refusal may mean the facility just filled up
     } finally {
       setBusy(false);
     }
@@ -93,6 +94,37 @@ function EntryPanel({ gate, onEntered }) {
   );
 }
 
+const typeLabel = (value) => VEHICLE_TYPES.find((t) => t.value === value)?.label ?? value;
+
+// Live occupancy (VPS-F-003): free slots per vehicle type, so the attendant sees "full" before a car arrives.
+function OccupancyCard({ occupancy }) {
+  if (!occupancy) return <section className="card"><h2>Occupancy</h2><p className="muted">Loading…</p></section>;
+  const pct = (n, of) => (of ? Math.round((n / of) * 100) : 0);
+  return (
+    <section className="card occupancy">
+      <div className="card-header">
+        <h2>Occupancy</h2>
+        {occupancy.full ? <span className="status-badge FAILED">Facility Full</span>
+          : <span className="muted">{occupancy.free} of {occupancy.capacity} free</span>}
+      </div>
+      <ul className="meter-list">
+        {occupancy.byVehicleType.map((t) => (
+          <li key={t.vehicleType}>
+            <div className="meter-label">
+              <span>{typeLabel(t.vehicleType)}</span>
+              <span className={t.full ? "danger-text" : "muted"}>{t.full ? "Full" : `${t.free} free`} · {t.occupied} parked{t.booked ? ` · ${t.booked} booked` : ""}</span>
+            </div>
+            <div className="meter" role="img" aria-label={`${typeLabel(t.vehicleType)}: ${t.occupied} parked, ${t.booked} booked, ${t.free} free of ${t.capacity}`}>
+              <span className="meter-occupied" style={{ width: `${pct(t.occupied, t.capacity)}%` }} />
+              <span className="meter-booked" style={{ width: `${pct(t.booked, t.capacity)}%` }} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function InsideList({ sessions, timezone }) {
   return (
     <section className="card">
@@ -128,6 +160,7 @@ export default function Gate() {
   const [facilities, setFacilities] = useState(null);
   const [selection, setSelection] = useState(readSaved);
   const [sessions, setSessions] = useState(null);
+  const [occupancy, setOccupancy] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -145,19 +178,22 @@ export default function Gate() {
 
   useEffect(() => { if (selection.facilityId) save(selection); }, [selection]);
 
-  const loadSessions = useCallback(() => {
+  // Vehicles inside and occupancy, refreshed after every gate action and every 30 s
+  const refresh = useCallback(() => {
     if (!selection.facilityId) return;
     api.sessions({ facilityId: selection.facilityId, status: "ACTIVE" })
       .then(({ sessions: list }) => setSessions(list))
       .catch((err) => setError(err.message));
+    api.occupancy(selection.facilityId).then(setOccupancy).catch((err) => setError(err.message));
   }, [selection.facilityId]);
 
   useEffect(() => {
     setSessions(null);
-    loadSessions();
-    const id = setInterval(() => document.visibilityState === "visible" && loadSessions(), REFRESH_MS);
+    setOccupancy(null);
+    refresh();
+    const id = setInterval(() => document.visibilityState === "visible" && refresh(), REFRESH_MS);
     return () => clearInterval(id);
-  }, [loadSessions]);
+  }, [refresh]);
 
   if (error && !facilities) return <main className="page"><p className="notice error" role="alert">{error}</p></main>;
   if (!facilities) return <main className="page"><p className="muted">Loading…</p></main>;
@@ -197,9 +233,14 @@ export default function Gate() {
         </div>
       </header>
       <div className="grid">
-        {entryGate ? <EntryPanel gate={entryGate} onEntered={loadSessions} />
-          : <div className="card"><p className="muted">This facility has no entry gate.</p></div>}
-        <InsideList sessions={sessions} timezone={facility.timezone} />
+        <div className="stack">
+          {entryGate ? <EntryPanel gate={entryGate} onEntered={refresh} />
+            : <div className="card"><p className="muted">This facility has no entry gate.</p></div>}
+        </div>
+        <div className="stack">
+          <OccupancyCard occupancy={occupancy} />
+          <InsideList sessions={sessions} timezone={facility.timezone} />
+        </div>
       </div>
     </main>
   );

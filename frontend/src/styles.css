@@ -191,3 +191,9 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 }
 .segmented button.active { background: var(--primary); color: #fff; }
 .gate-result { margin: 16px 0 0; }
+.meter-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.meter-label { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; margin-bottom: 4px; }
+.meter { display: flex; height: 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
+.meter-occupied { background: var(--primary); }
+.meter-booked { background: var(--muted); opacity: 0.5; }
+.danger-text { color: var(--danger); font-weight: 600; }

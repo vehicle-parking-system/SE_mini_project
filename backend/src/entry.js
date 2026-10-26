@@ -17,7 +17,7 @@ const { expireHolds } = require("./reservations");
 const { isId } = require("./slotSearch");
 const { localParts, localInstant } = require("./time");
 const { VEHICLE_TYPES, PLATE_RE, normalizePlate } = require("./validation");
-const { badRequest, conflict, notFound } = require("./errors");
+const { badRequest, conflict, facilityFull, notFound } = require("./errors");
 
 // A booked vehicle may enter this long before its start time
 const EARLY_ARRIVAL_MINUTES = 30;
@@ -164,8 +164,13 @@ async function captureEntry(user, body) {
   }
   if (await Session.exists({ plateNumber, status: "ACTIVE" })) throw refuse(conflict(`${plateNumber} is already parked here`), "See attendant");
 
+  // Facility full check (VPS-F-003): no slot for this vehicle means no entry. The display says
+  // so, the barrier stays closed, and nothing about the facility's occupancy changes.
   const slot = (reservation && await occupyBookedSlot(reservation)) || await allocateSlot(facility, vehicleType, now);
-  if (!slot) throw refuse(conflict("No free slot for this vehicle"), "No free slot");
+  if (!slot) {
+    logger.warn("facility full: entry refused", { facilityId: facility.id, gateId: gate.id, vehicleType });
+    throw refuse(facilityFull(`Facility Full: no free ${vehicleType.toLowerCase()} slot`), "Facility Full");
+  }
 
   let session;
   try {
