@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, VEHICLE_TYPES } from "../api";
+import Ticket from "../components/Ticket";
 import { formatTime } from "../time";
 
 const GATE_KEY = "vps.gate";
 const REFRESH_MS = 30000;
 const SOURCES = [
-  { value: "ANPR", label: "ANPR camera" },
+  { value: "ANPR", label: "ANPR" },
   { value: "QR", label: "QR scan" },
   { value: "MANUAL", label: "Manual" },
 ];
@@ -19,7 +20,7 @@ function save(value) {
 
 // Vehicle entry (VPS-F-001): the plate read by the ANPR camera or typed by the attendant,
 // or a booking's QR code, opens a parking session and tells the driver where to park.
-function EntryPanel({ gate, onEntered }) {
+function EntryPanel({ gate, facility, onEntered }) {
   const [form, setForm] = useState({ source: "ANPR", plateNumber: "", vehicleType: "CAR", qrCode: "" });
   const [errors, setErrors] = useState({});
   const [result, setResult] = useState(null); // {kind: "success"|"error", session?, text}
@@ -85,10 +86,13 @@ function EntryPanel({ gate, onEntered }) {
 
       {result?.kind === "error" && <p className="notice error gate-result" role="alert">{result.text}</p>}
       {result?.kind === "success" && (
-        <div className="notice success gate-result" role="status">
-          <strong>Barrier opened.</strong> {result.session.plateNumber} → slot <span className="plate">{result.session.slotNumber}</span>
-          {" "}({result.session.zoneName}){result.session.reservationId && " · booked"}
-        </div>
+        <>
+          <div className="notice success gate-result" role="status">
+            <strong>Barrier opened.</strong> {result.session.plateNumber} → slot <span className="plate">{result.session.slotNumber}</span>
+            {" "}({result.session.zoneName}){result.session.reservationId && " · booked"}
+          </div>
+          <Ticket session={result.session} facilityName={facility.name} timezone={facility.timezone} onPrint={() => window.print()} />
+        </>
       )}
     </form>
   );
@@ -142,7 +146,7 @@ function InsideList({ sessions, timezone }) {
                   {sessions.map((s) => (
                     <tr key={s.sessionId}>
                       <td><span className="plate">{s.plateNumber}</span></td>
-                      <td>{s.slotNumber} <span className="muted">{s.zoneName}</span></td>
+                      <td><strong>{s.slotNumber}</strong><br /><span className="muted small">{s.zoneName}</span></td>
                       <td>{formatTime(s.entryTime, timezone)}</td>
                       <td className="muted">{s.source}{s.reservationId ? " · booked" : ""}</td>
                     </tr>
@@ -234,7 +238,7 @@ export default function Gate() {
       </header>
       <div className="grid">
         <div className="stack">
-          {entryGate ? <EntryPanel gate={entryGate} onEntered={refresh} />
+          {entryGate ? <EntryPanel gate={entryGate} facility={facility} onEntered={refresh} />
             : <div className="card"><p className="muted">This facility has no entry gate.</p></div>}
         </div>
         <div className="stack">

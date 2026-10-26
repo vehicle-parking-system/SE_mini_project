@@ -14,6 +14,12 @@ router.post("/entry", async (req, res) => {
   res.status(201).json(await entry.captureEntry(req.user, req.body));
 });
 
+// POST /api/tickets/scan {qrCode} -> the session {sessionId, entryTime, slotNumber, plateNumber, status, ...}
+// 400 if the code isn't a valid entry ticket
+router.post("/tickets/scan", async (req, res) => {
+  res.json(await entry.scanTicket(req.body?.qrCode));
+});
+
 // GET /api/sessions?facilityId&status=ACTIVE|CLOSED -> {sessions:[...]} latest first
 router.get("/sessions", async (req, res) => {
   res.json({ sessions: await entry.listSessions(req.query) });

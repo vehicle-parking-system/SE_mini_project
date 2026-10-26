@@ -189,6 +189,42 @@ describeDb("vehicle entry", () => {
     });
   });
 
+  describe("entry tickets", () => {
+    test("every entry returns a signed QR ticket that scans back to the session at the exit", async () => {
+      const entry = await enter({ plateNumber: "KA05XY0001" });
+      expect(qr.readTicketCode(entry.body.ticketQr)).toBe(entry.body.sessionId);
+      const scan = await api.post("/api/tickets/scan").set(as("attendant")).send({ qrCode: entry.body.ticketQr });
+      expect(scan.status).toBe(200);
+      expect(scan.body).toEqual(expect.objectContaining({ sessionId: entry.body.sessionId, entryTime: entry.body.entryTime,
+        slotNumber: entry.body.slotNumber, plateNumber: "KA05XY0001", status: "ACTIVE" }));
+    });
+
+    test("invalid, altered or booking codes are not tickets (400)", async () => {
+      const entry = await enter({ plateNumber: "KA05XY0001" });
+      for (const qrCode of ["nonsense", entry.body.ticketQr.slice(0, -2) + "zz", qr.bookingCode(entry.body.sessionId), undefined]) {
+        const res = await api.post("/api/tickets/scan").set(as("attendant")).send({ qrCode });
+        expect(res.status).toBe(400);
+        expect(res.body.error.message).toBe("Invalid ticket");
+      }
+      expect((await api.post("/api/tickets/scan").set(as("driver")).send({ qrCode: entry.body.ticketQr })).status).toBe(403);
+    });
+
+    test("a registered driver gets a digital ticket: by notification and in their parking sessions", async () => {
+      const notifications = require("../src/notifications");
+      notifications.clear();
+      const entry = await enter({ plateNumber: "KA01AB1234" });
+      expect(notifications.sent()).toEqual([expect.objectContaining({ to: "driver@example.com", type: "ENTRY_TICKET",
+        data: { sessionId: entry.body.sessionId, slotNumber: "A-01", entryTime: entry.body.entryTime } })]);
+
+      const mine = await api.get("/api/users/me/sessions").set(as("driver"));
+      expect(mine.body.sessions).toEqual([expect.objectContaining({ sessionId: entry.body.sessionId, ticketQr: entry.body.ticketQr })]);
+      // walk-ins with unregistered plates notify nobody
+      notifications.clear();
+      await enter({ plateNumber: "KA05XY0001" });
+      expect(notifications.sent()).toEqual([]);
+    });
+  });
+
   describe("requests and access", () => {
     test("fields are validated and only entry gates are accepted", async () => {
       const bad = await api.post("/api/entry").set(as("attendant")).send({ gateId: "g", source: "CAMERA", plateNumber: "!" });

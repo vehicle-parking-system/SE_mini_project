@@ -42,6 +42,7 @@ The backend must also:
 
 - **Fee rounding:** every started hour is charged (`expectedFee` in `helpers/fixture.js`). The SRS doesn't define the rule.
 - **Requirement mapping:** TC-Res-02–04 map to VPS-F-021–023, TC-Pay-01–03 to VPS-F-030–032 and TC-Admin-01–04 to VPS-F-040–043, in the order SRS §4.3–4.5 describes them.
+- **TC-Entry-01 capacity:** the manual entry is a bike. Zone A has three car slots: A-01 starts occupied, and the test's own booking holds another. As first written, the third car entry could only succeed if a slot were given out twice.
 - **Load:** the baseline is 100 concurrent users (`PERF_BASELINE_USERS`), and TC-Perf-02 uses 10× that.
 
 ## Running locally

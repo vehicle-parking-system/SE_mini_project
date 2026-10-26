@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { api, RESERVATION_STATUS } from "../api";
 import QrCode from "../components/QrCode";
+import Ticket from "../components/Ticket";
 import { formatDay, formatTime } from "../time";
 
 const ACTIVE = ["HELD", "CONFIRMED"];
@@ -60,10 +61,12 @@ export default function Bookings() {
   const location = useLocation();
   const justBooked = location.state?.booked;
   const [bookings, setBookings] = useState(null);
+  const [parked, setParked] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     api.myReservations().then(({ reservations }) => setBookings(reservations)).catch((err) => setError(err.message));
+    api.mySessions().then(({ sessions }) => setParked(sessions.filter((s) => s.status === "ACTIVE"))).catch(() => {});
   }, []);
 
   const replace = (updated) => setBookings(bookings.map((b) => (b.reservationId === updated.reservationId ? updated : b)));
@@ -80,6 +83,12 @@ export default function Bookings() {
         <h1>My bookings</h1>
         <p className="muted">Show the QR code at the entry gate. The slot is kept for you until the grace period after your start time.</p>
       </header>
+      {parked.length > 0 && (
+        <section className="parked-now">
+          <h2>Parked now</h2>
+          {parked.map((s) => <div className="card" key={s.sessionId}><Ticket session={s} /></div>)}
+        </section>
+      )}
       {justBooked && (
         <p className="notice success" role="status">Slot {justBooked.slotNumber} is booked for you.</p>
       )}

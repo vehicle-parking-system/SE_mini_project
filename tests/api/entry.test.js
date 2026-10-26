@@ -16,7 +16,8 @@ describeApi("Vehicle Entry & Slot Allocation", () => {
     const entries = [
       { source: "ANPR", plateNumber: "KA01AB1234" },
       { source: "QR", qrCode: reservation.body.qrCode ?? reservation.body.reservationId },
-      { source: "MANUAL", plateNumber: "KA05XY0001" },
+      // Zone A has three car slots: A-01 is occupied and the booking holds one, so the manual entry is a bike
+      { source: "MANUAL", plateNumber: "KA05XY0001", vehicleType: "BIKE" },
     ];
     for (const e of entries) {
       const res = await enterVehicle(tokens.attendant, { gateId: ids.gateIn, ...e });
