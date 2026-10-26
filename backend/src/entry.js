@@ -10,10 +10,12 @@ const Gate = require("./models/Gate");
 const Reservation = require("./models/Reservation");
 const Session = require("./models/Session");
 const Slot = require("./models/Slot");
+const User = require("./models/User");
 const Vehicle = require("./models/Vehicle");
 const Zone = require("./models/Zone");
 const { ENTRY_SOURCES } = Session;
 const { expireHolds } = require("./reservations");
+const { notify } = require("./notifications");
 const { isId } = require("./slotSearch");
 const { localParts, localInstant } = require("./time");
 const { VEHICLE_TYPES, PLATE_RE, normalizePlate } = require("./validation");
@@ -112,14 +114,18 @@ const occupyBookedSlot = (reservation) => Slot.findOneAndUpdate(
 
 const releaseSlot = (slot) => Slot.updateOne({ _id: slot._id, status: "OCCUPIED" }, { status: "AVAILABLE", $inc: { version: 1 } });
 
-// Sessions with their slot, zone and entry gate, as the API returns them.
+// Sessions with their slot, zone and entry gate, as the API returns them. A session that is
+// still active carries its entry ticket: a signed QR code (VPS-F-004) scanned at the exit.
 async function presentSessions(sessions) {
   const ids = (field) => [...new Set(sessions.map((s) => s[field].toString()))];
   const byId = (docs) => Object.fromEntries(docs.map((d) => [d.id, d]));
   const [slots, zones, gates] = await Promise.all([
     Slot.find({ _id: { $in: ids("slot") } }), Zone.find({ _id: { $in: ids("zone") } }), Gate.find({ _id: { $in: ids("entryGate") } }),
   ].map((q) => q.then(byId)));
-  return sessions.map((s) => s.toPublic({ slot: slots[s.slot], zone: zones[s.zone], gate: gates[s.entryGate] }));
+  return sessions.map((s) => ({
+    ...s.toPublic({ slot: slots[s.slot], zone: zones[s.zone], gate: gates[s.entryGate] }),
+    ticketQr: s.status === "ACTIVE" ? qr.ticketCode(s.id) : null,
+  }));
 }
 const presentSession = async (s) => (await presentSessions([s]))[0];
 
@@ -192,7 +198,30 @@ async function captureEntry(user, body) {
   hardware.display(gate.id, `Proceed to slot ${slot.number} · ${zone.name} · ${slot.distance} m`);
   hardware.openBarrier(gate.id);
   logger.info("vehicle entered", { sessionId: session.id, gateId: gate.id, source: input.source, booked: Boolean(reservation) });
+
+  // Entry ticket (VPS-F-004): printed at the kiosk from the response, and sent to a registered driver.
+  const ticket = await presentSession(session);
+  if (vehicle) {
+    const owner = await User.findById(vehicle.owner, "email");
+    if (owner) {
+      await notify({ userId: owner.id, to: owner.email, type: "ENTRY_TICKET",
+        data: { sessionId: ticket.sessionId, slotNumber: ticket.slotNumber, entryTime: ticket.entryTime } });
+    }
+  }
+  return ticket;
+}
+
+// Reads an entry ticket at the exit (VPS-F-004) -> the session; 400 if the code isn't a valid ticket.
+async function scanTicket(code) {
+  const id = qr.readTicketCode(code);
+  const session = id && isId(id) ? await Session.findById(id) : null;
+  if (!session) throw badRequest("Invalid ticket", { qrCode: "This QR code isn't a valid entry ticket" });
   return presentSession(session);
+}
+
+// A driver's own parking sessions (registered vehicles only), latest first
+async function sessionsForDriver(user) {
+  return presentSessions(await Session.find({ driver: user._id }).sort({ entryTime: -1 }).limit(50));
 }
 
 async function getSession(id) {
@@ -210,4 +239,5 @@ async function listSessions({ facilityId, status } = {}) {
   return presentSessions(await Session.find(filter).sort({ entryTime: -1 }).limit(200));
 }
 
-module.exports = { captureEntry, getSession, listSessions, presentSessions, releaseSlot, EARLY_ARRIVAL_MINUTES };
+module.exports = { captureEntry, scanTicket, getSession, listSessions, sessionsForDriver, presentSessions, releaseSlot,
+  EARLY_ARRIVAL_MINUTES };
