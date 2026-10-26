@@ -28,6 +28,7 @@ const RULES = [
   ["*", "/api/users/me/*", ANY_USER],
 
   // Slot search & reservations (Driver Web App)
+  ["GET", "/api/facilities", ANY_USER],
   ["GET", "/api/slots/available", [DRIVER]],
   ["POST", "/api/reservations", [DRIVER]],
   ["GET", "/api/reservations/:id", [DRIVER, ADMIN]],

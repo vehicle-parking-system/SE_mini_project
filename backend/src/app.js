@@ -29,6 +29,8 @@ function createApp() {
 
   app.use("/api/auth", require("./routes/auth"));
   app.use("/api/users", require("./routes/users"));
+  app.use("/api/facilities", require("./routes/facilities"));
+  app.use("/api/slots", require("./routes/slots"));
   app.use("/api/admin", require("./routes/admin"));
   if (config.isTest) app.use("/api/test", require("./routes/test"));
 
