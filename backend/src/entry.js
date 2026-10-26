@@ -16,6 +16,7 @@ const Zone = require("./models/Zone");
 const { ENTRY_SOURCES } = Session;
 const { expireHolds } = require("./reservations");
 const { notify } = require("./notifications");
+const events = require("./events");
 const pricing = require("./pricing");
 const payments = require("./payments");
 const { isId } = require("./slotSearch");
@@ -202,6 +203,7 @@ async function captureEntry(user, body) {
   if (reservation) {
     await Reservation.updateOne({ _id: reservation._id }, { status: "CHECKED_IN", checkedInAt: now, session: session._id });
   }
+  events.slotChanged(slot, "ENTRY");
 
   const zone = await Zone.findById(slot.zone);
   hardware.display(gate.id, `Proceed to slot ${slot.number} · ${zone.name} · ${slot.distance} m`);

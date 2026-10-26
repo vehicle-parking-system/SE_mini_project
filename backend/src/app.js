@@ -35,6 +35,7 @@ function createApp() {
   app.use("/api/reservations", require("./routes/reservations"));
   app.use("/api", require("./routes/gate"));
   app.use("/api/payments", require("./routes/payments"));
+  app.use("/api/events", require("./routes/events"));
   app.use("/api/admin", require("./routes/admin"));
   if (config.isTest) app.use("/api/test", require("./routes/test"));
 

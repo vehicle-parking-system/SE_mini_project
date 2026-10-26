@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, formatDuration, formatMoney, SANDBOX_GATEWAY_TOKEN, VEHICLE_TYPES } from "../api";
+import { api, formatDuration, formatMoney, liveEvents, SANDBOX_GATEWAY_TOKEN, VEHICLE_TYPES } from "../api";
 import Ticket from "../components/Ticket";
 import { formatTime } from "../time";
 
@@ -296,6 +296,17 @@ export default function Gate() {
     const id = setInterval(() => document.visibilityState === "visible" && refresh(), REFRESH_MS);
     return () => clearInterval(id);
   }, [refresh]);
+
+  // Live: any slot change at this facility (another gate, a booking) refreshes at once
+  useEffect(() => {
+    if (!selection.facilityId) return undefined;
+    let timer = null;
+    const close = liveEvents({ facilityId: selection.facilityId }, () => {
+      clearTimeout(timer);
+      timer = setTimeout(refresh, 300); // one refresh for a burst of events
+    });
+    return () => { clearTimeout(timer); close(); };
+  }, [selection.facilityId, refresh]);
 
   if (error && !facilities) return <main className="page"><p className="notice error" role="alert">{error}</p></main>;
   if (!facilities) return <main className="page"><p className="muted">Loading…</p></main>;

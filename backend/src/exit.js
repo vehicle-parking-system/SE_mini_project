@@ -7,7 +7,10 @@ const hardware = require("./hardware");
 const logger = require("./logger");
 const qr = require("./qr");
 const Gate = require("./models/Gate");
+const Reservation = require("./models/Reservation");
 const Session = require("./models/Session");
+const Slot = require("./models/Slot");
+const events = require("./events");
 const payments = require("./payments");
 const { isId } = require("./slotSearch");
 const { PLATE_RE, normalizePlate } = require("./validation");
@@ -70,10 +73,27 @@ async function processExit(user, body) {
   if (!closed) throw conflict("This vehicle has already left");
   hardware.display(gate.id, "Thank you. Drive safely");
   hardware.openBarrier(gate.id);
+  await releaseSlot(closed);
   logger.info("vehicle exited", { sessionId: closed.id, gateId: gate.id, amount: total });
   return { sessionId: closed.id, plateNumber: closed.plateNumber, entryTime: closed.entryTime.toISOString(),
     exitTime: now.toISOString(), duration: quote.duration, chargedHours: quote.chargedHours, ratePerHour: quote.ratePerHour,
-    amount: total, paid, paymentStatus: total === 0 ? "NOT_REQUIRED" : "CONFIRMED" };
+    amount: total, paid, paymentStatus: total === 0 ? "NOT_REQUIRED" : "CONFIRMED", slotReleased: true };
+}
+
+// Real-time slot release (VPS-F-012): as soon as the exit is confirmed the slot is AVAILABLE
+// again — in the same request, before the response — its version is bumped so allocation and
+// booking see the change, a booking the vehicle came in on is COMPLETED (so it stops holding
+// the slot for the rest of its window), and gate screens and searches are told at once.
+async function releaseSlot(session) {
+  const slot = await Slot.findOneAndUpdate({ _id: session.slot, status: "OCCUPIED" },
+    { status: "AVAILABLE", $inc: { version: 1 } }, { new: true });
+  if (session.reservation) {
+    await Reservation.updateOne({ _id: session.reservation, status: "CHECKED_IN" }, { status: "COMPLETED" });
+  }
+  if (slot) {
+    events.slotChanged(slot, "EXIT");
+    logger.info("slot released", { slotId: slot.id, sessionId: session.id });
+  }
 }
 
 module.exports = { processExit, findSession };
