@@ -10,9 +10,10 @@ const facilitySchema = new mongoose.Schema({
   reservationGraceMinutes: { type: Number, default: 15 },
 }, { timestamps: true });
 
-facilitySchema.methods.toPublic = function toPublic(zones = []) {
+facilitySchema.methods.toPublic = function toPublic(zones = [], gates) {
   return { id: this.id, name: this.name, address: this.address ?? null, timezone: this.timezone,
-    openTime: this.openTime, closeTime: this.closeTime, zones: zones.map((z) => ({ id: z.id, name: z.name })) };
+    openTime: this.openTime, closeTime: this.closeTime, zones: zones.map((z) => ({ id: z.id, name: z.name })),
+    ...(gates && { gates: gates.map((g) => g.toPublic()) }) };
 };
 
 module.exports = mongoose.model("Facility", facilitySchema, "facilities");

@@ -125,6 +125,6 @@ function validateVehicle(body = {}) {
 }
 
 module.exports = {
-  VEHICLE_TYPES, MAX_VEHICLES, validateRegistration, validateStaffAccount, validateLogin, validateProfileUpdate,
+  VEHICLE_TYPES, PLATE_RE, normalizePlate, MAX_VEHICLES, validateRegistration, validateStaffAccount, validateLogin, validateProfileUpdate,
   validatePasswordChange, validateVehicle,
 };
