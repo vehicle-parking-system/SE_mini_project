@@ -14,5 +14,11 @@ const forbidden = (message = "You do not have permission to do this") => new Api
 const notFound = (message = "Not found") => new ApiError(404, "NOT_FOUND", message);
 const conflict = (message) => new ApiError(409, "CONFLICT", message);
 const locked = (message) => new ApiError(423, "ACCOUNT_LOCKED", message);
+// 429 with a Retry-After header (seconds)
+function tooManyRequests(message, retryAfterSeconds) {
+  const err = new ApiError(429, "TOO_MANY_REQUESTS", message);
+  err.headers = { "Retry-After": String(retryAfterSeconds) };
+  return err;
+}
 
-module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict, locked };
+module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict, locked, tooManyRequests };

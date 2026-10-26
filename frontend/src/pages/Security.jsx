@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, ROLE_LABELS } from "../api";
 
-const LOGIN_EVENTS = ["LOGIN_FAILED", "LOGIN_BLOCKED", "ACCOUNT_LOCKED", "ACCOUNT_UNLOCKED"];
+const LOGIN_EVENTS = ["LOGIN_FAILED", "LOGIN_BLOCKED", "ACCOUNT_LOCKED", "ACCOUNT_UNLOCKED", "LOGIN_RATE_LIMITED"];
 
 const formatTime = (iso) => new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+const ordinal = (n) => (n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : `${n}th`);
 
 function describe(log) {
   const d = log.details || {};
@@ -11,7 +13,9 @@ function describe(log) {
     case "LOGIN_FAILED":
       return d.reason === "UNKNOWN_EMAIL" ? "Login with an unknown email" : `Wrong password (attempt ${d.attempt})`;
     case "LOGIN_BLOCKED": return "Login attempt on a locked account";
-    case "ACCOUNT_LOCKED": return `Locked after ${d.failedAttempts} failed attempts, until ${formatTime(d.lockedUntil)}`;
+    case "ACCOUNT_LOCKED":
+      return `${ordinal(d.lockNumber ?? 1)} lock in a row, after ${d.failedAttempts} failed attempts, until ${formatTime(d.lockedUntil)}`;
+    case "LOGIN_RATE_LIMITED": return `IP throttled after ${d.limit} failed logins, until ${formatTime(d.until)}`;
     case "ACCOUNT_UNLOCKED": return "Unlocked by an admin";
     default: return "";
   }
@@ -48,7 +52,10 @@ export default function Security() {
     <main className="page">
       <header className="page-header">
         <h1>Login security</h1>
-        <p className="muted">Accounts lock automatically after repeated failed logins. Unlock one early once you've confirmed the owner.</p>
+        <p className="muted">
+          Accounts lock automatically after repeated failed logins, for longer each time it happens again. A network
+          with too many failed logins is throttled. Unlock an account early once you've confirmed the owner.
+        </p>
       </header>
       {status && <p className={`notice ${status.kind}`} role={status.kind === "error" ? "alert" : "status"}>{status.text}</p>}
 
@@ -63,13 +70,14 @@ export default function Security() {
               : (
                 <div className="table-wrap">
                   <table>
-                    <thead><tr><th>Account</th><th>Role</th><th>Locked until</th><th>Last failed attempt</th><th /></tr></thead>
+                    <thead><tr><th>Account</th><th>Role</th><th>Locked until</th><th>Locks in a row</th><th>Last failed attempt</th><th /></tr></thead>
                     <tbody>
                       {locked.map((u) => (
                         <tr key={u.id}>
                           <td><strong>{u.name}</strong><br /><span className="muted">{u.email}</span></td>
                           <td>{ROLE_LABELS[u.role]}</td>
                           <td>{formatTime(u.lockedUntil)}</td>
+                          <td>{u.lockCount}</td>
                           <td>{u.lastFailedLoginAt ? formatTime(u.lastFailedLoginAt) : "—"}</td>
                           <td>
                             <button className="btn small" disabled={unlocking === u.id} onClick={() => unlock(u)}>

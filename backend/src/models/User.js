@@ -14,6 +14,8 @@ const userSchema = new mongoose.Schema({
   lockedUntil: { type: Date, default: null },
   lastFailedLoginAt: { type: Date, default: null },
   lastLoginAt: { type: Date, default: null },
+  // locks in a row without a successful login in between; picks the next lock's length
+  lockCount: { type: Number, default: 0 },
 }, { timestamps: true });
 
 userSchema.methods.toPublic = function toPublic() {
@@ -23,7 +25,7 @@ userSchema.methods.toPublic = function toPublic() {
 
 // Admin view of an account's login security state
 userSchema.methods.toSecurity = function toSecurity() {
-  return { ...this.toPublic(), failedLoginAttempts: this.failedLoginAttempts, lockedUntil: this.lockedUntil,
+  return { ...this.toPublic(), failedLoginAttempts: this.failedLoginAttempts, lockedUntil: this.lockedUntil, lockCount: this.lockCount,
     lastFailedLoginAt: this.lastFailedLoginAt, lastLoginAt: this.lastLoginAt };
 };
 
