@@ -34,6 +34,7 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `POST /api/reservations/:id/cancel` | Driver (own) or admin. A held or confirmed booking becomes `CANCELLED`; 409 otherwise |
 | `POST /api/entry` | Staff. `{gateId, source: ANPR\|QR\|MANUAL, plateNumber \| qrCode, vehicleType?}` → `201` session. 400 for invalid fields or an invalid ticket, 409 if no slot is free, the vehicle is already inside, or the booking can't be used now |
 | `GET /api/sessions` | Staff. `?facilityId&status=ACTIVE\|CLOSED` → parking sessions, latest first |
+| `GET /api/slots/:id` | Staff. A slot's live status: `AVAILABLE`, `OCCUPIED`, `RESERVED` or `INACTIVE` |
 | `GET /api/sessions/:id` | Staff. `{sessionId, plateNumber, gateId, slotId, slotNumber, entryTime, exitTime, status, reservationId, …}` |
 
 **Role-Based Access Control (VPS-SR-003).** [`backend/src/permissions.js`](backend/src/permissions.js) is the single policy table that lists which roles may call each endpoint, including modules that haven't been built yet. The `authorize` middleware checks every `/api` request against it before any route runs:
@@ -85,9 +86,10 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 **Capture Vehicle Entry (VPS-F-001).** The ANPR camera, the QR scanner or an attendant on the **Gate** page reports a vehicle at an entry gate (`POST /api/entry`). The rules are in [`backend/src/entry.js`](backend/src/entry.js):
 
 - **QR:** the booking's signed code checks the vehicle in to its booked slot, and the booking becomes `CHECKED_IN`. An invalid or altered code gets 400 "Invalid ticket". A booking for another facility, or one that is too early (more than 30 minutes before its start), expired or already used, gets 409.
-- **ANPR / manual:** the plate is normalized. If it belongs to a registered vehicle that has a booking here for now, that booking is used. Otherwise the vehicle is a walk-in and gets a free slot of its type that isn't booked for any time before closing today, since nobody knows when a walk-in will leave. An unknown plate needs a `vehicleType`.
+- **ANPR / manual:** the plate is normalized. If it belongs to a registered vehicle that has a booking here for now, that booking is used. Otherwise the vehicle is a walk-in. An unknown plate needs a `vehicleType`.
+- **Nearest-slot allocation (VPS-F-002).** A walk-in gets the free slot of its vehicle type nearest to the entrance (lowest `distance`), across all zones. Inactive slots are never used. Slots booked for any time before closing today are skipped too, since nobody knows when a walk-in will leave. Allocation uses the same slot `version` as booking: candidates' versions are read before checking for bookings, and a slot is taken only if its version is unchanged. Simultaneous entries never share a slot, and an entry racing a booking for the last slot leaves exactly one of them with it.
 - A plate can be inside only once (409), enforced by a unique index on active sessions, so simultaneous requests can't create two sessions.
-- The **Hardware Abstraction Service** ([`backend/src/hardware.js`](backend/src/hardware.js)) is the only code that drives gates. On success the display shows "Proceed to slot A-02" and the barrier opens. On any refusal the display shows the reason and the barrier stays closed. No gate controller is wired up yet, so a simulator records the commands (`GET /api/test/hardware/commands` in test mode).
+- The **Hardware Abstraction Service** ([`backend/src/hardware.js`](backend/src/hardware.js)) is the only code that drives gates. On success the display shows where to go ("Proceed to slot A-02 · Zone A · 20 m") and the barrier opens. On any refusal the display shows the reason and the barrier stays closed. No gate controller is wired up yet, so a simulator records the commands (`GET /api/test/hardware/commands` in test mode).
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 
