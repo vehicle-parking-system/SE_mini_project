@@ -39,6 +39,7 @@ const RULES = [
   ["POST", "/api/entry", STAFF],
   ["POST", "/api/exit", STAFF],
   ["POST", "/api/tickets/scan", STAFF],
+  ["GET", "/api/sessions", STAFF],
   ["GET", "/api/sessions/:id", STAFF],
   ["GET", "/api/slots/:id", STAFF],
   ["GET", "/api/occupancy/:facilityId", STAFF],

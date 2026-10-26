@@ -26,12 +26,15 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/admin/attendants` | Admin only. Lists attendant accounts |
 | `GET /api/admin/locked-accounts` | Admin only. Accounts that are locked now, with their failure count and last failed or successful login |
 | `POST /api/admin/users/:id/unlock` | Admin only. Ends a lock early → 204, or 404 if the account isn't locked |
-| `GET /api/facilities` | Any logged-in user. Facilities with their opening hours and zones |
+| `GET /api/facilities` | Any logged-in user. Facilities with their opening hours and zones; staff also get their `gates` |
 | `GET /api/slots/available` | Drivers only. `?facilityId&zoneId?&vehicleType&startTime&endTime` → free slots, nearest first |
 | `POST /api/reservations` | Drivers only. `{vehicleId, facilityId, zoneId?, slotId?, startTime, endTime}` → `201 {reservationId, slotId, slotNumber, status: HELD, holdExpiresAt, qrCode, …}`. 409 if no slot is free or the vehicle is already booked, 422 for a window that breaks the search rules |
 | `GET /api/reservations` | Drivers only. Their bookings, latest first |
 | `GET /api/reservations/:id` | The driver's own booking, or any booking for an admin |
 | `POST /api/reservations/:id/cancel` | Driver (own) or admin. A held or confirmed booking becomes `CANCELLED`; 409 otherwise |
+| `POST /api/entry` | Staff. `{gateId, source: ANPR\|QR\|MANUAL, plateNumber \| qrCode, vehicleType?}` → `201` session. 400 for invalid fields or an invalid ticket, 409 if no slot is free, the vehicle is already inside, or the booking can't be used now |
+| `GET /api/sessions` | Staff. `?facilityId&status=ACTIVE\|CLOSED` → parking sessions, latest first |
+| `GET /api/sessions/:id` | Staff. `{sessionId, plateNumber, gateId, slotId, slotNumber, entryTime, exitTime, status, reservationId, …}` |
 
 **Role-Based Access Control (VPS-SR-003).** [`backend/src/permissions.js`](backend/src/permissions.js) is the single policy table that lists which roles may call each endpoint, including modules that haven't been built yet. The `authorize` middleware checks every `/api` request against it before any route runs:
 
@@ -78,6 +81,13 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Holds.** A new booking is `HELD`: the slot is kept until the facility's grace period (`reservationGraceMinutes`, 15 by default) after the start time. If the driver hasn't arrived by then, the hold lapses: search offers the slot again and the booking becomes `EXPIRED`. Lapsed holds are expired whenever bookings are read and by a sweep every minute.
 - **QR codes.** The code is `VPS1.R.<id>.<signature>`, an HMAC signed with `QR_SECRET` (derived from `JWT_SECRET` if unset). It can't be guessed or edited to point at another booking. Codes are computed when shown, not stored.
 - Drivers see only their own bookings. Admins can look up and cancel any booking, and each admin cancellation is audited as `RESERVATION_CANCELLED`.
+
+**Capture Vehicle Entry (VPS-F-001).** The ANPR camera, the QR scanner or an attendant on the **Gate** page reports a vehicle at an entry gate (`POST /api/entry`). The rules are in [`backend/src/entry.js`](backend/src/entry.js):
+
+- **QR:** the booking's signed code checks the vehicle in to its booked slot, and the booking becomes `CHECKED_IN`. An invalid or altered code gets 400 "Invalid ticket". A booking for another facility, or one that is too early (more than 30 minutes before its start), expired or already used, gets 409.
+- **ANPR / manual:** the plate is normalized. If it belongs to a registered vehicle that has a booking here for now, that booking is used. Otherwise the vehicle is a walk-in and gets a free slot of its type that isn't booked for any time before closing today, since nobody knows when a walk-in will leave. An unknown plate needs a `vehicleType`.
+- A plate can be inside only once (409), enforced by a unique index on active sessions, so simultaneous requests can't create two sessions.
+- The **Hardware Abstraction Service** ([`backend/src/hardware.js`](backend/src/hardware.js)) is the only code that drives gates. On success the display shows "Proceed to slot A-02" and the barrier opens. On any refusal the display shows the reason and the barrier stays closed. No gate controller is wired up yet, so a simulator records the commands (`GET /api/test/hardware/commands` in test mode).
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 

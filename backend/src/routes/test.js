@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const clock = require("../clock");
 const notifications = require("../notifications");
+const hardware = require("../hardware");
 const { createAccount } = require("../accounts");
 const { createFacility } = require("../facilities");
 const Reservation = require("../models/Reservation");
@@ -12,12 +13,13 @@ const router = express.Router();
 
 // POST /api/test/reset <fixture> -> {ids:{<fixture key>: <real id>}}
 // Wipes the database and seeds the fixture from tests/helpers/fixture.js.
-// Users, vehicles, facilities, zones and slots are seeded; gates and rates follow with their features.
+// Users, vehicles, facilities, gates, zones and slots are seeded; rates follow with fee calculation.
 router.post("/reset", async (req, res) => {
   await mongoose.connection.db.dropDatabase();
   await Promise.all(Object.values(mongoose.models).map((m) => m.syncIndexes()));
   clock.reset();
   notifications.clear();
+  hardware.clear();
 
   const ids = {};
   for (const u of req.body?.users ?? []) {
@@ -44,6 +46,11 @@ router.post("/reservations", async (req, res) => {
     status: req.body.status ?? "CONFIRMED", holdExpiresAt: req.body.holdExpiresAt,
   });
   res.status(201).json({ reservationId: reservation.id });
+});
+
+// GET /api/test/hardware/commands -> {commands:[{gateId, command: OPEN|DISPLAY, message?, at}]}
+router.get("/hardware/commands", (_req, res) => {
+  res.json({ commands: hardware.sent() });
 });
 
 // GET /api/test/notifications -> {notifications:[{to, channel, type, data, at}]}

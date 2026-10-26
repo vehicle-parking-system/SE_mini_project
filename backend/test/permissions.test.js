@@ -23,6 +23,8 @@ describe("RBAC policy", () => {
     ["POST", "/api/reservations/r1/cancel", ["DRIVER", "ADMIN"]],
     ["POST", "/api/entry", ["ATTENDANT", "ADMIN"]],
     ["POST", "/api/exit", ["ATTENDANT", "ADMIN"]],
+    ["GET", "/api/sessions", ["ATTENDANT", "ADMIN"]],
+    ["GET", "/api/sessions/s1", ["ATTENDANT", "ADMIN"]],
     ["GET", "/api/slots/s1", ["ATTENDANT", "ADMIN"]],
     ["GET", "/api/occupancy/f1", ["ATTENDANT", "ADMIN"]],
     ["POST", "/api/payments", ["DRIVER", "ATTENDANT"]],
