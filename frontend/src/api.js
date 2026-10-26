@@ -47,6 +47,7 @@ export const api = {
   myReservations: () => request("GET", "/api/reservations"),
   cancelReservation: (id) => request("POST", `/api/reservations/${id}/cancel`),
   enter: (entry) => request("POST", "/api/entry", entry),
+  occupancy: (facilityId) => request("GET", `/api/occupancy/${facilityId}`),
   sessions: (params) => request("GET", `/api/sessions?${new URLSearchParams(params)}`),
   listAttendants: () => request("GET", "/api/admin/attendants"),
   createAttendant: (details) => request("POST", "/api/admin/attendants", details),

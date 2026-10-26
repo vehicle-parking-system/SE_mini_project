@@ -13,6 +13,8 @@ const unauthorized = (message = "Authentication required") => new ApiError(401, 
 const forbidden = (message = "You do not have permission to do this") => new ApiError(403, "FORBIDDEN", message);
 const notFound = (message = "Not found") => new ApiError(404, "NOT_FOUND", message);
 const conflict = (message) => new ApiError(409, "CONFLICT", message);
+// 409 at an entry gate when no slot can be given to the vehicle (VPS-F-003)
+const facilityFull = (message) => new ApiError(409, "FACILITY_FULL", message);
 const locked = (message) => new ApiError(423, "ACCOUNT_LOCKED", message);
 // 429 with a Retry-After header (seconds)
 function tooManyRequests(message, retryAfterSeconds) {
@@ -21,4 +23,4 @@ function tooManyRequests(message, retryAfterSeconds) {
   return err;
 }
 
-module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict, locked, tooManyRequests };
+module.exports = { ApiError, badRequest, unauthorized, forbidden, notFound, conflict, facilityFull, locked, tooManyRequests };
