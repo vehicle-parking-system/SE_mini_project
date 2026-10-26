@@ -43,6 +43,9 @@ export const api = {
   removeVehicle: (id) => request("DELETE", `/api/users/me/vehicles/${id}`),
   facilities: () => request("GET", "/api/facilities"),
   searchSlots: (params) => request("GET", `/api/slots/available?${new URLSearchParams(params)}`),
+  reserve: (booking) => request("POST", "/api/reservations", booking),
+  myReservations: () => request("GET", "/api/reservations"),
+  cancelReservation: (id) => request("POST", `/api/reservations/${id}/cancel`),
   listAttendants: () => request("GET", "/api/admin/attendants"),
   createAttendant: (details) => request("POST", "/api/admin/attendants", details),
   lockedAccounts: () => request("GET", "/api/admin/locked-accounts"),
@@ -51,6 +54,14 @@ export const api = {
 };
 
 export const ROLE_LABELS = { DRIVER: "Driver", ATTENDANT: "Attendant", ADMIN: "Admin" };
+
+export const RESERVATION_STATUS = {
+  HELD: { label: "Booked", hint: "Pay online or at the gate" },
+  CONFIRMED: { label: "Confirmed", hint: "Paid" },
+  EXPIRED: { label: "Expired", hint: "You didn't arrive within the grace period" },
+  CANCELLED: { label: "Cancelled", hint: "" },
+  REFUNDED: { label: "Refunded", hint: "Cancelled and refunded" },
+};
 
 export const VEHICLE_TYPES = [
   { value: "CAR", label: "Car" },

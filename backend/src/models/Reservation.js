@@ -2,21 +2,41 @@ const mongoose = require("mongoose");
 
 const RESERVATION_STATUSES = ["HELD", "CONFIRMED", "EXPIRED", "CANCELLED", "REFUNDED"];
 
-// A booking of one slot for a time window. Slot search treats a slot as taken for any
-// window that overlaps an *active* reservation (see activeReservationFilter). Creating
-// reservations is the Online Slot Reservation story; this defines what search relies on.
+// A booking of one slot for a time window. Slot search and booking treat a slot as taken
+// for any window that overlaps an *active* reservation (see activeReservationFilter).
+//
+// HELD: booked, not paid. The slot is kept until holdExpiresAt (start + the facility's
+// grace period); if the driver hasn't arrived by then the hold lapses and it becomes EXPIRED.
+// CONFIRMED: paid. CANCELLED / REFUNDED: cancelled by the driver or an admin.
 const reservationSchema = new mongoose.Schema({
   slot: { type: mongoose.Schema.Types.ObjectId, ref: "Slot", required: true },
   facility: { type: mongoose.Schema.Types.ObjectId, ref: "Facility", required: true },
-  driver: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  zone: { type: mongoose.Schema.Types.ObjectId, ref: "Zone" },
+  driver: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
   vehicle: { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" },
   startTime: { type: Date, required: true },
   endTime: { type: Date, required: true },
   status: { type: String, enum: RESERVATION_STATUSES, default: "HELD" },
   holdExpiresAt: { type: Date }, // a HELD reservation stops blocking the slot after this
+  cancelledAt: { type: Date },
 }, { timestamps: true });
 
 reservationSchema.index({ slot: 1, startTime: 1, endTime: 1 });
+reservationSchema.index({ status: 1, holdExpiresAt: 1 });
+
+// The API view. Pass the related documents to include their names.
+reservationSchema.methods.toPublic = function toPublic({ slot, zone, facility, vehicle } = {}) {
+  return {
+    reservationId: this.id, status: this.status,
+    startTime: this.startTime.toISOString(), endTime: this.endTime.toISOString(),
+    holdExpiresAt: this.holdExpiresAt?.toISOString() ?? null,
+    slotId: this.slot.toString(), slotNumber: slot?.number ?? null,
+    zoneId: this.zone?.toString() ?? null, zoneName: zone?.name ?? null,
+    facilityId: this.facility.toString(), facilityName: facility?.name ?? null, timezone: facility?.timezone ?? null,
+    vehicleId: this.vehicle?.toString() ?? null, plateNumber: vehicle?.plateNumber ?? null, vehicleType: vehicle?.vehicleType ?? null,
+    createdAt: this.createdAt?.toISOString() ?? null, cancelledAt: this.cancelledAt?.toISOString() ?? null,
+  };
+};
 
 // Reservations that block their slot during [start, end): confirmed ones, and held ones
 // whose hold hasn't expired, whose window overlaps the given one.

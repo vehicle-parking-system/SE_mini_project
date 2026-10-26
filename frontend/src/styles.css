@@ -155,3 +155,27 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .slot-list { list-style: none; padding: 0; margin: 0; }
 .slot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .slot:last-child { border-bottom: none; }
+.slot-book { margin-left: auto; }
+.book-for { max-width: 260px; }
+.notice:not(.error):not(.success) { background: var(--bg); border: 1px solid var(--border); }
+.small { font-size: 0.85rem; }
+
+/* Bookings */
+.booking-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+.booking { display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.booking.highlight { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.booking-main { flex: 1; min-width: 240px; }
+.booking-main .card-header { margin-bottom: 8px; flex-wrap: wrap; }
+.booking-main p { margin: 0 0 6px; }
+.booking-when { font-weight: 600; }
+.past-bookings { margin-top: 32px; }
+.status-badge {
+  padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+  background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+}
+.status-badge.HELD, .status-badge.ACTIVE { color: var(--primary); border-color: var(--primary); }
+.status-badge.CONFIRMED, .status-badge.REFUNDED, .status-badge.PAID { background: var(--success-bg); color: var(--success-text); border-color: transparent; }
+.status-badge.FAILED { background: var(--error-bg); color: var(--danger); border-color: transparent; }
+.qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.qr img, .qr-placeholder { background: #fff; padding: 6px; border-radius: 8px; border: 1px solid var(--border); }
+.qr-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; color: var(--muted); max-width: 200px; word-break: break-all; text-align: center; }

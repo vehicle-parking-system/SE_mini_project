@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { api, VEHICLE_TYPES } from "../api";
 import { defaultWindow, formatDay, formatTime, zonedIso } from "../time";
 
@@ -7,7 +8,9 @@ const typeLabel = (value) => VEHICLE_TYPES.find((t) => t.value === value)?.label
 
 // Real-time slot search (VPS-F-021): pick a facility, zone, vehicle and time window and
 // see the free slots, nearest to the entrance first. Results refresh every 30 seconds.
+// Any listed slot can be booked straight away (VPS-F-020).
 export default function Search() {
+  const navigate = useNavigate();
   const [facilities, setFacilities] = useState(null);
   const [vehicles, setVehicles] = useState([]);
   const [form, setForm] = useState(null);
@@ -15,6 +18,9 @@ export default function Search() {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [bookFor, setBookFor] = useState("");
+  const [booking, setBooking] = useState(null); // slotId being booked
+  const [bookError, setBookError] = useState(null);
   const lastQuery = useRef(null);
 
   useEffect(() => {
@@ -34,7 +40,7 @@ export default function Search() {
   const facility = facilities?.find((f) => f.id === form?.facilityId);
 
   const run = useCallback(async (query, { quiet = false } = {}) => {
-    if (!quiet) { setBusy(true); setError(null); setErrors({}); }
+    if (!quiet) { setBusy(true); setError(null); setErrors({}); setBookError(null); }
     try {
       setResult(await api.searchSlots(query));
       lastQuery.current = query;
@@ -86,12 +92,30 @@ export default function Search() {
   };
 
   const tz = result?.facility.timezone;
+  const searchedType = lastQuery.current?.vehicleType;
+  const myVehicles = vehicles.filter((v) => v.vehicleType === searchedType);
+  const vehicleId = myVehicles.some((v) => v.id === bookFor) ? bookFor : myVehicles[0]?.id;
+
+  async function book(slot) {
+    setBooking(slot.slotId);
+    setBookError(null);
+    try {
+      const { facilityId, startTime, endTime } = lastQuery.current;
+      const reservation = await api.reserve({ vehicleId, facilityId, zoneId: slot.zoneId, slotId: slot.slotId, startTime, endTime });
+      navigate("/bookings", { state: { booked: reservation } });
+    } catch (err) {
+      setBookError(err.message);
+      if (err.status === 409) run(lastQuery.current, { quiet: true }); // someone else got it: refresh the list
+    } finally {
+      setBooking(null);
+    }
+  }
 
   return (
     <main className="page">
       <header className="page-header">
         <h1>Find parking</h1>
-        <p className="muted">See which slots are free for your whole stay before you set off.</p>
+        <p className="muted">See which slots are free for your whole stay, and book one before you set off.</p>
       </header>
 
       <form className="card search-form" onSubmit={onSubmit} noValidate>
@@ -151,6 +175,17 @@ export default function Search() {
             {" · "}{typeLabel(lastQuery.current?.vehicleType)}
             {" · "}updated {formatTime(result.checkedAt, tz)}, refreshes every 30 s
           </p>
+          {result.slots.length > 0 && (myVehicles.length === 0 ? (
+            <p className="notice">To book, <Link to="/profile">add a {typeLabel(searchedType).toLowerCase()}</Link> to your profile.</p>
+          ) : myVehicles.length > 1 && (
+            <div className="field book-for">
+              <label htmlFor="bookFor">Book for</label>
+              <select id="bookFor" value={vehicleId} onChange={(e) => setBookFor(e.target.value)}>
+                {myVehicles.map((v) => <option key={v.id} value={v.id}>{v.plateNumber}</option>)}
+              </select>
+            </div>
+          ))}
+          {bookError && <p className="notice error" role="alert">{bookError}</p>}
           {result.slots.length === 0
             ? <p className="muted">Try another zone, a shorter stay or a different time.</p>
             : (
@@ -161,6 +196,11 @@ export default function Search() {
                     <span>{s.zoneName}</span>
                     <span className="muted">{s.distance} m from the entrance</span>
                     {i === 0 && <span className="role-badge">Nearest</span>}
+                    {vehicleId && (
+                      <button className="btn small slot-book" onClick={() => book(s)} disabled={Boolean(booking)}>
+                        {booking === s.slotId ? "Booking…" : "Book"}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
