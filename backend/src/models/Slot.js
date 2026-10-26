@@ -17,7 +17,13 @@ const slotSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 slotSchema.index({ facility: 1, zone: 1, vehicleType: 1, distance: 1 });
+slotSchema.index({ facility: 1, vehicleType: 1, status: 1, distance: 1 }); // nearest-slot allocation
 slotSchema.index({ facility: 1, number: 1 }, { unique: true });
+
+slotSchema.methods.toPublic = function toPublic(zone) {
+  return { slotId: this.id, number: this.number, vehicleType: this.vehicleType, distance: this.distance, status: this.status,
+    facilityId: this.facility.toString(), zoneId: this.zone.toString(), zoneName: zone?.name ?? null };
+};
 
 module.exports = mongoose.model("Slot", slotSchema, "slots");
 module.exports.SLOT_STATUSES = SLOT_STATUSES;

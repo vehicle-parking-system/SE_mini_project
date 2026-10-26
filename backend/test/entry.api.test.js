@@ -83,7 +83,7 @@ describeDb("vehicle entry", () => {
       }));
       expect(await slotStatus("a1")).toBe("OCCUPIED");
       expect(commands()).toEqual([
-        expect.objectContaining({ gateId: ids.in, command: "DISPLAY", message: "Proceed to slot A-01" }),
+        expect.objectContaining({ gateId: ids.in, command: "DISPLAY", message: "Proceed to slot A-01 · Zone A · 10 m" }),
         expect.objectContaining({ gateId: ids.in, command: "OPEN" }),
       ]);
     });

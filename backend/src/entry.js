@@ -21,6 +21,8 @@ const { badRequest, conflict, notFound } = require("./errors");
 
 // A booked vehicle may enter this long before its start time
 const EARLY_ARRIVAL_MINUTES = 30;
+// How often allocation looks again when concurrent entries or bookings keep taking its candidates
+const MAX_ALLOCATION_ROUNDS = 5;
 
 // Body -> {gateId, source, qrCode | plateNumber, vehicleType?}, or a 400 listing every bad field.
 function parseEntry(body = {}) {
@@ -74,14 +76,31 @@ async function slotsBookedToday(facility, now) {
   return Reservation.distinct("slot", { facility: facility._id, ...Reservation.activeReservationFilter(now, until, now) });
 }
 
-// Marks a free slot of the vehicle type OCCUPIED and returns it, or null if none is free.
+// Automated nearest-slot allocation (VPS-F-002): the free slot of the vehicle type nearest to
+// the entrance is marked OCCUPIED and returned; null if none is free.
+//
+// Uses the same slot locking as booking (reservations.js). The candidates' versions are read
+// *before* checking for bookings, and a slot is taken only if its version is unchanged. So a
+// booking made after that check has bumped the version and the slot is skipped, and a booking
+// that comes later finds its own bump fails and withdraws. Concurrent entries race on the same
+// condition: each slot goes to exactly one of them, and the others move on to the next slot.
 async function allocateSlot(facility, vehicleType, now) {
-  const booked = await slotsBookedToday(facility, now);
-  return Slot.findOneAndUpdate(
-    { facility: facility._id, vehicleType, status: "AVAILABLE", _id: { $nin: booked } },
-    { status: "OCCUPIED", $inc: { version: 1 } },
-    { sort: { number: 1 }, new: true },
-  );
+  for (let round = 0; round < MAX_ALLOCATION_ROUNDS; round++) {
+    const candidates = await Slot.find({ facility: facility._id, vehicleType, status: "AVAILABLE" }, "version")
+      .sort({ distance: 1, number: 1 });
+    const booked = new Set((await slotsBookedToday(facility, now)).map(String));
+    const free = candidates.filter((c) => !booked.has(c.id));
+    if (!free.length) return null;
+    for (const candidate of free) {
+      const slot = await Slot.findOneAndUpdate(
+        { _id: candidate._id, status: "AVAILABLE", version: candidate.version },
+        { status: "OCCUPIED", $inc: { version: 1 } },
+        { new: true },
+      );
+      if (slot) return slot;
+    }
+  }
+  return null;
 }
 
 // The booked slot, marked OCCUPIED; null if it is unusable (e.g. the last car overstayed).
@@ -164,7 +183,8 @@ async function captureEntry(user, body) {
     await Reservation.updateOne({ _id: reservation._id }, { status: "CHECKED_IN", checkedInAt: now, session: session._id });
   }
 
-  hardware.display(gate.id, `Proceed to slot ${slot.number}`);
+  const zone = await Zone.findById(slot.zone);
+  hardware.display(gate.id, `Proceed to slot ${slot.number} · ${zone.name} · ${slot.distance} m`);
   hardware.openBarrier(gate.id);
   logger.info("vehicle entered", { sessionId: session.id, gateId: gate.id, source: input.source, booked: Boolean(reservation) });
   return presentSession(session);
