@@ -6,7 +6,6 @@
 module.exports = [
   "api/entry.test.js", //       Entry / Exit Management (TC-Entry-01–04)
   "api/exit.test.js", //        Exit & fee calculation (TC-Exit-01–04)
-  "api/reservation.test.js", // Reservation Management (TC-Res-01–04)
   "api/payment.test.js", //     Payment Processing (TC-Pay-01–03)
   "api/admin.test.js", //       Lot / zone / slot config, rates, reports (TC-Admin-01–04)
   "api/hardware.test.js", //    Hardware Abstraction Service

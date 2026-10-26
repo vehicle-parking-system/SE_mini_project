@@ -28,6 +28,10 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `POST /api/admin/users/:id/unlock` | Admin only. Ends a lock early → 204, or 404 if the account isn't locked |
 | `GET /api/facilities` | Any logged-in user. Facilities with their opening hours and zones |
 | `GET /api/slots/available` | Drivers only. `?facilityId&zoneId?&vehicleType&startTime&endTime` → free slots, nearest first |
+| `POST /api/reservations` | Drivers only. `{vehicleId, facilityId, zoneId?, slotId?, startTime, endTime}` → `201 {reservationId, slotId, slotNumber, status: HELD, holdExpiresAt, qrCode, …}`. 409 if no slot is free or the vehicle is already booked, 422 for a window that breaks the search rules |
+| `GET /api/reservations` | Drivers only. Their bookings, latest first |
+| `GET /api/reservations/:id` | The driver's own booking, or any booking for an admin |
+| `POST /api/reservations/:id/cancel` | Driver (own) or admin. A held or confirmed booking becomes `CANCELLED`; 409 otherwise |
 
 **Role-Based Access Control (VPS-SR-003).** [`backend/src/permissions.js`](backend/src/permissions.js) is the single policy table that lists which roles may call each endpoint, including modules that haven't been built yet. The `authorize` middleware checks every `/api` request against it before any route runs:
 
@@ -66,6 +70,14 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - A slot is also excluded if a confirmed reservation, or a held one whose hold hasn't expired, overlaps any part of the window. Back-to-back windows don't overlap. Booking reservations is the next story; search already respects them.
 - The window must not have started (5 minutes' grace), must be at most 30 days ahead, and must fall within one day's opening hours. Opening hours are checked in the facility's time zone, so a browser in another time zone gets the same answer. Times need an explicit offset, for example `2026-11-02T14:00:00+05:30`.
 - Invalid fields get 400 with per-field `details`, an unknown facility or zone gets 404, and a window that breaks the rules gets 422 with an explanation.
+
+**Online Pre-Booking & Atomic Slot Locking (VPS-F-020, VPS-F-022, VPS-F-023).** A driver books any slot from the search results (or lets the system pick the nearest free one) for one of their vehicles, and finds it under **My bookings** with a QR code for the entry gate. The rules are in [`backend/src/reservations.js`](backend/src/reservations.js):
+
+- The window follows the same rules as search (422), and the slot must fit the vehicle's type. One vehicle can't hold two overlapping bookings (409).
+- **Atomic slot locking.** Every slot has a `version`. A booking reads it, checks that no active reservation overlaps the window, inserts its reservation, and then bumps the version only if it hasn't changed. If another request touched the slot in between, the bump fails, the reservation is withdrawn and the slot is checked again. So of any number of simultaneous requests for the last slot, exactly one gets it and the rest get 409. This works on a standalone MongoDB, with no transactions.
+- **Holds.** A new booking is `HELD`: the slot is kept until the facility's grace period (`reservationGraceMinutes`, 15 by default) after the start time. If the driver hasn't arrived by then, the hold lapses: search offers the slot again and the booking becomes `EXPIRED`. Lapsed holds are expired whenever bookings are read and by a sweep every minute.
+- **QR codes.** The code is `VPS1.R.<id>.<signature>`, an HMAC signed with `QR_SECRET` (derived from `JWT_SECRET` if unset). It can't be guessed or edited to point at another booking. Codes are computed when shown, not stored.
+- Drivers see only their own bookings. Admins can look up and cancel any booking, and each admin cancellation is audited as `RESERVATION_CANCELLED`.
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 

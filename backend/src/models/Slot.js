@@ -11,6 +11,9 @@ const slotSchema = new mongoose.Schema({
   vehicleType: { type: String, enum: VEHICLE_TYPES, required: true },
   distance: { type: Number, default: 0 }, // metres from the entry gate; nearest is offered first
   status: { type: String, enum: SLOT_STATUSES, default: "AVAILABLE" },
+  // Bumped by every booking or status change. A booking re-checks it after inserting its
+  // reservation, so two requests can never both claim the slot (see reservations.js).
+  version: { type: Number, default: 0 },
 }, { timestamps: true });
 
 slotSchema.index({ facility: 1, zone: 1, vehicleType: 1, distance: 1 });

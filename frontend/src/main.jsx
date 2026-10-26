@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
 import Security from "./pages/Security";
 import Search from "./pages/Search";
+import Bookings from "./pages/Bookings";
 import "./styles.css";
 
 function NavBar() {
@@ -18,6 +19,7 @@ function NavBar() {
       {user ? (
         <div className="nav-actions">
           {user.role === "DRIVER" && <Link to="/search">Find parking</Link>}
+          {user.role === "DRIVER" && <Link to="/bookings">My bookings</Link>}
           {user.role === "ADMIN" && <Link to="/admin/staff">Staff</Link>}
           {user.role === "ADMIN" && <Link to="/admin/security">Security</Link>}
           <Link to="/profile">My profile</Link>
@@ -42,6 +44,7 @@ function App() {
         <Route path="/register" element={<GuestOnly><Register /></GuestOnly>} />
         <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path="/search" element={<RequireAuth roles={["DRIVER"]}><Search /></RequireAuth>} />
+        <Route path="/bookings" element={<RequireAuth roles={["DRIVER"]}><Bookings /></RequireAuth>} />
         <Route path="/admin/staff" element={<RequireAuth roles={["ADMIN"]}><Staff /></RequireAuth>} />
         <Route path="/admin/security" element={<RequireAuth roles={["ADMIN"]}><Security /></RequireAuth>} />
         <Route path="*" element={<Navigate to="/profile" replace />} />

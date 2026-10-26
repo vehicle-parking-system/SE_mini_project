@@ -31,6 +31,7 @@ const RULES = [
   ["GET", "/api/facilities", ANY_USER],
   ["GET", "/api/slots/available", [DRIVER]],
   ["POST", "/api/reservations", [DRIVER]],
+  ["GET", "/api/reservations", [DRIVER]], //  the driver's own bookings
   ["GET", "/api/reservations/:id", [DRIVER, ADMIN]],
   ["POST", "/api/reservations/:id/cancel", [DRIVER, ADMIN]],
 

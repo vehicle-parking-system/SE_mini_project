@@ -19,6 +19,8 @@ const config = {
   mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/vps",
   jwtSecret: process.env.JWT_SECRET || (isTest || process.env.NODE_ENV !== "production" ? "dev_jwt_secret" : undefined),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
+  // Signs the QR codes on bookings and entry tickets; derived from JWT_SECRET unless set
+  qrSecret: process.env.QR_SECRET,
   bcryptRounds: Number(process.env.BCRYPT_ROUNDS) || 10,
   // VPS-SR-005: lock after this many consecutive failed logins
   maxFailedLogins: Number(process.env.MAX_FAILED_LOGINS) || 5,
@@ -34,5 +36,6 @@ const config = {
 };
 
 if (!config.jwtSecret) throw new Error("JWT_SECRET must be set in production");
+config.qrSecret ||= require("crypto").createHmac("sha256", config.jwtSecret).update("vps-qr").digest("hex");
 
 module.exports = config;

@@ -1,5 +1,6 @@
 // Real-time slot search (VPS-F-021): which slots of a facility (optionally one zone)
-// are free for a vehicle type during a whole time window.
+// are free for a vehicle type during a whole time window. Booking (reservations.js)
+// applies the same window rules and picks from the same free slots.
 const mongoose = require("mongoose");
 const clock = require("./clock");
 const Facility = require("./models/Facility");
@@ -19,20 +20,25 @@ const ISO_WITH_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,3})?)?(Z|[
 const unprocessable = (message) => new ApiError(422, "OUTSIDE_BOOKING_RULES", message);
 const isId = (v) => typeof v === "string" && mongoose.isValidObjectId(v);
 
+// Checks startTime/endTime (ISO 8601 with an offset, end after start) into `errors`.
+function windowErrors(errors, input) {
+  for (const field of ["startTime", "endTime"]) {
+    if (typeof input[field] !== "string" || !ISO_WITH_OFFSET.test(input[field]) || Number.isNaN(Date.parse(input[field]))) {
+      errors[field] = "Use an ISO 8601 date-time with a time zone, e.g. 2026-11-02T14:00:00+05:30";
+    }
+  }
+  if (!errors.startTime && !errors.endTime && Date.parse(input.endTime) <= Date.parse(input.startTime)) {
+    errors.endTime = "End time must be after start time";
+  }
+}
+
 // Query string -> {facilityId, zoneId?, vehicleType, start, end}, or a 400 listing every bad field.
 function parseSearch(query) {
   const errors = {};
   if (!isId(query.facilityId)) errors.facilityId = "Choose a facility";
   if (query.zoneId !== undefined && query.zoneId !== "" && !isId(query.zoneId)) errors.zoneId = "Unknown zone";
   if (!VEHICLE_TYPES.includes(query.vehicleType)) errors.vehicleType = `Vehicle type must be one of ${VEHICLE_TYPES.join(", ")}`;
-  for (const field of ["startTime", "endTime"]) {
-    if (typeof query[field] !== "string" || !ISO_WITH_OFFSET.test(query[field]) || Number.isNaN(Date.parse(query[field]))) {
-      errors[field] = "Use an ISO 8601 date-time with a time zone, e.g. 2026-11-02T14:00:00+05:30";
-    }
-  }
-  if (!errors.startTime && !errors.endTime && Date.parse(query.endTime) <= Date.parse(query.startTime)) {
-    errors.endTime = "End time must be after start time";
-  }
+  windowErrors(errors, query);
   if (Object.keys(errors).length) throw badRequest("Some search fields are invalid", errors);
 
   return { facilityId: query.facilityId, zoneId: query.zoneId || null, vehicleType: query.vehicleType,
@@ -53,29 +59,38 @@ function checkWindow(facility, start, end, now) {
   }
 }
 
-// A slot is listed when it matches the facility, zone and vehicle type, isn't inactive,
-// isn't occupied right now (a parked vehicle has no known exit time), and has no active
-// reservation overlapping any part of the window. Nearest to the entry gate first.
-async function searchAvailableSlots(query) {
-  const { facilityId, zoneId, vehicleType, start, end } = parseSearch(query);
+// The facility and its zones; 404 if the facility is unknown or the zone isn't one of its zones.
+async function loadFacility(facilityId, zoneId) {
   const facility = await Facility.findById(facilityId);
   if (!facility) throw notFound("Facility not found");
   const zones = await Zone.find({ facility: facility._id }).sort({ name: 1 });
   if (zoneId && !zones.some((z) => z.id === zoneId)) throw notFound("Zone not found in this facility");
+  return { facility, zones };
+}
 
-  const now = clock.now();
-  checkWindow(facility, start, end, now);
-
+// A slot is free for [start, end) when it matches the facility, zone and vehicle type, isn't
+// inactive, isn't occupied right now (a parked vehicle has no known exit time), and has no
+// active reservation overlapping any part of the window. Nearest to the entry gate first.
+async function freeSlots(facility, { zoneId, vehicleType, start, end, now }) {
   const taken = await Reservation.distinct("slot", {
     facility: facility._id, ...Reservation.activeReservationFilter(start, end, now),
   });
-  const slots = await Slot.find({
+  return Slot.find({
     facility: facility._id,
     ...(zoneId && { zone: zoneId }),
     vehicleType,
     status: { $nin: ["INACTIVE", "OCCUPIED"] },
     _id: { $nin: taken },
   }).sort({ distance: 1, number: 1 });
+}
+
+async function searchAvailableSlots(query) {
+  const { facilityId, zoneId, vehicleType, start, end } = parseSearch(query);
+  const { facility, zones } = await loadFacility(facilityId, zoneId);
+
+  const now = clock.now();
+  checkWindow(facility, start, end, now);
+  const slots = await freeSlots(facility, { zoneId, vehicleType, start, end, now });
 
   const zoneName = Object.fromEntries(zones.map((z) => [z.id, z.name]));
   return {
@@ -87,4 +102,5 @@ async function searchAvailableSlots(query) {
   };
 }
 
-module.exports = { searchAvailableSlots, parseSearch, MAX_ADVANCE_DAYS };
+module.exports = { searchAvailableSlots, parseSearch, windowErrors, checkWindow, loadFacility, freeSlots, isId,
+  MAX_ADVANCE_DAYS };

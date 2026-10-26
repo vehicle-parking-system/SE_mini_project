@@ -3,6 +3,9 @@ const config = require("./config");
 const logger = require("./logger");
 const { createApp } = require("./app");
 const { ensureAdmin } = require("./accounts");
+const { expireHolds } = require("./reservations");
+
+const SWEEP_MS = 60000;
 
 async function main() {
   const app = createApp(); // registers the models
@@ -12,6 +15,8 @@ async function main() {
     name: process.env.ADMIN_NAME });
   if (admin) logger.info("admin account ready", { userId: admin.id });
   else if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) logger.warn("ADMIN_EMAIL belongs to a non-admin account; no admin was created");
+  // Lapsed holds are also expired whenever reservations are read; this keeps stored statuses current.
+  setInterval(() => expireHolds().catch((err) => logger.error("hold sweep failed", { error: err.message })), SWEEP_MS).unref();
   app.listen(config.port, () => logger.info("VPS API listening", { port: config.port, test: config.isTest }));
 }
 
