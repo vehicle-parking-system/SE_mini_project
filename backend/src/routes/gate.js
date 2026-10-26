@@ -1,6 +1,7 @@
 // Gate operations (Attendant Kiosk / Hardware Abstraction Service). Staff only (see permissions.js).
 const express = require("express");
 const entry = require("../entry");
+const exit = require("../exit");
 const { occupancy } = require("../occupancy");
 
 const router = express.Router();
@@ -18,6 +19,13 @@ router.post("/entry", async (req, res) => {
 // 400 if the code isn't a valid entry ticket
 router.post("/tickets/scan", async (req, res) => {
   res.json(await entry.scanTicket(req.body?.qrCode));
+});
+
+// POST /api/exit {gateId, sessionId | qrCode | plateNumber}
+// 402 PAYMENT_REQUIRED {amount, duration, chargedHours, ratePerHour, paymentStatus} while the fee is unpaid
+// (the barrier stays closed); 400 invalid fields or ticket, 404 unknown gate or session, 409 already left
+router.post("/exit", async (req, res) => {
+  res.json(await exit.processExit(req.user, req.body));
 });
 
 // GET /api/sessions?facilityId&status=ACTIVE|CLOSED -> {sessions:[...]} latest first

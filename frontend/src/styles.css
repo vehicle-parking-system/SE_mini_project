@@ -182,7 +182,7 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 
 /* Gate kiosk */
 .gate-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
-.gate-pick { min-width: min(100%, 420px); }
+.gate-pick { min-width: min(100%, 560px); }
 @media (min-width: 561px) { .gate-pick .field { margin-bottom: 0; } }
 .segmented { display: flex; border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; margin-bottom: 16px; }
 .segmented button {
@@ -217,3 +217,7 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
   .printable { position: absolute; inset: 0 auto auto 0; width: 100%; color: #000; background: #fff; border: none; }
   .no-print { display: none; }
 }
+.fee { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.fee p { margin: 0 0 4px; }
+.fee-amount { font-size: 1.8rem; font-weight: 700; }
+.fee-amount .muted { font-size: 1rem; font-weight: 400; }

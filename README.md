@@ -35,6 +35,7 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `POST /api/entry` | Staff. `{gateId, source: ANPR\|QR\|MANUAL, plateNumber \| qrCode, vehicleType?}` → `201` session. 400 for invalid fields or an invalid ticket, 409 if no slot is free, the vehicle is already inside, or the booking can't be used now |
 | `GET /api/sessions` | Staff. `?facilityId&status=ACTIVE\|CLOSED` → parking sessions, latest first |
 | `GET /api/slots/:id` | Staff. A slot's live status: `AVAILABLE`, `OCCUPIED`, `RESERVED` or `INACTIVE` |
+| `POST /api/exit` | Staff. `{gateId, sessionId \| qrCode \| plateNumber}` → `402 {amount, duration, chargedHours, ratePerHour, paid, paymentStatus}` while the fee is unpaid. 400 for invalid fields or ticket, 404 for an unknown gate or session, 409 if the vehicle already left or is at another facility |
 | `POST /api/tickets/scan` | Staff. `{qrCode}` → the session the entry ticket belongs to; 400 "Invalid ticket" otherwise |
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
 | `GET /api/occupancy/:facilityId` | Staff. `{capacity, occupied, booked, free, full, byVehicleType, byZone}` (inactive slots excluded) |
@@ -95,6 +96,13 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Entry ticket (VPS-F-004).** Every entry returns a `ticketQr`: a signed `VPS1.T.<sessionId>.<signature>` code (see `qr.js`). The Gate page shows the ticket and can print it. A registered driver also gets it digitally: an `ENTRY_TICKET` notification, and under **Parked now** on My bookings. `POST /api/tickets/scan` reads a ticket back to its session at the exit.
 - A plate can be inside only once (409), enforced by a unique index on active sessions, so simultaneous requests can't create two sessions.
 - The **Hardware Abstraction Service** ([`backend/src/hardware.js`](backend/src/hardware.js)) is the only code that drives gates. On success the display shows where to go ("Proceed to slot A-02 · Zone A · 20 m") and the barrier opens. On any refusal the display shows the reason and the barrier stays closed. No gate controller is wired up yet, so a simulator records the commands (`GET /api/test/hardware/commands` in test mode).
+
+**Parking Fee Calculation (VPS-F-010).** In [`backend/src/pricing.js`](backend/src/pricing.js):
+
+- **Rate cards** give an hourly rate per vehicle type, either for one zone or facility-wide. A zone's own rate wins.
+- The rate is looked up when the vehicle enters and **kept on its session**. A rate change therefore applies to vehicles that enter after it, never to one already parked. With no rate configured, parking is free and a warning is logged.
+- **Fee = started hours × rate.** The duration runs from entry to the moment of calculation, rounded to the nearest minute, and every started hour is charged in full (30 min → 1 h, 61 min → 2 h). This is the rounding rule assumed in `tests/README.md`.
+- At an exit gate (`POST /api/exit`), the vehicle is found by its session, its entry ticket or its plate. Until the fee is paid the response is 402 with the quote, the display asks for the amount and the barrier stays closed. A parked vehicle's session also shows its `fee` so far: on the Gate page's exit panel, and on the driver's ticket.
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 

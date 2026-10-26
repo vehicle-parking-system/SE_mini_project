@@ -15,15 +15,19 @@ const DEMO = [
   {
     name: "City Centre Parking", address: "MG Road, Bengaluru", openTime: "06:00", closeTime: "23:00",
     zones: [
-      { name: "Zone A (Ground)", slots: slots("A", 8, "CAR", 10) },
+      { key: "ground", name: "Zone A (Ground)", slots: slots("A", 8, "CAR", 10) },
       { name: "Zone B (Level 1)", slots: [...slots("B", 6, "CAR", 40), ...slots("BK", 6, "BIKE", 35, 2)] },
     ],
+    // ₹ per started hour; ground-floor car slots cost more
+    rates: [{ vehicleType: "CAR", ratePerHour: 40 }, { zone: "ground", vehicleType: "CAR", ratePerHour: 50 },
+      { vehicleType: "BIKE", ratePerHour: 20 }],
   },
   {
     name: "Airport Long-Stay", address: "Kempegowda International Airport", openTime: "00:00", closeTime: "23:59",
     zones: [
       { name: "Zone P1", slots: [...slots("P1", 10, "CAR", 20), ...slots("T", 3, "TRUCK", 80, 10)] },
     ],
+    rates: [{ vehicleType: "CAR", ratePerHour: 30 }, { vehicleType: "TRUCK", ratePerHour: 100 }],
   },
 ];
 
