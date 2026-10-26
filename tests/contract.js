@@ -20,7 +20,11 @@ module.exports = {
   myVehicle: (id) => `/api/users/me/vehicles/${id}`, // DELETE -> 204
 
   // Reservation Management (SAD §4.3)
-  availableSlots: "/api/slots/available", // GET ?facilityId&zoneId&vehicleType&startTime&endTime -> {slots:[{slotId}]}
+  facilities: "/api/facilities", //        GET -> {facilities:[{id, name, timezone, openTime, closeTime, zones:[{id, name}]}]}
+  availableSlots: "/api/slots/available", // GET ?facilityId&zoneId?&vehicleType&startTime&endTime
+  //                                          -> {slots:[{slotId, number, distance, zoneId, zoneName}], facility, window}
+  //                                          nearest first; errors 400 invalid fields, 404 unknown facility/zone,
+  //                                          422 window in the past, > 30 days ahead or outside opening hours
   reservations: "/api/reservations", //      POST {vehicleId, facilityId, zoneId, startTime, endTime}
   //                                          -> {reservationId, slotId, status, holdExpiresAt, qrCode}
   //                                          errors 401, 409 slot unavailable, 422 outside operating hours
@@ -61,6 +65,7 @@ module.exports = {
     hardwareCommands: "/api/test/hardware/commands", // GET -> {commands:[{gateId, command: OPEN|CLOSE|DISPLAY, message, at}]}
     hardwareLink: "/api/test/hardware/link", //      POST {gateId, up: boolean}  simulates gate network loss
     notifications: "/api/test/notifications", //     GET -> {notifications:[{to, channel, type}]}
+    reservations: "/api/test/reservations", //       POST {slotId, startTime, endTime, status?, holdExpiresAt?} inserts a reservation
   },
 
   // Mongo collections inspected directly by the security tests.

@@ -25,19 +25,7 @@ describeApi("Slot Reservation / Online Pre-booking", () => {
     expect(others.body.slots.map((s) => s.slotId)).not.toContain(res.body.slotId);
   });
 
-  test("TC-Res-02 [VPS-F-021]: search lists only slots free for the whole window", async () => {
-    const res = await search(window("14:00", "16:00"));
-    expect(res.status).toBe(200);
-    const listed = res.body.slots.map((s) => s.slotId);
-    expect(listed).toEqual(expect.arrayContaining([ids.carNear, ids.carFar]));
-    expect(listed).not.toContain(ids.bikeNearest); // wrong vehicle type
-
-    // a reservation overlapping only part of the window removes that slot from the results
-    const booked = await reserve(tokens.driver, ids.car1, window("15:00", "17:00"));
-    const overlap = await search(window("14:00", "16:00"));
-    expect(overlap.body.slots.map((s) => s.slotId)).not.toContain(booked.body.slotId);
-    expect(overlap.body.slots).toHaveLength(listed.length - 1);
-  });
+  // TC-Res-02 (slot search) is in slots.test.js
 
   test("TC-Res-03 [VPS-F-022]: hold is released after the grace period if the driver does not arrive", async () => {
     const w = window("10:30", "12:00");
