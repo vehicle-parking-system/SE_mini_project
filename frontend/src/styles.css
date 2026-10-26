@@ -224,3 +224,13 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .pay-online { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
 .pay-online .notice { flex-basis: 100%; margin: 0; }
 .fee .btn { margin-top: 8px; }
+
+/* Exit receipt */
+.receipt dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0 0 14px; font-size: 0.95rem; }
+.receipt dt { color: var(--muted); }
+.receipt dd { margin: 0; }
+.receipt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
+.receipt-head p { margin: 0; }
+.receipt-number { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; }
+.gate-receipt { margin-top: 16px; border: 1px dashed var(--border); border-radius: var(--radius); padding: 16px; }
+.page.narrow { max-width: 640px; }

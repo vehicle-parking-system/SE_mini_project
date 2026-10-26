@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, formatDuration, formatMoney, liveEvents, SANDBOX_GATEWAY_TOKEN, VEHICLE_TYPES } from "../api";
 import Ticket from "../components/Ticket";
+import Receipt from "../components/Receipt";
 import { formatTime } from "../time";
 
 const GATE_KEY = "vps.gate";
@@ -110,10 +111,12 @@ function ExitPanel({ gate, onChanged }) {
   const [result, setResult] = useState(null); // {kind: "due"|"done"|"error", ...}
   const [busy, setBusy] = useState(null); // what is in progress, as text
 
-  // -> the exit result; 402 becomes {kind: "due", ...}
+  // -> the exit result (with its receipt); 402 becomes {kind: "due", ...}
   async function tryExit(lookup) {
     try {
-      return { kind: "done", ...(await api.exit({ gateId: gate.id, ...lookup })) };
+      const done = await api.exit({ gateId: gate.id, ...lookup });
+      const receipt = await api.receipt(done.receiptId).catch(() => null);
+      return { kind: "done", ...done, receipt };
     } catch (err) {
       return err.status === 402 ? { kind: "due", ...err.data } : { kind: "error", text: err.message };
     }
@@ -191,6 +194,9 @@ function ExitPanel({ gate, onChanged }) {
           <strong>Barrier opened.</strong> {result.plateNumber} · {formatDuration(result.duration)} ·{" "}
           {result.paymentStatus === "NOT_REQUIRED" ? "no charge" : `${formatMoney(result.amount)} paid`}
         </div>
+      )}
+      {result?.kind === "done" && result.receipt && (
+        <div className="gate-receipt"><Receipt receipt={result.receipt} onPrint={() => window.print()} /></div>
       )}
     </form>
   );

@@ -6,6 +6,7 @@ const Vehicle = require("../models/Vehicle");
 const auth = require("../auth");
 const { addVehicles } = require("../accounts");
 const { sessionsForDriver } = require("../entry");
+const { receiptsForDriver } = require("../receipts");
 const { badRequest, conflict, notFound } = require("../errors");
 const { MAX_VEHICLES, validateProfileUpdate, validatePasswordChange, validateVehicle } = require("../validation");
 
@@ -51,6 +52,11 @@ router.post("/me/vehicles", async (req, res) => {
 // latest first; an active one carries its entry ticket (ticketQr)
 router.get("/me/sessions", async (req, res) => {
   res.json({ sessions: await sessionsForDriver(req.user) });
+});
+
+// GET /api/users/me/receipts -> {receipts:[...]} exit receipts for the user's vehicles, latest first
+router.get("/me/receipts", async (req, res) => {
+  res.json({ receipts: await receiptsForDriver(req.user) });
 });
 
 // DELETE /api/users/me/vehicles/:id -> 204
