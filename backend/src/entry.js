@@ -16,6 +16,7 @@ const Zone = require("./models/Zone");
 const { ENTRY_SOURCES } = Session;
 const { expireHolds } = require("./reservations");
 const { notify } = require("./notifications");
+const { auditManualEntry } = require("./gates");
 const events = require("./events");
 const pricing = require("./pricing");
 const payments = require("./payments");
@@ -209,6 +210,7 @@ async function captureEntry(user, body) {
   hardware.display(gate.id, `Proceed to slot ${slot.number} · ${zone.name} · ${slot.distance} m`);
   hardware.openBarrier(gate.id);
   logger.info("vehicle entered", { sessionId: session.id, gateId: gate.id, source: input.source, booked: Boolean(reservation) });
+  if (input.source === "MANUAL") await auditManualEntry(user, gate, session);
 
   // Entry ticket (VPS-F-004): printed at the kiosk from the response, and sent to a registered driver.
   const ticket = await presentSession(session);

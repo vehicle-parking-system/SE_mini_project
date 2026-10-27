@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api, formatDuration, formatMoney, liveEvents, SANDBOX_GATEWAY_TOKEN, VEHICLE_TYPES } from "../api";
 import Ticket from "../components/Ticket";
 import Receipt from "../components/Receipt";
+import OccupancyCard from "../components/OccupancyCard";
 import { formatTime } from "../time";
 
 const GATE_KEY = "vps.gate";
@@ -199,37 +200,6 @@ function ExitPanel({ gate, onChanged }) {
         <div className="gate-receipt"><Receipt receipt={result.receipt} onPrint={() => window.print()} /></div>
       )}
     </form>
-  );
-}
-
-const typeLabel = (value) => VEHICLE_TYPES.find((t) => t.value === value)?.label ?? value;
-
-// Live occupancy (VPS-F-003): free slots per vehicle type, so the attendant sees "full" before a car arrives.
-function OccupancyCard({ occupancy }) {
-  if (!occupancy) return <section className="card"><h2>Occupancy</h2><p className="muted">Loading…</p></section>;
-  const pct = (n, of) => (of ? Math.round((n / of) * 100) : 0);
-  return (
-    <section className="card occupancy">
-      <div className="card-header">
-        <h2>Occupancy</h2>
-        {occupancy.full ? <span className="status-badge FAILED">Facility Full</span>
-          : <span className="muted">{occupancy.free} of {occupancy.capacity} free</span>}
-      </div>
-      <ul className="meter-list">
-        {occupancy.byVehicleType.map((t) => (
-          <li key={t.vehicleType}>
-            <div className="meter-label">
-              <span>{typeLabel(t.vehicleType)}</span>
-              <span className={t.full ? "danger-text" : "muted"}>{t.full ? "Full" : `${t.free} free`} · {t.occupied} parked{t.booked ? ` · ${t.booked} booked` : ""}</span>
-            </div>
-            <div className="meter" role="img" aria-label={`${typeLabel(t.vehicleType)}: ${t.occupied} parked, ${t.booked} booked, ${t.free} free of ${t.capacity}`}>
-              <span className="meter-occupied" style={{ width: `${pct(t.occupied, t.capacity)}%` }} />
-              <span className="meter-booked" style={{ width: `${pct(t.booked, t.capacity)}%` }} />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
 

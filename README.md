@@ -47,6 +47,9 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
 | `GET /api/occupancy/:facilityId` | Staff. `{capacity, occupied, booked, free, full, byVehicleType, byZone}` (inactive slots excluded) |
 | `GET /api/sessions/:id` | Staff. `{sessionId, plateNumber, gateId, slotId, slotNumber, entryTime, exitTime, status, reservationId, …}` |
+| `GET /api/gates/status` | Staff. `?facilityId` → `{gates:[{id, name, type, online, queued, lastDeliveredAt}]}` |
+| `POST /api/gates/:id/override` | Staff. `{action: OPEN\|CLOSE, reason, note?}` → `{gateId, action, delivered, online, queued}`. Audited as `MANUAL_OVERRIDE` |
+| `GET /api/gates/overrides` | Staff. `?facilityId` → the latest 50 `MANUAL_OVERRIDE` entries, for the shift log |
 | `GET /api/admin/facilities` | Admin only. Every facility with its settings, gates, zones, slots (`active`, live `status`) and rates. `GET /api/admin/facilities/:id` for one |
 | `POST /api/admin/facilities` | Admin only. `{name, openTime, closeTime, address?, timezone?, reservationGraceMinutes?, refundCutoffMinutes?, gates?, zones?:[{name, slots:[{number, vehicleType, distance?}]}]}` → `201 {facility}` |
 | `PATCH /api/admin/facilities/:id` | Admin only. Any of the facility's settings → `{facility}` |
@@ -65,7 +68,7 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | Role | Can use |
 |---|---|
 | Driver | Own profile and vehicles, slot search, reservations, online payment, receipts |
-| Attendant | Own profile, gate entry and exit, ticket scan, sessions, slot status, occupancy, at-gate payment, receipts |
+| Attendant | Own profile, gate entry and exit, ticket scan, sessions, slot status, occupancy, gate status and manual override, at-gate payment, receipts |
 | Admin | Everything under `/api/admin/*`, reports, reservation lookup and cancellation, gate operations |
 
 **Login Security & Account Lockout (VPS-SR-005).** In `backend/src/auth.js`:
@@ -110,7 +113,7 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Facility full (VPS-F-003).** If no slot can be given to the vehicle, entry is refused with 409 `FACILITY_FULL`. The gate display shows "Facility Full", the barrier stays closed, and no session or occupancy changes. A booked vehicle still gets in to its held slot when the rest are full, and a full car section doesn't stop a bike. The Gate page shows live occupancy per vehicle type (parked, booked for now, free) so attendants can see the facility filling up.
 - **Entry ticket (VPS-F-004).** Every entry returns a `ticketQr`: a signed `VPS1.T.<sessionId>.<signature>` code (see `qr.js`). The Gate page shows the ticket and can print it. A registered driver also gets it digitally: an `ENTRY_TICKET` notification, and under **Parked now** on My bookings. `POST /api/tickets/scan` reads a ticket back to its session at the exit.
 - A plate can be inside only once (409), enforced by a unique index on active sessions, so simultaneous requests can't create two sessions.
-- The **Hardware Abstraction Service** ([`backend/src/hardware.js`](backend/src/hardware.js)) is the only code that drives gates. On success the display shows where to go ("Proceed to slot A-02 · Zone A · 20 m") and the barrier opens. On any refusal the display shows the reason and the barrier stays closed. No gate controller is wired up yet, so a simulator records the commands (`GET /api/test/hardware/commands` in test mode).
+- The **Hardware Abstraction Service** ([`backend/src/hardware.js`](backend/src/hardware.js)) is the only code that drives gates. On success the display shows where to go ("Proceed to slot A-02 · Zone A · 20 m") and the barrier opens. On any refusal the display shows the reason and the barrier stays closed. No gate controller is wired up yet, so a simulator records the commands (`GET /api/test/hardware/commands` in test mode). If a gate's controller can't be reached, its commands are queued and retried (see below).
 
 **Parking Fee Calculation (VPS-F-010).** In [`backend/src/pricing.js`](backend/src/pricing.js):
 
@@ -149,6 +152,13 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - A receipt is a fixed record of the stay: facility, plate, slot, entry and exit times, billed duration, charged hours × rate, the total, and each payment with its gateway reference. It never holds card data.
 - **Printed:** the Gate page shows the receipt as soon as the barrier opens, with a Print button.
 - **Digital:** a registered driver gets an `EXIT_RECEIPT` notification, a **Parking history** on My bookings, and a printable receipt page at `/receipts/:id`. Drivers can read only their own receipts.
+
+**Occupancy Monitoring & Manual Gate Override (VPS-F-042).** The **Monitor** page, for attendants and admins, shows a facility's live occupancy per vehicle type and per zone, the connection to each of its gates, and the shift's manual overrides. The rules are in [`backend/src/gates.js`](backend/src/gates.js) and [`hardware.js`](backend/src/hardware.js):
+
+- **Manual override.** When a camera, scanner, card terminal or barrier fails, an attendant opens or closes a barrier by hand (`POST /api/gates/:id/override`). A reason is required (`ANPR_FAILURE`, `SCANNER_FAILURE`, `BARRIER_FAULT`, `PAYMENT_TERMINAL_FAILURE`, `EMERGENCY`, or `OTHER` with a note).
+- **Every override is audited** as `MANUAL_OVERRIDE`, with the attendant's id and email, the gate, the reason and whether the command reached the gate. A vehicle admitted on a plate the attendant typed in (`source: MANUAL`) is recorded the same way, with its session and plate. Admins see them all in the audit log; attendants see the latest on the Monitor page.
+- **Network loss to a gate.** If a gate controller can't be reached, the session is still created and the command is queued for that gate. It is retried with exponential backoff (250 ms, doubling to 2 s) and delivered exactly once, in order, when the link is back. The Monitor page shows the gate as not connected, with the number of commands waiting. A command that hasn't gone through within `HARDWARE_QUEUE_TTL_SECONDS` (120) is dropped, so a barrier never opens long after the vehicle has gone. The attendant then uses an override.
+- In test mode, `POST /api/test/hardware/link {gateId, up}` simulates the link going down and coming back.
 
 **Lot, Zone, Slot and Pricing Configuration (VPS-F-040, VPS-F-041).** Admins set up facilities on the **Facilities** page of the web app. The rules are in [`backend/src/configuration.js`](backend/src/configuration.js):
 

@@ -250,3 +250,15 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .inactive-row td { color: var(--muted); }
 .status-badge.INACTIVE { border-style: dashed; }
 .status-badge.OCCUPIED { color: var(--primary); border-color: var(--primary); }
+
+/* Monitor: gates and manual override */
+.meter-heading { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 20px 0 10px; }
+.gate-list { list-style: none; padding: 0; margin: 0; }
+.gate-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.gate-row:last-child { border-bottom: none; }
+.gate-row-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gate-row .booking-actions { margin-top: 0; }
+.gate-row .notice { margin: 10px 0 0; }
+.link-ok { color: var(--success-text); font-weight: 600; }
+.override-form { margin-top: 12px; padding: 12px; border: 1px dashed var(--border); border-radius: var(--radius); }
+.override-form .field select { width: 100%; }
