@@ -39,6 +39,8 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `POST /api/payments` | Driver (`ONLINE`, own session) or attendant (`AT_GATE`). `{sessionId, method, gatewayToken}` → `201 {paymentId, amount, status: PENDING, gatewayRef}`. The amount is what's owed now; 409 if nothing is owed |
 | `POST /api/payments/webhook` | Public, authenticated by its signature. `{paymentId, status: CONFIRMED\|FAILED}` with `x-razorpay-signature` (hex HMAC-SHA256 of the raw body with `PAYMENT_WEBHOOK_SECRET`). 401 for a bad signature; a replayed event is ignored |
 | `GET /api/payments/:id` | A payment's status (drivers: their own) |
+| `GET /api/receipts/:id` | Staff (any) or the driver (own). `{number, plateNumber, entryTime, exitTime, duration, chargedHours, ratePerHour, amount, payments}` |
+| `GET /api/users/me/receipts` | The user's exit receipts, latest first |
 | `GET /api/events` | Any logged-in user. `?facilityId` → `text/event-stream` of live `slot` and `availability` events |
 | `POST /api/tickets/scan` | Staff. `{qrCode}` → the session the entry ticket belongs to; 400 "Invalid ticket" otherwise |
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
@@ -123,6 +125,13 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Live events.** Every slot change (entry, exit, booking, cancellation) is published on an event bus ([`backend/src/events.js`](backend/src/events.js)) and pushed to open `GET /api/events` streams. The Gate page refreshes occupancy and the vehicle list as soon as anything changes at its facility, and a driver's search results update as soon as a slot is taken or freed. Both keep their 30-second refresh as a fallback.
 - The stream is authenticated like every endpoint. The web app reads it with `fetch`, so the token travels in the `Authorization` header and never in a URL, and reconnects with backoff.
 - The bus is in-process. With several API instances, publish through a shared broker such as Redis pub/sub instead.
+
+**Exit Receipt (VPS-F-013).** In [`backend/src/receipts.js`](backend/src/receipts.js):
+
+- Every confirmed exit issues one receipt per session, numbered `VPS-<year>-<sequence>` from an atomic counter. The exit response carries its `receiptId`.
+- A receipt is a fixed record of the stay: facility, plate, slot, entry and exit times, billed duration, charged hours × rate, the total, and each payment with its gateway reference. It never holds card data.
+- **Printed:** the Gate page shows the receipt as soon as the barrier opens, with a Print button.
+- **Digital:** a registered driver gets an `EXIT_RECEIPT` notification, a **Parking history** on My bookings, and a printable receipt page at `/receipts/:id`. Drivers can read only their own receipts.
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 

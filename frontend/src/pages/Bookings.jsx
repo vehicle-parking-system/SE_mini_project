@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { api, formatMoney, RESERVATION_STATUS, SANDBOX_GATEWAY_TOKEN } from "../api";
+import { api, formatDuration, formatMoney, RESERVATION_STATUS, SANDBOX_GATEWAY_TOKEN } from "../api";
 import QrCode from "../components/QrCode";
 import Ticket from "../components/Ticket";
 import { formatDay, formatTime } from "../time";
@@ -101,11 +101,13 @@ export default function Bookings() {
   const justBooked = location.state?.booked;
   const [bookings, setBookings] = useState(null);
   const [parked, setParked] = useState([]);
+  const [receipts, setReceipts] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     api.myReservations().then(({ reservations }) => setBookings(reservations)).catch((err) => setError(err.message));
     api.mySessions().then(({ sessions }) => setParked(sessions.filter((s) => s.status === "ACTIVE"))).catch(() => {});
+    api.myReceipts().then(({ receipts: list }) => setReceipts(list)).catch(() => {});
   }, []);
 
   const replace = (updated) => setBookings(bookings.map((b) => (b.reservationId === updated.reservationId ? updated : b)));
@@ -148,6 +150,29 @@ export default function Bookings() {
               highlight={b.reservationId === justBooked?.reservationId} />
           ))}
         </ul>
+      )}
+
+      {receipts.length > 0 && (
+        <section className="past-bookings">
+          <h2>Parking history</h2>
+          <div className="card table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Facility</th><th>Vehicle</th><th>Duration</th><th>Paid</th><th /></tr></thead>
+              <tbody>
+                {receipts.map((r) => (
+                  <tr key={r.receiptId}>
+                    <td>{formatDay(r.exitTime, r.timezone)}</td>
+                    <td>{r.facilityName}</td>
+                    <td><span className="plate">{r.plateNumber}</span></td>
+                    <td>{formatDuration(r.duration)}</td>
+                    <td>{formatMoney(r.amount)}</td>
+                    <td><Link to={`/receipts/${r.receiptId}`}>Receipt</Link></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
 
       {past.length > 0 && (

@@ -3,6 +3,7 @@ const express = require("express");
 const entry = require("../entry");
 const exit = require("../exit");
 const { occupancy } = require("../occupancy");
+const receipts = require("../receipts");
 
 const router = express.Router();
 
@@ -27,6 +28,12 @@ router.post("/tickets/scan", async (req, res) => {
 // payments cover the fee; 400 invalid fields or ticket, 404 unknown gate or session, 409 already left
 router.post("/exit", async (req, res) => {
   res.json(await exit.processExit(req.user, req.body));
+});
+
+// GET /api/receipts/:id -> {number, plateNumber, entryTime, exitTime, duration, chargedHours, ratePerHour, amount, payments, ...}
+// staff: any receipt; drivers: their own (404 otherwise)
+router.get("/receipts/:id", async (req, res) => {
+  res.json(await receipts.getReceipt(req.user, req.params.id));
 });
 
 // GET /api/sessions?facilityId&status=ACTIVE|CLOSED -> {sessions:[...]} latest first

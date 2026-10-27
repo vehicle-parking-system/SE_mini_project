@@ -12,6 +12,7 @@ const Session = require("./models/Session");
 const Slot = require("./models/Slot");
 const events = require("./events");
 const payments = require("./payments");
+const { issueReceipt } = require("./receipts");
 const { isId } = require("./slotSearch");
 const { PLATE_RE, normalizePlate } = require("./validation");
 const { badRequest, conflict, notFound, paymentRequired } = require("./errors");
@@ -74,10 +75,12 @@ async function processExit(user, body) {
   hardware.display(gate.id, "Thank you. Drive safely");
   hardware.openBarrier(gate.id);
   await releaseSlot(closed);
+  const receipt = await issueReceipt(closed);
   logger.info("vehicle exited", { sessionId: closed.id, gateId: gate.id, amount: total });
   return { sessionId: closed.id, plateNumber: closed.plateNumber, entryTime: closed.entryTime.toISOString(),
     exitTime: now.toISOString(), duration: quote.duration, chargedHours: quote.chargedHours, ratePerHour: quote.ratePerHour,
-    amount: total, paid, paymentStatus: total === 0 ? "NOT_REQUIRED" : "CONFIRMED", slotReleased: true };
+    amount: total, paid, paymentStatus: total === 0 ? "NOT_REQUIRED" : "CONFIRMED", slotReleased: true,
+    receiptId: receipt.id, receiptNumber: receipt.number };
 }
 
 // Real-time slot release (VPS-F-012): as soon as the exit is confirmed the slot is AVAILABLE
