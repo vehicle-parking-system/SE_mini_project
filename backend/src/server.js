@@ -2,12 +2,14 @@ const mongoose = require("mongoose");
 const config = require("./config");
 const logger = require("./logger");
 const { createApp } = require("./app");
+const transport = require("./transport");
 const { ensureAdmin } = require("./accounts");
 const { expireHolds } = require("./reservations");
 
 const SWEEP_MS = 60000;
 
 async function main() {
+  transport.enforceOutboundTls(); // before any connection is opened (VPS-SR-001)
   const app = createApp(); // registers the models
   await mongoose.connect(config.mongoUrl);
   await Promise.all(Object.values(mongoose.models).map((m) => m.syncIndexes()));
@@ -17,7 +19,7 @@ async function main() {
   else if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) logger.warn("ADMIN_EMAIL belongs to a non-admin account; no admin was created");
   // Lapsed holds are also expired whenever reservations are read; this keeps stored statuses current.
   setInterval(() => expireHolds().catch((err) => logger.error("hold sweep failed", { error: err.message })), SWEEP_MS).unref();
-  app.listen(config.port, () => logger.info("VPS API listening", { port: config.port, test: config.isTest }));
+  await transport.listen(app, config);
 }
 
 main().catch((err) => {

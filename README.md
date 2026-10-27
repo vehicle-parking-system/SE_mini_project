@@ -161,6 +161,16 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Network loss to a gate.** If a gate controller can't be reached, the session is still created and the command is queued for that gate. It is retried with exponential backoff (250 ms, doubling to 2 s) and delivered exactly once, in order, when the link is back. The Monitor page shows the gate as not connected, with the number of commands waiting. A command that hasn't gone through within `HARDWARE_QUEUE_TTL_SECONDS` (120) is dropped, so a barrier never opens long after the vehicle has gone. The attendant then uses an override.
 - In test mode, `POST /api/test/hardware/link {gateId, up}` simulates the link going down and coming back.
 
+**TLS 1.2+ Network Encryption (VPS-SR-001).** Every connection is encrypted with TLS 1.2 or later. The rules are in [`backend/src/transport.js`](backend/src/transport.js):
+
+- **Client ↔ API**, one of two ways:
+  - **The API terminates TLS itself.** Set `TLS_CERT_FILE` and `TLS_KEY_FILE` (and `TLS_CA_FILE` for intermediate certificates). The API serves HTTPS on `PORT`, accepts TLS 1.2 and 1.3 only, and for TLS 1.2 only forward-secret AEAD cipher suites (ECDHE with AES-GCM or ChaCha20). TLS 1.0 and 1.1 clients get a `protocol_version` alert. With `HTTP_REDIRECT_PORT` set, plain HTTP on that port is redirected (308) to HTTPS.
+  - **A load balancer terminates TLS.** Set `TLS_TERMINATED_BY_PROXY=true` and `TRUST_PROXY`. A request the balancer received over plain HTTP is redirected to HTTPS if it is a GET or HEAD, and refused with 403 `HTTPS_REQUIRED` otherwise, because its body has already crossed the network unencrypted. `GET /api/health` is allowed over HTTP for the balancer's health checks. The balancer itself must be set to TLS 1.2+.
+  - HTTPS responses carry `Strict-Transport-Security` (`HSTS_MAX_AGE_SECONDS`, 1 year by default).
+- **API ↔ MongoDB and the payment gateway.** Node's minimum TLS version is pinned to 1.2 for every outgoing connection at startup. In production, a `MONGO_URL` for a remote host must turn TLS on (`tls=true`, or `mongodb+srv://`).
+- **In production (`NODE_ENV=production`) the API refuses to start** without one of the two TLS set-ups, or with a remote database URL without TLS. Development and test mode still allow plain HTTP on `localhost`.
+- The nightly workflow checks a deployed URL with testssl.sh (TC-Sec-02): nothing below TLS 1.2 is offered, and HTTP redirects to HTTPS.
+
 **Revenue & Occupancy Reporting (VPS-F-043).** Admins pick a facility, a report and a date range on the **Reports** page and export it as CSV. The rules are in [`backend/src/reports.js`](backend/src/reports.js):
 
 - A report has one row per day, in the facility's own time zone, and totals. The range is at most 366 days.
@@ -194,4 +204,13 @@ npm test                       # set MONGO_URL to also run the DB-backed API tes
 
 # Driver Web App on http://localhost:5173 (proxies /api to :4000)
 cd frontend && npm install && npm run dev
+```
+
+To run the API over HTTPS locally, make a self-signed certificate and point the web app's proxy at it:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -nodes -days 30 -subj /CN=localhost \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1" -keyout key.pem -out cert.pem
+TLS_CERT_FILE=cert.pem TLS_KEY_FILE=key.pem HTTP_REDIRECT_PORT=4080 npm start          # in backend/
+VITE_API_PROXY=https://localhost:4000 VITE_API_PROXY_SELF_SIGNED=true npm run dev        # in frontend/
 ```

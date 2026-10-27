@@ -1,5 +1,8 @@
 // All runtime settings come from the environment (see tests/README.md).
+const { mongoUrlProblem } = require("./transport");
+
 const isTest = process.env.NODE_ENV === "test";
+const isProduction = process.env.NODE_ENV === "production";
 
 function parseTrustProxy(value) {
   if (!value || value === "false") return false;
@@ -13,8 +16,11 @@ function parseMinutesList(value) {
   return value && list.every((n) => Number.isFinite(n) && n > 0) ? list : null;
 }
 
+const certFile = process.env.TLS_CERT_FILE || null;
+
 const config = {
   isTest,
+  isProduction,
   port: Number(process.env.PORT) || 4000,
   mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/vps",
   jwtSecret: process.env.JWT_SECRET || (isTest || process.env.NODE_ENV !== "production" ? "dev_jwt_secret" : undefined),
@@ -40,10 +46,29 @@ const config = {
   // Express "trust proxy" setting, so the client IP recorded for login attempts is right behind a load balancer
   // ("true", a hop count such as "1", or a comma-separated list of proxy addresses)
   trustProxy: parseTrustProxy(process.env.TRUST_PROXY),
+  // VPS-SR-001: TLS 1.2+ (see transport.js). Either the API terminates TLS with these files, or a
+  // load balancer does (TLS_TERMINATED_BY_PROXY=true) and plain-HTTP requests are redirected or refused.
+  https: {
+    certFile,
+    keyFile: process.env.TLS_KEY_FILE || null,
+    caFile: process.env.TLS_CA_FILE || null, //          intermediate certificates, if any
+    redirectPort: process.env.HTTP_REDIRECT_PORT ? Number(process.env.HTTP_REDIRECT_PORT) : null,
+    terminatedByProxy: process.env.TLS_TERMINATED_BY_PROXY === "true",
+    enforce: Boolean(certFile) || process.env.TLS_TERMINATED_BY_PROXY === "true",
+    hstsMaxAgeSeconds: Number(process.env.HSTS_MAX_AGE_SECONDS) || 31536000,
+  },
 };
 
 if (!config.jwtSecret) throw new Error("JWT_SECRET must be set in production");
 if (!config.paymentWebhookSecret) throw new Error("PAYMENT_WEBHOOK_SECRET must be set in production");
+if (Boolean(config.https.certFile) !== Boolean(config.https.keyFile)) throw new Error("Set both TLS_CERT_FILE and TLS_KEY_FILE");
+if (config.https.terminatedByProxy && !config.trustProxy) {
+  throw new Error("TLS_TERMINATED_BY_PROXY needs TRUST_PROXY, so the API can tell which requests arrived over HTTPS");
+}
+if (isProduction && !config.https.enforce) {
+  throw new Error("TLS is required in production: set TLS_CERT_FILE and TLS_KEY_FILE, or TLS_TERMINATED_BY_PROXY=true behind a TLS load balancer");
+}
+if (isProduction && mongoUrlProblem(config.mongoUrl)) throw new Error(mongoUrlProblem(config.mongoUrl));
 config.qrSecret ||= require("crypto").createHmac("sha256", config.jwtSecret).update("vps-qr").digest("hex");
 
 module.exports = config;
