@@ -35,6 +35,44 @@ async function request(method, path, body) {
   return data;
 }
 
+// Live slot events (GET /api/events, server-sent events). Read with fetch so the token goes in
+// the Authorization header, not the URL. Calls onEvent(event) for each event and reconnects
+// with backoff if the connection drops. Returns a function that closes the stream.
+export function liveEvents(params, onEvent) {
+  let controller = null;
+  let closed = false;
+  let retryMs = 1000;
+  async function connect() {
+    controller = new AbortController();
+    try {
+      const res = await fetch(`${BASE}/api/events?${new URLSearchParams(params)}`, {
+        headers: { authorization: `Bearer ${authToken}` }, signal: controller.signal,
+      });
+      if (!res.ok || !res.body) throw new Error(`events: ${res.status}`);
+      retryMs = 1000;
+      const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+      let buffer = "";
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += value;
+        const blocks = buffer.split("\n\n");
+        buffer = blocks.pop();
+        for (const block of blocks) {
+          const data = block.split("\n").find((line) => line.startsWith("data: "));
+          if (data) onEvent(JSON.parse(data.slice(6)));
+        }
+      }
+    } catch { /* dropped, refused or closed */ }
+    if (!closed) {
+      setTimeout(connect, retryMs);
+      retryMs = Math.min(retryMs * 2, 30000);
+    }
+  }
+  connect();
+  return () => { closed = true; controller?.abort(); };
+}
+
 export const api = {
   register: (body) => request("POST", "/api/auth/register", body),
   login: (email, password) => request("POST", "/api/auth/login", { email, password }),
@@ -81,6 +119,8 @@ export const RESERVATION_STATUS = {
   HELD: { label: "Booked", hint: "Pay online or at the gate" },
   CONFIRMED: { label: "Confirmed", hint: "Paid" },
   EXPIRED: { label: "Expired", hint: "You didn't arrive within the grace period" },
+  CHECKED_IN: { label: "Parked", hint: "You're parked in this slot" },
+  COMPLETED: { label: "Completed", hint: "" },
   CANCELLED: { label: "Cancelled", hint: "" },
   REFUNDED: { label: "Refunded", hint: "Cancelled and refunded" },
 };

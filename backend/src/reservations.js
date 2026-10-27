@@ -12,6 +12,7 @@ const Slot = require("./models/Slot");
 const Vehicle = require("./models/Vehicle");
 const Zone = require("./models/Zone");
 const { notify } = require("./notifications");
+const events = require("./events");
 const { windowErrors, checkWindow, loadFacility, freeSlots, isId } = require("./slotSearch");
 const { badRequest, conflict, notFound } = require("./errors");
 
@@ -118,6 +119,7 @@ async function createReservation(user, body) {
   }
 
   logger.info("reservation held", { reservationId: reservation.id, userId: user.id });
+  events.publish({ type: "availability", facilityId: facility._id, reason: "BOOKED" });
   await notify({ userId: user.id, to: user.email, type: "RESERVATION_HELD",
     data: { reservationId: reservation.id, startTime: start, endTime: end } });
   return presentOne(reservation);
@@ -152,6 +154,7 @@ async function cancelReservation(user, id) {
   );
   if (!reservation) throw conflict(`This booking is ${existing.status.toLowerCase()} and can't be cancelled`);
 
+  events.publish({ type: "availability", facilityId: reservation.facility, reason: "CANCELLED" });
   if (user.role === "ADMIN") {
     await AuditLog.create({ event: "RESERVATION_CANCELLED", actorId: user._id, at: clock.now(),
       details: { reservationId: reservation.id } });

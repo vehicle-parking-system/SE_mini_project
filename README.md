@@ -39,6 +39,7 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `POST /api/payments` | Driver (`ONLINE`, own session) or attendant (`AT_GATE`). `{sessionId, method, gatewayToken}` → `201 {paymentId, amount, status: PENDING, gatewayRef}`. The amount is what's owed now; 409 if nothing is owed |
 | `POST /api/payments/webhook` | Public, authenticated by its signature. `{paymentId, status: CONFIRMED\|FAILED}` with `x-razorpay-signature` (hex HMAC-SHA256 of the raw body with `PAYMENT_WEBHOOK_SECRET`). 401 for a bad signature; a replayed event is ignored |
 | `GET /api/payments/:id` | A payment's status (drivers: their own) |
+| `GET /api/events` | Any logged-in user. `?facilityId` → `text/event-stream` of live `slot` and `availability` events |
 | `POST /api/tickets/scan` | Staff. `{qrCode}` → the session the entry ticket belongs to; 400 "Invalid ticket" otherwise |
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
 | `GET /api/occupancy/:facilityId` | Staff. `{capacity, occupied, booked, free, full, byVehicleType, byZone}` (inactive slots excluded) |
@@ -114,7 +115,14 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **The barrier opens only when confirmed payments cover the fee.** Until then the exit gets 402: `UNPAID`, or `PENDING` while a payment awaits confirmation, and the display shows "Please pay ₹…" or "Waiting for payment confirmation". Once paid, the session is closed (exit time, billed duration, amount) and the barrier opens, exactly once however many exit requests race.
 - After paying, the driver has `EXIT_GRACE_MINUTES` (15) to leave before further time is charged.
 - **Sandbox gateway.** No real gateway is connected yet. [`paymentGateway.js`](backend/src/paymentGateway.js) accepts any `tok_…` token. Outside tests it sends its own signed confirmation after a moment (`PAYMENT_SANDBOX_AUTOCONFIRM`), so the app works end to end. `tok_sandbox_decline` is declined.
-- Releasing the slot when the vehicle leaves is the next story.
+
+**Real-time Slot Release on Exit (VPS-F-012).**
+
+- When the exit is confirmed, the slot becomes `AVAILABLE` in the same request, before the response, and its version is bumped. The next vehicle at the entry can have it straight away.
+- A booking the vehicle came in on becomes `COMPLETED`, so leaving early frees the slot for the rest of the booked window too.
+- **Live events.** Every slot change (entry, exit, booking, cancellation) is published on an event bus ([`backend/src/events.js`](backend/src/events.js)) and pushed to open `GET /api/events` streams. The Gate page refreshes occupancy and the vehicle list as soon as anything changes at its facility, and a driver's search results update as soon as a slot is taken or freed. Both keep their 30-second refresh as a fallback.
+- The stream is authenticated like every endpoint. The web app reads it with `fetch`, so the token travels in the `Authorization` header and never in a URL, and reconnects with backoff.
+- The bus is in-process. With several API instances, publish through a shared broker such as Redis pub/sub instead.
 
 There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 

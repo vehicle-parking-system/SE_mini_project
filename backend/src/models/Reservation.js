@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const RESERVATION_STATUSES = ["HELD", "CONFIRMED", "CHECKED_IN", "EXPIRED", "CANCELLED", "REFUNDED"];
+const RESERVATION_STATUSES = ["HELD", "CONFIRMED", "CHECKED_IN", "COMPLETED", "EXPIRED", "CANCELLED", "REFUNDED"];
 
 // A booking of one slot for a time window. Slot search and booking treat a slot as taken
 // for any window that overlaps an *active* reservation (see activeReservationFilter).
@@ -8,6 +8,7 @@ const RESERVATION_STATUSES = ["HELD", "CONFIRMED", "CHECKED_IN", "EXPIRED", "CAN
 // HELD: booked, not paid. The slot is kept until holdExpiresAt (start + the facility's
 // grace period); if the driver hasn't arrived by then the hold lapses and it becomes EXPIRED.
 // CONFIRMED: paid. CHECKED_IN: the vehicle has entered (its session is `session`).
+// COMPLETED: the vehicle has left; the slot is free again even if the window hasn't ended.
 // CANCELLED / REFUNDED: cancelled by the driver or an admin.
 const reservationSchema = new mongoose.Schema({
   slot: { type: mongoose.Schema.Types.ObjectId, ref: "Slot", required: true },

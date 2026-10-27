@@ -29,6 +29,7 @@ const RULES = [
 
   // Slot search & reservations (Driver Web App)
   ["GET", "/api/facilities", ANY_USER],
+  ["GET", "/api/events", ANY_USER], //  live slot events for gate screens and searches
   ["GET", "/api/slots/available", [DRIVER]],
   ["POST", "/api/reservations", [DRIVER]],
   ["GET", "/api/reservations", [DRIVER]], //  the driver's own bookings

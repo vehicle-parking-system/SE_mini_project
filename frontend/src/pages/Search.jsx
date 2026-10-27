@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api, VEHICLE_TYPES } from "../api";
+import { api, liveEvents, VEHICLE_TYPES } from "../api";
 import { defaultWindow, formatDay, formatTime, zonedIso } from "../time";
 
 const REFRESH_MS = 30000;
@@ -55,13 +55,25 @@ export default function Search() {
     }
   }, []);
 
-  // Real-time: re-run the last search every 30 s while the page is visible
+  // Real-time: re-run the last search every 30 s while the page is visible, and at once when
+  // a slot at the searched facility is taken or freed
   useEffect(() => {
     const id = setInterval(() => {
       if (lastQuery.current && document.visibilityState === "visible") run(lastQuery.current, { quiet: true });
     }, REFRESH_MS);
     return () => clearInterval(id);
   }, [run]);
+
+  const searchedFacility = result?.facility.id;
+  useEffect(() => {
+    if (!searchedFacility) return undefined;
+    let timer = null;
+    const close = liveEvents({ facilityId: searchedFacility }, () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => lastQuery.current && run(lastQuery.current, { quiet: true }), 300);
+    });
+    return () => { clearTimeout(timer); close(); };
+  }, [searchedFacility, run]);
 
   if (error && !facilities) return <main className="page"><p className="notice error" role="alert">{error}</p></main>;
   if (!facilities) return <main className="page"><p className="muted">Loading…</p></main>;
@@ -173,7 +185,7 @@ export default function Search() {
           <p className="muted results-meta">
             {formatDay(result.window.startTime, tz)}, {formatTime(result.window.startTime, tz)}–{formatTime(result.window.endTime, tz)}
             {" · "}{typeLabel(lastQuery.current?.vehicleType)}
-            {" · "}updated {formatTime(result.checkedAt, tz)}, refreshes every 30 s
+            {" · "}updated {formatTime(result.checkedAt, tz)}, live
           </p>
           {result.slots.length > 0 && (myVehicles.length === 0 ? (
             <p className="notice">To book, <Link to="/profile">add a {typeLabel(searchedType).toLowerCase()}</Link> to your profile.</p>
