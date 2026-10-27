@@ -1,4 +1,5 @@
 import QrCode from "./QrCode";
+import { formatDuration, formatMoney } from "../api";
 import { formatDay, formatTime } from "../time";
 
 // Entry ticket (VPS-F-004): proof of entry with the QR code to scan at the exit gate.
@@ -13,6 +14,9 @@ export default function Ticket({ session, facilityName, timezone, onPrint }) {
           <dt>Vehicle</dt><dd><span className="plate">{session.plateNumber}</span></dd>
           <dt>Entered</dt><dd>{formatDay(session.entryTime, timezone)}, {formatTime(session.entryTime, timezone)}</dd>
           <dt>Gate</dt><dd>{session.gateName}</dd>
+          {session.fee && (
+            <><dt>So far</dt><dd>{formatMoney(session.fee.amount)} for {formatDuration(session.fee.duration)} <span className="muted">({formatMoney(session.ratePerHour)}/h)</span></dd></>
+          )}
         </dl>
         <p className="muted small">Scan this ticket at the exit gate.</p>
         {onPrint && <button type="button" className="btn small no-print" onClick={onPrint}>Print ticket</button>}

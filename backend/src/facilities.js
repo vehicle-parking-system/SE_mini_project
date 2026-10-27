@@ -2,16 +2,18 @@
 // seed script until the admin console (Lot / Zone / Slot configuration) exists.
 const Facility = require("./models/Facility");
 const Gate = require("./models/Gate");
+const Rate = require("./models/Rate");
 const Zone = require("./models/Zone");
 const Slot = require("./models/Slot");
 
 // def: {key?, name, openTime, closeTime, timezone?, address?, reservationGraceMinutes?,
 //       gates?: [{key?, name?, type: ENTRY|EXIT}],
+//       rates?: [{zone?: <zone key>, vehicleType, ratePerHour}]  (no zone: facility-wide)
 //       zones: [{key?, name, slots: [{key?, number, vehicleType, distance?, status?}]}]}
 // Without gates, the facility gets one entry and one exit gate.
 // Returns the facility and {<key>: <id>} for every keyed facility, gate, zone and slot.
 async function createFacility(def) {
-  const { key, zones = [], gates = [{ type: "ENTRY" }, { type: "EXIT" }], ...fields } = def;
+  const { key, zones = [], gates = [{ type: "ENTRY" }, { type: "EXIT" }], rates = [], ...fields } = def;
   const facility = await Facility.create({
     name: fields.name, address: fields.address, timezone: fields.timezone, openTime: fields.openTime,
     closeTime: fields.closeTime, reservationGraceMinutes: fields.reservationGraceMinutes,
@@ -34,6 +36,12 @@ async function createFacility(def) {
       distance: s.distance, status: s.status,
     })));
     (z.slots ?? []).forEach((s, i) => { if (s.key) ids[s.key] = slots[i].id; });
+  }
+  const zoneIds = {};
+  zones.forEach((z) => { if (z.key) zoneIds[z.key] = ids[z.key]; });
+  for (const r of rates) {
+    await Rate.create({ facility: facility._id, zone: r.zone ? zoneIds[r.zone] : null, vehicleType: r.vehicleType,
+      ratePerHour: r.ratePerHour });
   }
   return { facility, ids };
 }

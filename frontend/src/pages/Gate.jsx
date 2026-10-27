@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, VEHICLE_TYPES } from "../api";
+import { api, formatDuration, formatMoney, VEHICLE_TYPES } from "../api";
 import Ticket from "../components/Ticket";
 import { formatTime } from "../time";
 
@@ -98,6 +98,60 @@ function EntryPanel({ gate, facility, onEntered }) {
   );
 }
 
+// Vehicle exit (VPS-F-010): find the vehicle by its entry ticket or plate and show the fee for its stay.
+function ExitPanel({ gate, onChanged }) {
+  const [by, setBy] = useState("QR");
+  const [value, setValue] = useState("");
+  const [result, setResult] = useState(null); // {kind: "due"|"done"|"error", ...}
+  const [busy, setBusy] = useState(false);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setBusy(true);
+    setResult(null);
+    try {
+      const done = await api.exit({ gateId: gate.id, ...(by === "QR" ? { qrCode: value } : { plateNumber: value }) });
+      setResult({ kind: "done", ...done });
+      setValue("");
+    } catch (err) {
+      setResult(err.status === 402 ? { kind: "due", ...err.data } : { kind: "error", text: err.message });
+    } finally {
+      setBusy(false);
+      onChanged();
+    }
+  }
+
+  return (
+    <form className="card" onSubmit={onSubmit} noValidate>
+      <h2>Vehicle exit</h2>
+      <div className="segmented" role="radiogroup" aria-label="How to find the vehicle">
+        {[["QR", "Ticket scan"], ["PLATE", "Number plate"]].map(([v, label]) => (
+          <button key={v} type="button" role="radio" aria-checked={by === v} className={by === v ? "active" : ""}
+            onClick={() => { setBy(v); setValue(""); }}>{label}</button>
+        ))}
+      </div>
+      <div className="field">
+        <label htmlFor="exitLookup">{by === "QR" ? "Entry ticket code" : "Number plate"}</label>
+        <input id="exitLookup" value={value} autoComplete="off" placeholder={by === "QR" ? "Scan or paste the ticket" : "KA01AB1234"}
+          onChange={(e) => setValue(by === "QR" ? e.target.value : e.target.value.toUpperCase())} />
+      </div>
+      <button className="btn primary" disabled={busy || !value.trim()}>{busy ? "Checking…" : "Calculate fee"}</button>
+
+      {result?.kind === "error" && <p className="notice error gate-result" role="alert">{result.text}</p>}
+      {result?.kind === "due" && (
+        <div className="fee gate-result" role="status">
+          <p className="fee-amount">{formatMoney(result.amount)} <span className="muted">due</span></p>
+          <p className="muted">
+            {formatDuration(result.duration)} parked · {result.chargedHours} h × {formatMoney(result.ratePerHour)}
+            {result.paid > 0 && <> · {formatMoney(result.paid)} already paid</>}
+          </p>
+          <p className="muted small">The barrier opens once the fee is paid.</p>
+        </div>
+      )}
+    </form>
+  );
+}
+
 const typeLabel = (value) => VEHICLE_TYPES.find((t) => t.value === value)?.label ?? value;
 
 // Live occupancy (VPS-F-003): free slots per vehicle type, so the attendant sees "full" before a car arrives.
@@ -174,8 +228,8 @@ export default function Gate() {
         const facility = list.find((f) => f.id === current.facilityId) ?? list[0];
         if (!facility) return {};
         const gates = facility.gates ?? [];
-        const entryGate = gates.find((g) => g.id === current.entryGateId) ?? gates.find((g) => g.type === "ENTRY");
-        return { facilityId: facility.id, entryGateId: entryGate?.id };
+        const pick = (type, id) => (gates.find((g) => g.id === id && g.type === type) ?? gates.find((g) => g.type === type))?.id;
+        return { facilityId: facility.id, entryGateId: pick("ENTRY", current.entryGateId), exitGateId: pick("EXIT", current.exitGateId) };
       });
     }).catch((err) => setError(err.message));
   }, []);
@@ -208,10 +262,13 @@ export default function Gate() {
   const facility = facilities.find((f) => f.id === selection.facilityId);
   const entryGates = facility.gates.filter((g) => g.type === "ENTRY");
   const entryGate = entryGates.find((g) => g.id === selection.entryGateId);
+  const exitGates = facility.gates.filter((g) => g.type === "EXIT");
+  const exitGate = exitGates.find((g) => g.id === selection.exitGateId);
 
   const onFacility = (e) => {
     const next = facilities.find((f) => f.id === e.target.value);
-    setSelection({ facilityId: next.id, entryGateId: next.gates.find((g) => g.type === "ENTRY")?.id });
+    setSelection({ facilityId: next.id, entryGateId: next.gates.find((g) => g.type === "ENTRY")?.id,
+      exitGateId: next.gates.find((g) => g.type === "EXIT")?.id });
   };
 
   return (
@@ -219,7 +276,7 @@ export default function Gate() {
       <header className="page-header gate-header">
         <div>
           <h1>Gate</h1>
-          <p className="muted">Admit vehicles at the entry barrier.</p>
+          <p className="muted">Admit vehicles at the entry barrier and let them out at the exit.</p>
         </div>
         <div className="row gate-pick">
           <div className="field">
@@ -234,12 +291,20 @@ export default function Gate() {
               {entryGates.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </div>
+          <div className="field">
+            <label htmlFor="exitGate">Exit gate</label>
+            <select id="exitGate" value={exitGate?.id ?? ""} onChange={(e) => setSelection({ ...selection, exitGateId: e.target.value })}>
+              {exitGates.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+            </select>
+          </div>
         </div>
       </header>
       <div className="grid">
         <div className="stack">
           {entryGate ? <EntryPanel gate={entryGate} facility={facility} onEntered={refresh} />
             : <div className="card"><p className="muted">This facility has no entry gate.</p></div>}
+          {exitGate ? <ExitPanel gate={exitGate} onChanged={refresh} />
+            : <div className="card"><p className="muted">This facility has no exit gate.</p></div>}
         </div>
         <div className="stack">
           <OccupancyCard occupancy={occupancy} />

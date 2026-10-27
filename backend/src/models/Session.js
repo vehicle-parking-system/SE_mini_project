@@ -21,6 +21,8 @@ const sessionSchema = new mongoose.Schema({
   source: { type: String, enum: ENTRY_SOURCES, required: true },
   capturedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // the attendant or kiosk account
   entryTime: { type: Date, required: true },
+  // the rate card's hourly rate when the vehicle entered (see pricing.js); 0 if none was configured
+  ratePerHour: { type: Number, default: 0 },
   exitTime: { type: Date },
   status: { type: String, enum: SESSION_STATUSES, default: "ACTIVE" },
 }, { timestamps: true });
@@ -38,6 +40,7 @@ sessionSchema.methods.toPublic = function toPublic({ slot, zone, gate } = {}) {
     zoneId: this.zone.toString(), zoneName: zone?.name ?? null,
     reservationId: this.reservation?.toString() ?? null,
     entryTime: this.entryTime.toISOString(), exitTime: this.exitTime?.toISOString() ?? null,
+    ratePerHour: this.ratePerHour,
   };
 };
 

@@ -42,7 +42,7 @@ function createApp() {
   app.use((err, req, res, _next) => {
     if (err instanceof ApiError) {
       if (err.headers) res.set(err.headers);
-      return res.status(err.status).json({ error: { code: err.code, message: err.message, details: err.details } });
+      return res.status(err.status).json({ ...err.extra, error: { code: err.code, message: err.message, details: err.details } });
     }
     if (err.type === "entity.parse.failed") {
       return res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Request body is not valid JSON" } });

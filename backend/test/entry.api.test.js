@@ -94,7 +94,7 @@ describeDb("vehicle entry", () => {
       expect(res.body.vehicleType).toBe("CAR");
       expect(res.body.source).toBe("MANUAL");
       const session = await api.get(`/api/sessions/${res.body.sessionId}`).set(as("attendant"));
-      expect(session.body).toEqual(res.body);
+      expect(session.body).toEqual({ ...res.body, fee: expect.objectContaining({ amount: 0 }) }); // fee is quoted at read time
     });
 
     test("an unknown plate needs a vehicle type", async () => {

@@ -2,11 +2,13 @@
 // server's message and per-field details ({error: {code, message, details}}).
 const BASE = import.meta.env.VITE_API_URL || "";
 
+// `data` is the whole error body, e.g. the amount due that comes with a 402
 export class ApiError extends Error {
-  constructor(status, message, details) {
+  constructor(status, message, details, data) {
     super(message);
     this.status = status;
     this.details = details || {};
+    this.data = data || {};
   }
 }
 
@@ -29,7 +31,7 @@ async function request(method, path, body) {
   }
   if (res.status === 204) return null;
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new ApiError(res.status, data.error?.message || "Something went wrong", data.error?.details);
+  if (!res.ok) throw new ApiError(res.status, data.error?.message || "Something went wrong", data.error?.details, data);
   return data;
 }
 
@@ -49,6 +51,7 @@ export const api = {
   cancelReservation: (id) => request("POST", `/api/reservations/${id}/cancel`),
   enter: (entry) => request("POST", "/api/entry", entry),
   occupancy: (facilityId) => request("GET", `/api/occupancy/${facilityId}`),
+  exit: (body) => request("POST", "/api/exit", body),
   scanTicket: (qrCode) => request("POST", "/api/tickets/scan", { qrCode }),
   sessions: (params) => request("GET", `/api/sessions?${new URLSearchParams(params)}`),
   listAttendants: () => request("GET", "/api/admin/attendants"),
@@ -57,6 +60,15 @@ export const api = {
   unlockUser: (id) => request("POST", `/api/admin/users/${id}/unlock`),
   auditLogs: (events) => request("GET", `/api/admin/audit-logs?event=${encodeURIComponent(events.join(","))}`),
 };
+
+export const formatMoney = (amount) => `₹${Number(amount).toLocaleString("en-IN")}`;
+
+// 61 -> "1 h 1 min"
+export function formatDuration(minutes) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return [h && `${h} h`, (m || !h) && `${m} min`].filter(Boolean).join(" ");
+}
 
 export const ROLE_LABELS = { DRIVER: "Driver", ATTENDANT: "Attendant", ADMIN: "Admin" };
 
