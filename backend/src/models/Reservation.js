@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 
-const RESERVATION_STATUSES = ["HELD", "CONFIRMED", "EXPIRED", "CANCELLED", "REFUNDED"];
+const RESERVATION_STATUSES = ["HELD", "CONFIRMED", "CHECKED_IN", "EXPIRED", "CANCELLED", "REFUNDED"];
 
 // A booking of one slot for a time window. Slot search and booking treat a slot as taken
 // for any window that overlaps an *active* reservation (see activeReservationFilter).
 //
 // HELD: booked, not paid. The slot is kept until holdExpiresAt (start + the facility's
 // grace period); if the driver hasn't arrived by then the hold lapses and it becomes EXPIRED.
-// CONFIRMED: paid. CANCELLED / REFUNDED: cancelled by the driver or an admin.
+// CONFIRMED: paid. CHECKED_IN: the vehicle has entered (its session is `session`).
+// CANCELLED / REFUNDED: cancelled by the driver or an admin.
 const reservationSchema = new mongoose.Schema({
   slot: { type: mongoose.Schema.Types.ObjectId, ref: "Slot", required: true },
   facility: { type: mongoose.Schema.Types.ObjectId, ref: "Facility", required: true },
@@ -19,6 +20,8 @@ const reservationSchema = new mongoose.Schema({
   status: { type: String, enum: RESERVATION_STATUSES, default: "HELD" },
   holdExpiresAt: { type: Date }, // a HELD reservation stops blocking the slot after this
   cancelledAt: { type: Date },
+  checkedInAt: { type: Date },
+  session: { type: mongoose.Schema.Types.ObjectId, ref: "Session" },
 }, { timestamps: true });
 
 reservationSchema.index({ slot: 1, startTime: 1, endTime: 1 });
@@ -35,16 +38,17 @@ reservationSchema.methods.toPublic = function toPublic({ slot, zone, facility, v
     facilityId: this.facility.toString(), facilityName: facility?.name ?? null, timezone: facility?.timezone ?? null,
     vehicleId: this.vehicle?.toString() ?? null, plateNumber: vehicle?.plateNumber ?? null, vehicleType: vehicle?.vehicleType ?? null,
     createdAt: this.createdAt?.toISOString() ?? null, cancelledAt: this.cancelledAt?.toISOString() ?? null,
+    checkedInAt: this.checkedInAt?.toISOString() ?? null, sessionId: this.session?.toString() ?? null,
   };
 };
 
-// Reservations that block their slot during [start, end): confirmed ones, and held ones
-// whose hold hasn't expired, whose window overlaps the given one.
+// Reservations that block their slot during [start, end): confirmed and checked-in ones,
+// and held ones whose hold hasn't expired, whose window overlaps the given one.
 function activeReservationFilter(start, end, now) {
   return {
     startTime: { $lt: end },
     endTime: { $gt: start },
-    $or: [{ status: "CONFIRMED" }, { status: "HELD", holdExpiresAt: { $gt: now } }],
+    $or: [{ status: { $in: ["CONFIRMED", "CHECKED_IN"] } }, { status: "HELD", holdExpiresAt: { $gt: now } }],
   };
 }
 

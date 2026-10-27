@@ -5,6 +5,7 @@ const User = require("../models/User");
 const Vehicle = require("../models/Vehicle");
 const auth = require("../auth");
 const { addVehicles } = require("../accounts");
+const { sessionsForDriver } = require("../entry");
 const { badRequest, conflict, notFound } = require("../errors");
 const { MAX_VEHICLES, validateProfileUpdate, validatePasswordChange, validateVehicle } = require("../validation");
 
@@ -44,6 +45,12 @@ router.post("/me/vehicles", async (req, res) => {
   }
   const [created] = await addVehicles(req.user._id, [vehicle]);
   res.status(201).json({ vehicle: created.toPublic() });
+});
+
+// GET /api/users/me/sessions -> {sessions:[...]} parking sessions of the user's registered vehicles,
+// latest first; an active one carries its entry ticket (ticketQr)
+router.get("/me/sessions", async (req, res) => {
+  res.json({ sessions: await sessionsForDriver(req.user) });
 });
 
 // DELETE /api/users/me/vehicles/:id -> 204

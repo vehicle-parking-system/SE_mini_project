@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { api, RESERVATION_STATUS } from "../api";
+import { api, formatMoney, RESERVATION_STATUS, SANDBOX_GATEWAY_TOKEN } from "../api";
 import QrCode from "../components/QrCode";
+import Ticket from "../components/Ticket";
 import { formatDay, formatTime } from "../time";
 
 const ACTIVE = ["HELD", "CONFIRMED"];
@@ -55,15 +56,56 @@ function Booking({ booking, onCancelled, highlight }) {
   );
 }
 
+// Pay the parking fee online before walking back to the car, so the exit barrier opens straight away.
+function PayOnline({ session, onPaid }) {
+  const [state, setState] = useState(null); // null | "paying" | {error}
+  const fee = session.fee;
+  if (!fee) return null;
+  if (fee.paymentStatus === "PAID") {
+    return <p className="notice success">Paid. You have a few minutes to drive out without paying more.</p>;
+  }
+
+  async function pay() {
+    setState("paying");
+    try {
+      await api.pay({ sessionId: session.sessionId, method: "ONLINE", gatewayToken: SANDBOX_GATEWAY_TOKEN });
+      for (let i = 0; i < 20; i++) {
+        await new Promise((r) => setTimeout(r, 1500));
+        const updated = (await api.mySessions()).sessions.find((s) => s.sessionId === session.sessionId);
+        if (updated?.fee?.paymentStatus !== "PENDING") {
+          onPaid(updated);
+          setState(updated?.fee?.paymentStatus === "UNPAID" ? { error: "The payment was declined." } : null);
+          return;
+        }
+      }
+      setState({ error: "The payment is taking longer than usual. Check back in a minute." });
+    } catch (err) {
+      setState({ error: err.message });
+    }
+  }
+
+  return (
+    <div className="pay-online">
+      {state?.error && <p className="notice error" role="alert">{state.error}</p>}
+      <button className="btn primary" onClick={pay} disabled={state === "paying"}>
+        {state === "paying" ? "Confirming payment…" : `Pay ${formatMoney(fee.amount)} now`}
+      </button>
+      <span className="muted small">Pay before you leave and the exit barrier opens straight away.</span>
+    </div>
+  );
+}
+
 // The driver's bookings. Active ones show the QR code to scan at the entry gate.
 export default function Bookings() {
   const location = useLocation();
   const justBooked = location.state?.booked;
   const [bookings, setBookings] = useState(null);
+  const [parked, setParked] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     api.myReservations().then(({ reservations }) => setBookings(reservations)).catch((err) => setError(err.message));
+    api.mySessions().then(({ sessions }) => setParked(sessions.filter((s) => s.status === "ACTIVE"))).catch(() => {});
   }, []);
 
   const replace = (updated) => setBookings(bookings.map((b) => (b.reservationId === updated.reservationId ? updated : b)));
@@ -80,6 +122,17 @@ export default function Bookings() {
         <h1>My bookings</h1>
         <p className="muted">Show the QR code at the entry gate. The slot is kept for you until the grace period after your start time.</p>
       </header>
+      {parked.length > 0 && (
+        <section className="parked-now">
+          <h2>Parked now</h2>
+          {parked.map((s) => (
+            <div className="card" key={s.sessionId}>
+              <Ticket session={s} />
+              <PayOnline session={s} onPaid={(updated) => setParked(parked.map((p) => (p.sessionId === updated.sessionId ? updated : p)))} />
+            </div>
+          ))}
+        </section>
+      )}
       {justBooked && (
         <p className="notice success" role="status">Slot {justBooked.slotNumber} is booked for you.</p>
       )}

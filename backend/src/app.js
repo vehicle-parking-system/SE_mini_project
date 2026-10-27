@@ -9,7 +9,8 @@ function createApp() {
   const app = express();
   app.disable("x-powered-by");
   app.set("trust proxy", config.trustProxy);
-  app.use(express.json({ limit: "100kb" }));
+  // The raw body is kept for verifying payment webhook signatures.
+  app.use(express.json({ limit: "100kb", verify: (req, _res, buf) => { req.rawBody = buf; } }));
 
   // Access log: method, path and status only — never bodies, query strings or headers (VPS-NF-003).
   app.use((req, res, next) => {
@@ -32,6 +33,8 @@ function createApp() {
   app.use("/api/facilities", require("./routes/facilities"));
   app.use("/api/slots", require("./routes/slots"));
   app.use("/api/reservations", require("./routes/reservations"));
+  app.use("/api", require("./routes/gate"));
+  app.use("/api/payments", require("./routes/payments"));
   app.use("/api/admin", require("./routes/admin"));
   if (config.isTest) app.use("/api/test", require("./routes/test"));
 
@@ -41,7 +44,7 @@ function createApp() {
   app.use((err, req, res, _next) => {
     if (err instanceof ApiError) {
       if (err.headers) res.set(err.headers);
-      return res.status(err.status).json({ error: { code: err.code, message: err.message, details: err.details } });
+      return res.status(err.status).json({ ...err.extra, error: { code: err.code, message: err.message, details: err.details } });
     }
     if (err.type === "entity.parse.failed") {
       return res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Request body is not valid JSON" } });

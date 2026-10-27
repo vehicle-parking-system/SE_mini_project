@@ -19,6 +19,13 @@ const config = {
   mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/vps",
   jwtSecret: process.env.JWT_SECRET || (isTest || process.env.NODE_ENV !== "production" ? "dev_jwt_secret" : undefined),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
+  // Payment gateway webhooks are signed with this (hex HMAC-SHA256 of the raw body)
+  paymentWebhookSecret: process.env.PAYMENT_WEBHOOK_SECRET
+    || (isTest || process.env.NODE_ENV !== "production" ? "test_webhook_secret" : undefined),
+  // The sandbox gateway confirms its own payments after a moment (see paymentGateway.js)
+  paymentSandboxAutoConfirm: process.env.PAYMENT_SANDBOX_AUTOCONFIRM ? process.env.PAYMENT_SANDBOX_AUTOCONFIRM === "true" : !isTest,
+  // After paying, a vehicle may leave within this many minutes without paying for the extra time
+  exitGraceMinutes: Number(process.env.EXIT_GRACE_MINUTES) || 15,
   // Signs the QR codes on bookings and entry tickets; derived from JWT_SECRET unless set
   qrSecret: process.env.QR_SECRET,
   bcryptRounds: Number(process.env.BCRYPT_ROUNDS) || 10,
@@ -36,6 +43,7 @@ const config = {
 };
 
 if (!config.jwtSecret) throw new Error("JWT_SECRET must be set in production");
+if (!config.paymentWebhookSecret) throw new Error("PAYMENT_WEBHOOK_SECRET must be set in production");
 config.qrSecret ||= require("crypto").createHmac("sha256", config.jwtSecret).update("vps-qr").digest("hex");
 
 module.exports = config;

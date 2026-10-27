@@ -7,4 +7,18 @@ function localParts(instant, timeZone) {
   return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
 }
 
-module.exports = { localParts };
+// Offset of the zone from UTC at an instant, in ms (e.g. +5:30 h for India)
+function offsetMs(instant, timeZone) {
+  const { date, time } = localParts(instant, timeZone);
+  return Date.parse(`${date}T${time}:00Z`) - Math.floor(instant.getTime() / 60000) * 60000;
+}
+
+// The instant at a local date and time ("2026-11-02", "23:00") in a time zone. The offset is
+// taken a second time at the result, in case a daylight-saving change lies in between.
+function localInstant(date, time, timeZone) {
+  const wall = Date.parse(`${date}T${time}:00Z`);
+  const first = wall - offsetMs(new Date(wall), timeZone);
+  return new Date(wall - offsetMs(new Date(first), timeZone));
+}
+
+module.exports = { localParts, localInstant };

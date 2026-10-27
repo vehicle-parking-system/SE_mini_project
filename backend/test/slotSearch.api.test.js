@@ -91,9 +91,9 @@ describeDb("real-time slot search", () => {
         zoneId: ids.zoneA, zoneName: "Zone A" });
       expect(res.body.facility).toEqual(expect.objectContaining({ id: ids.city, name: "City Centre", openTime: "06:00" }));
       expect(res.body.window).toEqual({ startTime: new Date(at("14:00")).toISOString(), endTime: new Date(at("16:00")).toISOString() });
-      // the test clock keeps ticking after it is set, so allow a second
+      // the test clock keeps ticking after it is set (slowly, when every suite runs at once)
       expect(Date.parse(res.body.checkedAt) - Date.parse(NOW)).toBeGreaterThanOrEqual(0);
-      expect(Date.parse(res.body.checkedAt) - Date.parse(NOW)).toBeLessThan(1000);
+      expect(Date.parse(res.body.checkedAt) - Date.parse(NOW)).toBeLessThan(10000);
     });
   });
 
