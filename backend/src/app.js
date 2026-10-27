@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./config");
 const logger = require("./logger");
+const clock = require("./clock");
+const accessLog = require("./accessLog");
 const { ApiError } = require("./errors");
 const { authorize } = require("./middleware/auth");
 const { rejectCardData } = require("./middleware/cardData");
@@ -18,11 +20,19 @@ function createApp(options = {}) {
   app.use(express.json({ limit: "100kb", verify: (req, _res, buf) => { req.rawBody = buf; } }));
 
   // Access log: method, path and status only — never bodies, query strings or headers (VPS-NF-003).
+  // Written to the process log and kept in the database for audits (VPS-NF-004, accessLog.js);
+  // load balancer health checks and test hooks are left out of the stored log.
   app.use((req, res, next) => {
     const started = Date.now();
-    res.on("finish", () => logger.info("request", {
-      method: req.method, path: req.originalUrl.split("?")[0], status: res.statusCode, ms: Date.now() - started,
-    }));
+    const at = clock.now();
+    res.on("finish", () => {
+      const path = req.originalUrl.split("?")[0];
+      const ms = Date.now() - started;
+      logger.info("request", { method: req.method, path, status: res.statusCode, ms });
+      if (path === "/api/health" || path.startsWith("/api/test/")) return;
+      accessLog.record({ at, method: req.method, path, status: res.statusCode, ms,
+        ...(req.user && { userId: req.user._id, role: req.user.role }), ip: req.ip });
+    });
     next();
   });
 

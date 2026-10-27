@@ -5,6 +5,8 @@ const { createApp } = require("./app");
 const transport = require("./transport");
 const { ensureAdmin } = require("./accounts");
 const { expireHolds } = require("./reservations");
+const { scheduleArchive } = require("./archive");
+const accessLog = require("./accessLog");
 
 const SWEEP_MS = 60000;
 
@@ -20,6 +22,11 @@ async function main() {
   // Lapsed holds are also expired whenever reservations are read; this keeps stored statuses current.
   setInterval(() => expireHolds().catch((err) => logger.error("hold sweep failed", { error: err.message })), SWEEP_MS).unref();
   await transport.listen(app, config);
+  if (!config.isTest) scheduleArchive(); // daily log archival (VPS-NF-004)
+  // Write buffered access log entries before the process stops
+  for (const signal of ["SIGTERM", "SIGINT"]) {
+    process.once(signal, () => accessLog.flush().finally(() => process.exit(0)));
+  }
 }
 
 main().catch((err) => {

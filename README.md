@@ -51,6 +51,9 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/gates/status` | Staff. `?facilityId` → `{gates:[{id, name, type, online, queued, lastDeliveredAt}]}` |
 | `POST /api/gates/:id/override` | Staff. `{action: OPEN\|CLOSE, reason, note?}` → `{gateId, action, delivered, online, queued}`. Audited as `MANUAL_OVERRIDE` |
 | `GET /api/gates/overrides` | Staff. `?facilityId` → the latest 50 `MANUAL_OVERRIDE` entries, for the shift log |
+| `GET /api/admin/logs` | Admin only. `?type=access\|audit&from&to&event?&userId?&path?&status?&limit?` (UTC dates) → `{logs:[{…, source: database\|archive}], sources, filesRead, integrity}`. Searches the database and the archive together |
+| `GET /api/admin/archives` | Admin only. `{hotDays, retentionDays, lastRun, totals, files:[{collection, day, file, count, bytes, sha256}]}` |
+| `POST /api/admin/archives/run` | Admin only. Runs the archive now → `{ran, cutoff, archived:{access, audit}, purgedFiles}`; 409 while a run is in progress |
 | `GET /api/admin/metrics/gates` | Admin only. `{budgetMs: 3000, targetPct: 90, entry:{count, p50, p90, p99, max, overBudget, withinBudgetPct, meetsTarget}, exit:{…}}` over this instance's latest 2000 of each |
 | `GET /api/admin/facilities` | Admin only. Every facility with its settings, gates, zones, slots (`active`, live `status`) and rates. `GET /api/admin/facilities/:id` for one |
 | `POST /api/admin/facilities` | Admin only. `{name, openTime, closeTime, address?, timezone?, reservationGraceMinutes?, refundCutoffMinutes?, gates?, zones?:[{name, slots:[{number, vehicleType, distance?}]}]}` → `201 {facility}` |
@@ -161,6 +164,15 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Every override is audited** as `MANUAL_OVERRIDE`, with the attendant's id and email, the gate, the reason and whether the command reached the gate. A vehicle admitted on a plate the attendant typed in (`source: MANUAL`) is recorded the same way, with its session and plate. Admins see them all in the audit log; attendants see the latest on the Monitor page.
 - **Network loss to a gate.** If a gate controller can't be reached, the session is still created and the command is queued for that gate. It is retried with exponential backoff (250 ms, doubling to 2 s) and delivered exactly once, in order, when the link is back. The Monitor page shows the gate as not connected, with the number of commands waiting. A command that hasn't gone through within `HARDWARE_QUEUE_TTL_SECONDS` (120) is dropped, so a barrier never opens long after the vehicle has gone. The attendant then uses an override.
 - In test mode, `POST /api/test/hardware/link {gateId, up}` simulates the link going down and coming back.
+
+**Data Archival & Log Retention (VPS-NF-004).** Transaction and access logs are kept for at least a year, archived automatically and searchable on the **Logs** page. The rules are in [`backend/src/archive.js`](backend/src/archive.js) and [`accessLog.js`](backend/src/accessLog.js):
+
+- **What is kept.** Every API request goes into the **access log** (`accesslogs`): time, method, path, status, duration, user, role and IP. Bodies, query strings, headers and tokens are never stored. Security, configuration and override events are in the **audit log** (`auditlogs`). **Transactions** (payments, refunds) and receipts are business records: they stay in the database and are never archived or deleted.
+- Access log entries are written in batches about once a second, so logging doesn't slow requests down.
+- **Archival.** Access and audit entries stay in the database for `LOG_HOT_DAYS` (90). A daily job then moves older entries to gzip-compressed Extended JSON files under `ARCHIVE_DIR` (`archive/` by default), one per collection and day (at most 20,000 entries a file). Each file is synced and read back, and its entry count and SHA-256 are checked, before its manifest entry is saved and before the entries are deleted from the database. A run that stops part-way loses nothing and archives nothing twice. Only one API instance runs the job at a time (a lease in `joblocks`).
+- **Retention.** Archive files are deleted once older than `LOG_RETENTION_DAYS` (400). The API refuses to start with less than 365, or with a hot window that isn't shorter.
+- **Retrieval.** `GET /api/admin/logs` and the Logs page search the database and the archive together, marking each entry's source. Every archive file read is checked against its manifest checksum; a changed or missing file is reported, not used.
+- In production, `ARCHIVE_DIR` must be durable storage that is backed up (a mounted volume, or a directory synced to object storage).
 
 **Entry/Exit Transaction Performance (VPS-NF-001).** An entry or exit must complete within 3 seconds for 90% of vehicles. What makes it fast:
 

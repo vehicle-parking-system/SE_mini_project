@@ -11,6 +11,8 @@ const { validateStaffAccount } = require("../validation");
 const { listTransactions } = require("../payments");
 const config = require("../configuration");
 const metrics = require("../metrics");
+const archive = require("../archive");
+const { conflict } = require("../errors");
 
 const router = express.Router();
 
@@ -54,6 +56,27 @@ router.post("/users/:id/unlock", async (req, res) => {
   if (!(await unlockAccount(req.params.id, req.user._id))) throw notFound("No locked account with that id");
   logger.info("account unlocked", { userId: req.params.id, by: req.user.id });
   res.status(204).end();
+});
+
+// Log retention and archival (VPS-NF-004); see archive.js.
+// GET /api/admin/logs?type=access|audit&from&to&event?&userId?&path?&status?&limit?   (UTC dates, inclusive)
+// -> {logs:[{..., source: database|archive}], sources:{database, archive}, filesRead, integrity:[{file, error}]}
+// Searches the database and the archive together; a file failing its checksum is listed in integrity, not used.
+router.get("/logs", async (req, res) => {
+  res.json(await archive.searchLogs(req.query));
+});
+
+// GET /api/admin/archives -> {hotDays, retentionDays, lastRun, totals, files:[{collection, day, file, count, bytes, sha256, ...}]}
+router.get("/archives", async (_req, res) => {
+  res.json(await archive.archiveStatus());
+});
+
+// POST /api/admin/archives/run -> {ran: true, cutoff, archived:{access, audit}, purgedFiles}; 409 if a run is in progress
+router.post("/archives/run", async (req, res) => {
+  const result = await archive.runArchive();
+  if (!result.ran) throw conflict(result.reason);
+  await AuditLog.create({ event: "ARCHIVE_RUN_REQUESTED", actorId: req.user._id, at: clock.now() });
+  res.json(result);
 });
 
 // GET /api/admin/metrics/gates -> {budgetMs, targetPct, entry:{count, p50, p90, p99, max, overBudget, withinBudgetPct,

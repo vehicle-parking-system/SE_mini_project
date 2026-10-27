@@ -46,6 +46,11 @@ const config = {
   // Express "trust proxy" setting, so the client IP recorded for login attempts is right behind a load balancer
   // ("true", a hop count such as "1", or a comma-separated list of proxy addresses)
   trustProxy: parseTrustProxy(process.env.TRUST_PROXY),
+  // VPS-NF-004: access and audit logs stay in the database this many days, then move to compressed,
+  // checksummed files under ARCHIVE_DIR, which are kept for LOG_RETENTION_DAYS (at least a year).
+  logHotDays: Number(process.env.LOG_HOT_DAYS) || 90,
+  logRetentionDays: Number(process.env.LOG_RETENTION_DAYS) || 400,
+  archiveDir: require("path").resolve(process.env.ARCHIVE_DIR || "archive"),
   // VPS-SR-001: TLS 1.2+ (see transport.js). Either the API terminates TLS with these files, or a
   // load balancer does (TLS_TERMINATED_BY_PROXY=true) and plain-HTTP requests are redirected or refused.
   https: {
@@ -61,6 +66,8 @@ const config = {
 
 if (!config.jwtSecret) throw new Error("JWT_SECRET must be set in production");
 if (!config.paymentWebhookSecret) throw new Error("PAYMENT_WEBHOOK_SECRET must be set in production");
+if (config.logRetentionDays < 365) throw new Error("LOG_RETENTION_DAYS must be at least 365: logs are kept for at least a year (VPS-NF-004)");
+if (config.logHotDays >= config.logRetentionDays) throw new Error("LOG_HOT_DAYS must be less than LOG_RETENTION_DAYS");
 if (Boolean(config.https.certFile) !== Boolean(config.https.keyFile)) throw new Error("Set both TLS_CERT_FILE and TLS_KEY_FILE");
 if (config.https.terminatedByProxy && !config.trustProxy) {
   throw new Error("TLS_TERMINATED_BY_PROXY needs TRUST_PROXY, so the API can tell which requests arrived over HTTPS");

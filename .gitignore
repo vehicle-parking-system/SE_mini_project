@@ -5,3 +5,4 @@ tests/results/
 backend.log
 .env
 .DS_Store
+backend/archive/
