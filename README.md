@@ -47,6 +47,7 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
 | `GET /api/occupancy/:facilityId` | Staff. `{capacity, occupied, booked, free, full, byVehicleType, byZone}` (inactive slots excluded) |
 | `GET /api/sessions/:id` | Staff. `{sessionId, plateNumber, gateId, slotId, slotNumber, entryTime, exitTime, status, reservationId, …}` |
+| `GET /api/reports/:type` | Admin only. `occupancy\|revenue\|usage`, `?facilityId&from&to&format=json\|csv` (local dates, inclusive, default today, at most 366 days) → `{type, facility, from, to, totals, days:[…]}`, or a CSV attachment with a row per day and a TOTAL row |
 | `GET /api/gates/status` | Staff. `?facilityId` → `{gates:[{id, name, type, online, queued, lastDeliveredAt}]}` |
 | `POST /api/gates/:id/override` | Staff. `{action: OPEN\|CLOSE, reason, note?}` → `{gateId, action, delivered, online, queued}`. Audited as `MANUAL_OVERRIDE` |
 | `GET /api/gates/overrides` | Staff. `?facilityId` → the latest 50 `MANUAL_OVERRIDE` entries, for the shift log |
@@ -159,6 +160,14 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Every override is audited** as `MANUAL_OVERRIDE`, with the attendant's id and email, the gate, the reason and whether the command reached the gate. A vehicle admitted on a plate the attendant typed in (`source: MANUAL`) is recorded the same way, with its session and plate. Admins see them all in the audit log; attendants see the latest on the Monitor page.
 - **Network loss to a gate.** If a gate controller can't be reached, the session is still created and the command is queued for that gate. It is retried with exponential backoff (250 ms, doubling to 2 s) and delivered exactly once, in order, when the link is back. The Monitor page shows the gate as not connected, with the number of commands waiting. A command that hasn't gone through within `HARDWARE_QUEUE_TTL_SECONDS` (120) is dropped, so a barrier never opens long after the vehicle has gone. The attendant then uses an override.
 - In test mode, `POST /api/test/hardware/link {gateId, up}` simulates the link going down and coming back.
+
+**Revenue & Occupancy Reporting (VPS-F-043).** Admins pick a facility, a report and a date range on the **Reports** page and export it as CSV. The rules are in [`backend/src/reports.js`](backend/src/reports.js):
+
+- A report has one row per day, in the facility's own time zone, and totals. The range is at most 366 days.
+- **Revenue** counts money when it moved: a payment on the day the gateway confirmed it, a refund on the day it was processed. Each day has the payments received, refunds, net, and the split by method (at gate, online) and by what was paid for (parking, bookings). Pending and failed payments don't count.
+- **Occupancy** is measured over each day's opening hours against the slots in use (inactive slots excluded): the average share of slots occupied, the peak number of vehicles parked at once, slot-hours used, entries and exits, and turnover (vehicles that entered per slot). A day still in progress counts up to now.
+- **Usage**: entries by source (ANPR, QR, manual) and vehicle type, walk-ins vs bookings, average stay of the vehicles that left, the bookings for the day and how many were used, no-shows or cancelled, and entries per hour of day for the whole range.
+- **CSV** has the same columns as the JSON days, a TOTAL row, and a file name like `revenue-main-lot-2026-11-01-to-2026-11-07.csv`. Text cells that start with `=`, `+`, `-` or `@` are prefixed with `'` so a spreadsheet doesn't run them as formulas.
 
 **Lot, Zone, Slot and Pricing Configuration (VPS-F-040, VPS-F-041).** Admins set up facilities on the **Facilities** page of the web app. The rules are in [`backend/src/configuration.js`](backend/src/configuration.js):
 

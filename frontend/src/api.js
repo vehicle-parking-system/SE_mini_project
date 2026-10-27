@@ -35,6 +35,23 @@ async function request(method, path, body) {
   return data;
 }
 
+// A file the API returns (e.g. a CSV report) -> {blob, filename}. Fetched with the token, so it
+// can't be a plain link; the caller hands the blob to the browser to save.
+async function download(path) {
+  let res;
+  try {
+    res = await fetch(BASE + path, { headers: authToken ? { authorization: `Bearer ${authToken}` } : {} });
+  } catch {
+    throw new ApiError(0, "Can't reach the server. Check your connection and try again.");
+  }
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new ApiError(res.status, data.error?.message || "Something went wrong", data.error?.details, data);
+  }
+  const filename = /filename="([^"]+)"/.exec(res.headers.get("content-disposition") || "")?.[1] || "download";
+  return { blob: await res.blob(), filename };
+}
+
 // Live slot events (GET /api/events, server-sent events). Read with fetch so the token goes in
 // the Authorization header, not the URL. Calls onEvent(event) for each event and reconnects
 // with backoff if the connection drops. Returns a function that closes the stream.
@@ -112,6 +129,8 @@ export const api = {
   addSlots: (zoneId, slots) => request("POST", `/api/admin/zones/${zoneId}/slots`, { slots }),
   updateSlot: (id, fields) => request("PATCH", `/api/admin/slots/${id}`, fields),
   setRate: (rate) => request("PUT", "/api/admin/rates", rate),
+  report: (type, params) => request("GET", `/api/reports/${type}?${new URLSearchParams({ ...params, format: "json" })}`),
+  reportCsv: (type, params) => download(`/api/reports/${type}?${new URLSearchParams({ ...params, format: "csv" })}`),
   deleteRate: (id) => request("DELETE", `/api/admin/rates/${id}`),
 };
 

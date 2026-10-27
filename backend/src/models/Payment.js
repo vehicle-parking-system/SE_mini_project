@@ -31,6 +31,7 @@ const paymentSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 paymentSchema.index({ createdAt: -1 });
+paymentSchema.index({ facility: 1, confirmedAt: 1 }); // revenue reports
 
 paymentSchema.methods.toPublic = function toPublic() {
   return { paymentId: this.id, type: this.type, sessionId: this.session?.toString() ?? null,
