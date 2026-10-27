@@ -8,6 +8,7 @@ const { createAccount } = require("../accounts");
 const { lockActive, unlockAccount } = require("../auth");
 const { notFound } = require("../errors");
 const { validateStaffAccount } = require("../validation");
+const { listTransactions } = require("../payments");
 
 const router = express.Router();
 
@@ -16,6 +17,13 @@ router.get("/audit-logs", async (req, res) => {
   const filter = typeof req.query.event === "string" ? { event: { $in: req.query.event.split(",") } } : {};
   const logs = await AuditLog.find(filter).sort({ at: -1 }).limit(500);
   res.json({ logs: logs.map((l) => l.toPublic()) });
+});
+
+// GET /api/admin/transactions?type=PAYMENT|REFUND&from&to
+// -> {transactions:[{paymentId, type, method, amount, status, gatewayRef, sessionId, reservationId, createdAt, ...}]}
+// The transaction log (VPS-F-032): gateway references only, never card data.
+router.get("/transactions", async (req, res) => {
+  res.json({ transactions: await listTransactions(req.query) });
 });
 
 // POST /api/admin/attendants {name, email, password, phone?} -> 201 {user}

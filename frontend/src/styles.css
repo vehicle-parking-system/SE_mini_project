@@ -234,3 +234,6 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .receipt-number { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; }
 .gate-receipt { margin-top: 16px; border: 1px dashed var(--border); border-radius: var(--radius); padding: 16px; }
 .page.narrow { max-width: 640px; }
+.booking-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+.segmented.compact { margin-bottom: 0; }
+.status-badge.PROCESSED { background: var(--success-bg); color: var(--success-text); border-color: transparent; }
