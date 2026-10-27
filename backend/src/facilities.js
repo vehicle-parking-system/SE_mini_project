@@ -1,5 +1,5 @@
-// Creating facilities with their gates, zones and slots. Used by the test fixture and the demo
-// seed script until the admin console (Lot / Zone / Slot configuration) exists.
+// Creating facilities with their gates, zones and slots. Used by the Admin Console (after
+// configuration.js has validated the definition), the test fixture and the demo seed script.
 const Facility = require("./models/Facility");
 const Gate = require("./models/Gate");
 const Rate = require("./models/Rate");

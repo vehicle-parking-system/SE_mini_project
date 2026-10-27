@@ -237,3 +237,16 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .booking-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
 .segmented.compact { margin-bottom: 0; }
 .status-badge.PROCESSED { background: var(--success-bg); color: var(--success-text); border-color: transparent; }
+
+/* Admin: facilities */
+.facility-pick { min-width: min(100%, 280px); }
+@media (min-width: 561px) { .facility-pick { margin-bottom: 0; } }
+.rate-form, .inline-form, .add-slots { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-top: 16px; }
+.rate-form .field, .inline-form .field { min-width: 120px; }
+.add-slots { padding-top: 16px; border-top: 1px solid var(--border); }
+.add-slots .field { min-width: 90px; }
+.add-slots .notice { flex-basis: 100%; }
+.rate-form > .btn, .inline-form > .btn, .add-slots > .btn { margin-top: 26px; }
+.inactive-row td { color: var(--muted); }
+.status-badge.INACTIVE { border-style: dashed; }
+.status-badge.OCCUPIED { color: var(--primary); border-color: var(--primary); }

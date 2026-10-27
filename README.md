@@ -47,6 +47,14 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/users/me/sessions` | The parking sessions of the user's registered vehicles; an active one carries its `ticketQr` |
 | `GET /api/occupancy/:facilityId` | Staff. `{capacity, occupied, booked, free, full, byVehicleType, byZone}` (inactive slots excluded) |
 | `GET /api/sessions/:id` | Staff. `{sessionId, plateNumber, gateId, slotId, slotNumber, entryTime, exitTime, status, reservationId, …}` |
+| `GET /api/admin/facilities` | Admin only. Every facility with its settings, gates, zones, slots (`active`, live `status`) and rates. `GET /api/admin/facilities/:id` for one |
+| `POST /api/admin/facilities` | Admin only. `{name, openTime, closeTime, address?, timezone?, reservationGraceMinutes?, refundCutoffMinutes?, gates?, zones?:[{name, slots:[{number, vehicleType, distance?}]}]}` → `201 {facility}` |
+| `PATCH /api/admin/facilities/:id` | Admin only. Any of the facility's settings → `{facility}` |
+| `POST /api/admin/facilities/:id/zones` | Admin only. `{name, slots?}` → `201 {zone}`; 409 if the name is taken |
+| `POST /api/admin/facilities/:id/gates` | Admin only. `{name, type: ENTRY\|EXIT}` → `201 {gate}`. `PATCH /api/admin/gates/:id {name}` renames one |
+| `POST /api/admin/zones/:id/slots` | Admin only. `{slots:[{number, vehicleType, distance?}]}` → `201 {slots}`; 409 if a number already exists in the facility. `PATCH /api/admin/zones/:id {name}` renames the zone |
+| `PATCH /api/admin/slots/:id` | Admin only. `{number?, vehicleType?, distance?, active?}` → `{slot}`; 409 when deactivating or retyping a slot someone is parked in or has booked |
+| `PUT /api/admin/rates` | Admin only. `{facilityId, zoneId?, vehicleType, ratePerHour}` → `{rate, created}`. `GET /api/admin/rates?facilityId` lists them, `DELETE /api/admin/rates/:id` removes one |
 
 **Role-Based Access Control (VPS-SR-003).** [`backend/src/permissions.js`](backend/src/permissions.js) is the single policy table that lists which roles may call each endpoint, including modules that haven't been built yet. The `authorize` middleware checks every `/api` request against it before any route runs:
 
@@ -142,7 +150,16 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Printed:** the Gate page shows the receipt as soon as the barrier opens, with a Print button.
 - **Digital:** a registered driver gets an `EXIT_RECEIPT` notification, a **Parking history** on My bookings, and a printable receipt page at `/receipts/:id`. Drivers can read only their own receipts.
 
-There's no admin screen for facilities yet (Lot / Zone / Slot configuration is a later story). To try search, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
+**Lot, Zone, Slot and Pricing Configuration (VPS-F-040, VPS-F-041).** Admins set up facilities on the **Facilities** page of the web app. The rules are in [`backend/src/configuration.js`](backend/src/configuration.js):
+
+- A facility has a name, opening hours (closing must be after opening, since bookings fall within one day), a time zone, a booking grace period and a free-cancellation cut-off. A new facility gets one entry and one exit gate unless others are given; more gates and zones can be added later.
+- **Slots** are added to a zone one by one or as a numbered run (A-04 … A-10, each a few metres further from the entrance). A slot number is unique within its facility.
+- Facilities, zones, slots and gates are never deleted, because sessions, bookings and receipts refer to them. A slot that shouldn't be used is **deactivated**: search, booking and walk-in allocation skip it from that moment, and occupancy no longer counts it. It can be activated again.
+- A slot is deactivated, or its vehicle type changed, only when nobody is parked in it and no active booking holds it (409 otherwise). The change uses the slot's `version` like booking and allocation do, so a booking racing it either lands first, and the change is refused, or is withdrawn.
+- **Pricing rules.** A rate is an hourly price per vehicle type, for one zone or the whole facility. A zone's own rate wins. Setting a rate replaces the previous one for the same zone and vehicle type. A vehicle keeps the rate it entered with, so a change applies to vehicles that enter afterwards.
+- Every change is recorded as a `CONFIG_CHANGED` audit entry with what changed (for a rate, the old and new price).
+
+To try search with ready-made data, `npm run seed:demo` in `backend/` adds two demo facilities if none exist.
 
 ## Running locally
 

@@ -9,6 +9,7 @@ const { lockActive, unlockAccount } = require("../auth");
 const { notFound } = require("../errors");
 const { validateStaffAccount } = require("../validation");
 const { listTransactions } = require("../payments");
+const config = require("../configuration");
 
 const router = express.Router();
 
@@ -51,6 +52,82 @@ router.get("/locked-accounts", async (_req, res) => {
 router.post("/users/:id/unlock", async (req, res) => {
   if (!(await unlockAccount(req.params.id, req.user._id))) throw notFound("No locked account with that id");
   logger.info("account unlocked", { userId: req.params.id, by: req.user.id });
+  res.status(204).end();
+});
+
+// Lot, zone, slot and pricing configuration (VPS-F-040, VPS-F-041); see configuration.js.
+// A facility: {id, name, address, timezone, openTime, closeTime, reservationGraceMinutes, refundCutoffMinutes,
+//   gates:[{id, name, type}], zones:[{id, name, slots:[{slotId, number, vehicleType, distance, status, active}]}], rates:[...]}
+
+// GET /api/admin/facilities -> {facilities:[facility]}
+router.get("/facilities", async (_req, res) => {
+  res.json({ facilities: await config.listFacilities() });
+});
+
+// GET /api/admin/facilities/:id -> {facility}
+router.get("/facilities/:id", async (req, res) => {
+  res.json({ facility: await config.getFacility(req.params.id) });
+});
+
+// POST /api/admin/facilities {name, openTime, closeTime, address?, timezone?, reservationGraceMinutes?,
+//   refundCutoffMinutes?, gates?:[{name?, type}], zones?:[{name, slots:[{number, vehicleType, distance?, active?}]}]}
+// -> 201 {facility}. Without gates, the facility gets one entry and one exit gate.
+router.post("/facilities", async (req, res) => {
+  res.status(201).json({ facility: await config.addFacility(req.user, req.body) });
+});
+
+// PATCH /api/admin/facilities/:id {name?, address?, timezone?, openTime?, closeTime?, reservationGraceMinutes?,
+//   refundCutoffMinutes?} -> {facility}
+router.patch("/facilities/:id", async (req, res) => {
+  res.json({ facility: await config.updateFacility(req.user, req.params.id, req.body) });
+});
+
+// POST /api/admin/facilities/:id/zones {name, slots?} -> 201 {zone}; 409 if the name is taken
+router.post("/facilities/:id/zones", async (req, res) => {
+  res.status(201).json({ zone: await config.addZone(req.user, req.params.id, req.body) });
+});
+
+// POST /api/admin/facilities/:id/gates {name, type: ENTRY|EXIT} -> 201 {gate}
+router.post("/facilities/:id/gates", async (req, res) => {
+  res.status(201).json({ gate: await config.addGate(req.user, req.params.id, req.body) });
+});
+
+// PATCH /api/admin/zones/:id {name} -> {zone}
+router.patch("/zones/:id", async (req, res) => {
+  res.json({ zone: await config.updateZone(req.user, req.params.id, req.body) });
+});
+
+// POST /api/admin/zones/:id/slots {slots:[{number, vehicleType, distance?, active?}]} -> 201 {slots}
+// 409 if a slot number already exists in the facility
+router.post("/zones/:id/slots", async (req, res) => {
+  res.status(201).json({ slots: await config.addSlots(req.user, req.params.id, req.body) });
+});
+
+// PATCH /api/admin/slots/:id {number?, vehicleType?, distance?, active?} -> {slot}
+// 409 when deactivating or retyping a slot someone is parked in or has booked
+router.patch("/slots/:id", async (req, res) => {
+  res.json({ slot: await config.updateSlot(req.user, req.params.id, req.body) });
+});
+
+// PATCH /api/admin/gates/:id {name} -> {gate}
+router.patch("/gates/:id", async (req, res) => {
+  res.json({ gate: await config.updateGate(req.user, req.params.id, req.body) });
+});
+
+// GET /api/admin/rates?facilityId -> {rates:[{id, facilityId, zoneId, vehicleType, ratePerHour, updatedAt}]}
+router.get("/rates", async (req, res) => {
+  res.json({ rates: await config.listRates(req.query) });
+});
+
+// PUT /api/admin/rates {facilityId, zoneId?, vehicleType, ratePerHour} -> {rate, created}
+// No zoneId: the facility-wide rate. Applies to vehicles that enter from now on.
+router.put("/rates", async (req, res) => {
+  res.json(await config.setRate(req.user, req.body));
+});
+
+// DELETE /api/admin/rates/:id -> 204
+router.delete("/rates/:id", async (req, res) => {
+  await config.deleteRate(req.user, req.params.id);
   res.status(204).end();
 });
 
