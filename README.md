@@ -51,6 +51,7 @@ MERN implementation of the [SRS/SAD](https://github.com/vehicle-parking-system/D
 | `GET /api/gates/status` | Staff. `?facilityId` → `{gates:[{id, name, type, online, queued, lastDeliveredAt}]}` |
 | `POST /api/gates/:id/override` | Staff. `{action: OPEN\|CLOSE, reason, note?}` → `{gateId, action, delivered, online, queued}`. Audited as `MANUAL_OVERRIDE` |
 | `GET /api/gates/overrides` | Staff. `?facilityId` → the latest 50 `MANUAL_OVERRIDE` entries, for the shift log |
+| `GET /api/admin/metrics/gates` | Admin only. `{budgetMs: 3000, targetPct: 90, entry:{count, p50, p90, p99, max, overBudget, withinBudgetPct, meetsTarget}, exit:{…}}` over this instance's latest 2000 of each |
 | `GET /api/admin/facilities` | Admin only. Every facility with its settings, gates, zones, slots (`active`, live `status`) and rates. `GET /api/admin/facilities/:id` for one |
 | `POST /api/admin/facilities` | Admin only. `{name, openTime, closeTime, address?, timezone?, reservationGraceMinutes?, refundCutoffMinutes?, gates?, zones?:[{name, slots:[{number, vehicleType, distance?}]}]}` → `201 {facility}` |
 | `PATCH /api/admin/facilities/:id` | Admin only. Any of the facility's settings → `{facility}` |
@@ -160,6 +161,22 @@ Security: passwords are stored as bcrypt hashes (VPS-SR-002). JWTs are HS256, an
 - **Every override is audited** as `MANUAL_OVERRIDE`, with the attendant's id and email, the gate, the reason and whether the command reached the gate. A vehicle admitted on a plate the attendant typed in (`source: MANUAL`) is recorded the same way, with its session and plate. Admins see them all in the audit log; attendants see the latest on the Monitor page.
 - **Network loss to a gate.** If a gate controller can't be reached, the session is still created and the command is queued for that gate. It is retried with exponential backoff (250 ms, doubling to 2 s) and delivered exactly once, in order, when the link is back. The Monitor page shows the gate as not connected, with the number of commands waiting. A command that hasn't gone through within `HARDWARE_QUEUE_TTL_SECONDS` (120) is dropped, so a barrier never opens long after the vehicle has gone. The attendant then uses an override.
 - In test mode, `POST /api/test/hardware/link {gateId, up}` simulates the link going down and coming back.
+
+**Entry/Exit Transaction Performance (VPS-NF-001).** An entry or exit must complete within 3 seconds for 90% of vehicles. What makes it fast:
+
+- **One atomic claim per slot allocation.** Allocation reads the free slots' versions (lean, two fields), drops booked ones, then claims the nearest one whose version is unchanged in a single `findOneAndUpdate` over up to 50 candidates. Concurrent entries each get a different slot in one round trip, instead of all trying the nearest slot and working down the list one request at a time. The version check that keeps a racing booking safe is unchanged.
+- **Cached configuration.** Gates, facilities and zones are read on every vehicle, so they're kept in a short-lived cache ([`cache.js`](backend/src/cache.js), `CONFIG_CACHE_SECONDS`, 30 by default, 0 turns it off). An admin change drops this instance's cache at once; other instances pick it up within the TTL.
+- **Independent work runs side by side**: the plate lookup and the "already inside" check, the rate and the zone, the ticket and the driver's notification at entry; the slot release and the receipt at exit. Lapsed holds are expired for the gate's own facility only.
+- **Measured all the time.** Every entry and exit is timed from request to response. One over 3 s is logged as `slow gate transaction`, and admins can read p50/p90/p99 and the share within budget from `GET /api/admin/metrics/gates`.
+- **Benchmark.** `MONGO_URL=mongodb://localhost:27017/vps_bench npm run bench:gate -- [lanes] [cycles] [history]` runs the API in-process against a scratch database (which it drops) with a history of 20,000 past stays, and drives concurrent gate lanes through entry → at-gate payment → webhook → exit. On a laptop with a local MongoDB:
+
+  | Lanes in parallel | Entry p90 before → after | Exit p90 before → after | Whole run before → after |
+  |---|---|---|---|
+  | 1 | 9 ms → 6 ms | 4 ms → 4 ms | 1.6 s → 1.2 s |
+  | 50 | 328 ms → 141 ms | 163 ms → 111 ms | 5.1 s → 3.2 s |
+  | 100 | 835 ms → 290–404 ms | 247 ms → 217 ms | 9.7 s → 6.3–6.5 s |
+
+  At 100 lanes a single Node process is the limit (CPU-bound). More capacity comes from running more API instances (VPS-NF-005). The nightly JMeter run (TC-Perf-01) checks the 3 s target against a deployed environment.
 
 **TLS 1.2+ Network Encryption (VPS-SR-001).** Every connection is encrypted with TLS 1.2 or later. The rules are in [`backend/src/transport.js`](backend/src/transport.js):
 

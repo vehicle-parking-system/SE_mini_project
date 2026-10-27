@@ -2,10 +2,10 @@
 // reports a vehicle at an entry gate. The system finds its booking (by QR code, or by plate
 // for a registered vehicle) or allocates a slot, opens a parking session and raises the barrier.
 const clock = require("./clock");
+const { findGate, findFacility, findZone } = require("./cache");
 const hardware = require("./hardware");
 const logger = require("./logger");
 const qr = require("./qr");
-const Facility = require("./models/Facility");
 const Gate = require("./models/Gate");
 const Reservation = require("./models/Reservation");
 const Session = require("./models/Session");
@@ -28,7 +28,9 @@ const { badRequest, conflict, facilityFull, notFound } = require("./errors");
 // A booked vehicle may enter this long before its start time
 const EARLY_ARRIVAL_MINUTES = 30;
 // How often allocation looks again when concurrent entries or bookings keep taking its candidates
-const MAX_ALLOCATION_ROUNDS = 5;
+const MAX_ALLOCATION_ROUNDS = 10;
+// The nearest free slots offered to one atomic claim
+const CLAIM_BATCH = 50;
 
 // Body -> {gateId, source, qrCode | plateNumber, vehicleType?}, or a 400 listing every bad field.
 function parseEntry(body = {}) {
@@ -88,23 +90,24 @@ async function slotsBookedToday(facility, now) {
 // Uses the same slot locking as booking (reservations.js). The candidates' versions are read
 // *before* checking for bookings, and a slot is taken only if its version is unchanged. So a
 // booking made after that check has bumped the version and the slot is skipped, and a booking
-// that comes later finds its own bump fails and withdraws. Concurrent entries race on the same
-// condition: each slot goes to exactly one of them, and the others move on to the next slot.
+// that comes later finds its own bump fails and withdraws.
+//
+// The claim is one atomic update over the nearest free candidates: it takes the nearest one whose
+// version is still the one read. Concurrent entries each get a different slot in a single round
+// trip instead of trying the same nearest slot one after another (VPS-NF-001).
 async function allocateSlot(facility, vehicleType, now) {
   for (let round = 0; round < MAX_ALLOCATION_ROUNDS; round++) {
     const candidates = await Slot.find({ facility: facility._id, vehicleType, status: "AVAILABLE" }, "version")
-      .sort({ distance: 1, number: 1 });
+      .sort({ distance: 1, number: 1 }).lean();
     const booked = new Set((await slotsBookedToday(facility, now)).map(String));
-    const free = candidates.filter((c) => !booked.has(c.id));
+    const free = candidates.filter((c) => !booked.has(String(c._id)));
     if (!free.length) return null;
-    for (const candidate of free) {
-      const slot = await Slot.findOneAndUpdate(
-        { _id: candidate._id, status: "AVAILABLE", version: candidate.version },
-        { status: "OCCUPIED", $inc: { version: 1 } },
-        { new: true },
-      );
-      if (slot) return slot;
-    }
+    const slot = await Slot.findOneAndUpdate(
+      { status: "AVAILABLE", $or: free.slice(0, CLAIM_BATCH).map((c) => ({ _id: c._id, version: c.version })) },
+      { status: "OCCUPIED", $inc: { version: 1 } },
+      { new: true, sort: { distance: 1, number: 1 } },
+    );
+    if (slot) return slot;
   }
   return null;
 }
@@ -121,13 +124,16 @@ const releaseSlot = (slot) => Slot.updateOne({ _id: slot._id, status: "OCCUPIED"
 // Sessions with their slot, zone and entry gate, as the API returns them. A session that is
 // still active carries its entry ticket: a signed QR code (VPS-F-004) scanned at the exit,
 // and what leaving now would cost (`fee`: amount still due, total, paid; see payments.js).
-async function presentSessions(sessions) {
+// `known` ({slot, zone, gate}) skips looking up what the caller already has, for a single session.
+async function presentSessions(sessions, known = null) {
   const ids = (field) => [...new Set(sessions.map((s) => s[field].toString()))];
   const byId = (docs) => Object.fromEntries(docs.map((d) => [d.id, d]));
-  const [slots, zones, gates] = await Promise.all([
-    Slot.find({ _id: { $in: ids("slot") } }), Zone.find({ _id: { $in: ids("zone") } }), Gate.find({ _id: { $in: ids("entryGate") } }),
-  ].map((q) => q.then(byId)));
-  const fees = await payments.feesFor(sessions.filter((s) => s.status === "ACTIVE"));
+  const [[slots, zones, gates], fees] = await Promise.all([
+    known ? [byId([known.slot]), byId([known.zone]), byId([known.gate])] : Promise.all([
+      Slot.find({ _id: { $in: ids("slot") } }), Zone.find({ _id: { $in: ids("zone") } }), Gate.find({ _id: { $in: ids("entryGate") } }),
+    ].map((q) => q.then(byId))),
+    payments.feesFor(sessions.filter((s) => s.status === "ACTIVE")),
+  ]);
   return sessions.map((s) => ({
     ...s.toPublic({ slot: slots[s.slot], zone: zones[s.zone], gate: gates[s.entryGate] }),
     ticketQr: s.status === "ACTIVE" ? qr.ticketCode(s.id) : null,
@@ -136,13 +142,15 @@ async function presentSessions(sessions) {
 }
 const presentSession = async (s) => (await presentSessions([s]))[0];
 
+// Independent lookups run side by side, so an entry costs a few round trips rather than one per
+// query (VPS-NF-001: entry and exit within 3 s for 90% of vehicles).
 async function captureEntry(user, body) {
   const input = parseEntry(body);
-  const gate = await Gate.findById(input.gateId);
+  const gate = await findGate(input.gateId);
   if (!gate || gate.type !== "ENTRY") throw notFound("Entry gate not found");
-  const facility = await Facility.findById(gate.facility);
   const now = clock.now();
-  await expireHolds(now);
+  // Lapsed holds only need their status updated: every check below compares holdExpiresAt itself.
+  const [facility] = await Promise.all([findFacility(gate.facility), expireHolds(now, gate.facility)]);
 
   // Every refusal is shown on the gate's display; the barrier stays closed.
   const refuse = (err, message = err.message) => {
@@ -159,7 +167,10 @@ async function captureEntry(user, body) {
     if (!reservation) throw refuse(badRequest("Invalid ticket", { qrCode: "This QR code isn't a valid booking" }), "Invalid ticket");
     vehicle = await Vehicle.findById(reservation.vehicle);
   } else {
-    vehicle = await Vehicle.findOne({ plateNumber: input.plateNumber });
+    let inside;
+    [vehicle, inside] = await Promise.all([Vehicle.findOne({ plateNumber: input.plateNumber }),
+      Session.exists({ plateNumber: input.plateNumber, status: "ACTIVE" })]);
+    if (inside) throw refuse(conflict(`${input.plateNumber} is already parked here`), "See attendant");
     if (vehicle) reservation = await bookingForPlate(vehicle, facility, now);
   }
   if (reservation) {
@@ -175,7 +186,9 @@ async function captureEntry(user, body) {
   if (!plateNumber || !vehicleType) {
     throw refuse(badRequest("Vehicle type is required", { vehicleType: "Choose the vehicle type" }), "See attendant");
   }
-  if (await Session.exists({ plateNumber, status: "ACTIVE" })) throw refuse(conflict(`${plateNumber} is already parked here`), "See attendant");
+  if (input.source === "QR" && await Session.exists({ plateNumber, status: "ACTIVE" })) {
+    throw refuse(conflict(`${plateNumber} is already parked here`), "See attendant");
+  }
 
   // Facility full check (VPS-F-003): no slot for this vehicle means no entry. The display says
   // so, the barrier stays closed, and nothing about the facility's occupancy changes.
@@ -185,7 +198,7 @@ async function captureEntry(user, body) {
     throw refuse(facilityFull(`Facility Full: no free ${vehicleType.toLowerCase()} slot`), "Facility Full");
   }
 
-  const ratePerHour = await pricing.rateFor(facility._id, slot.zone, vehicleType);
+  const [ratePerHour, zone] = await Promise.all([pricing.rateFor(facility._id, slot.zone, vehicleType), findZone(slot.zone)]);
   if (ratePerHour === null) logger.warn("no rate configured: parking is free", { facilityId: facility.id, vehicleType });
 
   let session;
@@ -201,25 +214,22 @@ async function captureEntry(user, body) {
     if (err.code === 11000) throw refuse(conflict(`${plateNumber} is already parked here`), "See attendant");
     throw err;
   }
-  if (reservation) {
-    await Reservation.updateOne({ _id: reservation._id }, { status: "CHECKED_IN", checkedInAt: now, session: session._id });
-  }
+  // The barrier opens as soon as the session exists; the bookkeeping after it runs side by side.
   events.slotChanged(slot, "ENTRY");
-
-  const zone = await Zone.findById(slot.zone);
   hardware.display(gate.id, `Proceed to slot ${slot.number} · ${zone.name} · ${slot.distance} m`);
   hardware.openBarrier(gate.id);
   logger.info("vehicle entered", { sessionId: session.id, gateId: gate.id, source: input.source, booked: Boolean(reservation) });
-  if (input.source === "MANUAL") await auditManualEntry(user, gate, session);
 
   // Entry ticket (VPS-F-004): printed at the kiosk from the response, and sent to a registered driver.
-  const ticket = await presentSession(session);
-  if (vehicle) {
-    const owner = await User.findById(vehicle.owner, "email");
-    if (owner) {
-      await notify({ userId: owner.id, to: owner.email, type: "ENTRY_TICKET",
-        data: { sessionId: ticket.sessionId, slotNumber: ticket.slotNumber, entryTime: ticket.entryTime } });
-    }
+  const [ticket, owner] = await Promise.all([
+    presentSessions([session], { slot, zone, gate }).then(([t]) => t),
+    vehicle && User.findById(vehicle.owner, "email"),
+    reservation && Reservation.updateOne({ _id: reservation._id }, { status: "CHECKED_IN", checkedInAt: now, session: session._id }),
+    input.source === "MANUAL" && auditManualEntry(user, gate, session),
+  ]);
+  if (owner) {
+    await notify({ userId: owner.id, to: owner.email, type: "ENTRY_TICKET",
+      data: { sessionId: ticket.sessionId, slotNumber: ticket.slotNumber, entryTime: ticket.entryTime } });
   }
   return ticket;
 }

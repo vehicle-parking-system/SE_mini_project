@@ -1,6 +1,7 @@
 // Exit receipts (VPS-F-013): issued when a vehicle leaves, printed at the gate, sent to a
 // registered driver, and kept in their parking history.
 const clock = require("./clock");
+const { findFacility, findZone } = require("./cache");
 const logger = require("./logger");
 const Counter = require("./models/Counter");
 const Facility = require("./models/Facility");
@@ -8,7 +9,6 @@ const Payment = require("./models/Payment");
 const Receipt = require("./models/Receipt");
 const Slot = require("./models/Slot");
 const User = require("./models/User");
-const Zone = require("./models/Zone");
 const pricing = require("./pricing");
 const { notify } = require("./notifications");
 const { isId } = require("./slotSearch");
@@ -20,7 +20,7 @@ async function issueReceipt(session) {
   if (existing) return existing;
 
   const [facility, slot, zone, payments] = await Promise.all([
-    Facility.findById(session.facility), Slot.findById(session.slot), Zone.findById(session.zone),
+    findFacility(session.facility), Slot.findById(session.slot), findZone(session.zone),
     Payment.find({ session: session._id, status: "CONFIRMED" }).sort({ confirmedAt: 1 }),
   ]);
   const issuedAt = clock.now();

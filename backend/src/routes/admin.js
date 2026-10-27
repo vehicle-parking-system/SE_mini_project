@@ -10,6 +10,7 @@ const { notFound } = require("../errors");
 const { validateStaffAccount } = require("../validation");
 const { listTransactions } = require("../payments");
 const config = require("../configuration");
+const metrics = require("../metrics");
 
 const router = express.Router();
 
@@ -53,6 +54,12 @@ router.post("/users/:id/unlock", async (req, res) => {
   if (!(await unlockAccount(req.params.id, req.user._id))) throw notFound("No locked account with that id");
   logger.info("account unlocked", { userId: req.params.id, by: req.user.id });
   res.status(204).end();
+});
+
+// GET /api/admin/metrics/gates -> {budgetMs, targetPct, entry:{count, p50, p90, p99, max, overBudget, withinBudgetPct,
+// meetsTarget}, exit:{...}} over the latest gate transactions on this API instance (VPS-NF-001)
+router.get("/metrics/gates", (_req, res) => {
+  res.json(metrics.summary());
 });
 
 // Lot, zone, slot and pricing configuration (VPS-F-040, VPS-F-041); see configuration.js.

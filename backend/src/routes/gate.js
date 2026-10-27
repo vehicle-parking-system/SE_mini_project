@@ -5,6 +5,7 @@ const exit = require("../exit");
 const { occupancy } = require("../occupancy");
 const receipts = require("../receipts");
 const gates = require("../gates");
+const { timeGate } = require("../metrics");
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ const router = express.Router();
 // 400 invalid fields or ticket, 404 unknown gate,
 // 409 FACILITY_FULL when no slot is free for the vehicle (display shows "Facility Full", barrier stays closed),
 // 409 CONFLICT when it is already parked or its booking can't be used now
-router.post("/entry", async (req, res) => {
+router.post("/entry", timeGate("entry"), async (req, res) => {
   res.status(201).json(await entry.captureEntry(req.user, req.body));
 });
 
@@ -27,7 +28,7 @@ router.post("/tickets/scan", async (req, res) => {
 // -> {sessionId, entryTime, exitTime, duration, amount, paid, paymentStatus: CONFIRMED|NOT_REQUIRED} and the barrier opens
 // 402 PAYMENT_REQUIRED {amount (still due), total, paid, duration, paymentStatus: UNPAID|PENDING} until confirmed
 // payments cover the fee; 400 invalid fields or ticket, 404 unknown gate or session, 409 already left
-router.post("/exit", async (req, res) => {
+router.post("/exit", timeGate("exit"), async (req, res) => {
   res.json(await exit.processExit(req.user, req.body));
 });
 
