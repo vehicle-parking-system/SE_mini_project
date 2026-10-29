@@ -48,9 +48,17 @@ router.post("/reservations", async (req, res) => {
   res.status(201).json({ reservationId: reservation.id });
 });
 
-// GET /api/test/hardware/commands -> {commands:[{gateId, command: OPEN|DISPLAY, message?, at}]}
+// GET /api/test/hardware/commands -> {commands:[{gateId, command: OPEN|CLOSE|DISPLAY, message?, at}]}
+// Only commands that reached the gate; queued ones appear once delivered.
 router.get("/hardware/commands", (_req, res) => {
   res.json({ commands: hardware.sent() });
+});
+
+// POST /api/test/hardware/link {gateId, up} -> {gateId, up}
+// Simulates the network link to a gate controller going down or coming back.
+router.post("/hardware/link", (req, res) => {
+  hardware.setLink(req.body.gateId, req.body.up);
+  res.json({ gateId: String(req.body.gateId), up: Boolean(req.body.up) });
 });
 
 // GET /api/test/notifications -> {notifications:[{to, channel, type, data, at}]}

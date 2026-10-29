@@ -4,6 +4,7 @@ const entry = require("../entry");
 const exit = require("../exit");
 const { occupancy } = require("../occupancy");
 const receipts = require("../receipts");
+const gates = require("../gates");
 
 const router = express.Router();
 
@@ -49,6 +50,24 @@ router.get("/sessions/:id", async (req, res) => {
 // GET /api/occupancy/:facilityId -> {capacity, occupied, booked, free, full, byVehicleType:[...], byZone:[...]}
 router.get("/occupancy/:facilityId", async (req, res) => {
   res.json(await occupancy(req.params.facilityId));
+});
+
+// GET /api/gates/status?facilityId -> {gates:[{id, name, type, facilityId, online, queued, lastDeliveredAt}]}
+// online: the last command reached the gate controller; queued: commands waiting for the link to return
+router.get("/gates/status", async (req, res) => {
+  res.json({ gates: await gates.gateStatus(req.query) });
+});
+
+// GET /api/gates/overrides?facilityId -> {logs:[{event: MANUAL_OVERRIDE, actorId, actorEmail, details, at}]} latest first
+router.get("/gates/overrides", async (req, res) => {
+  res.json({ logs: await gates.recentOverrides(req.query) });
+});
+
+// POST /api/gates/:id/override {action: OPEN|CLOSE, reason, note?}
+// -> {gateId, action, delivered, online, queued, logId}. Audited as MANUAL_OVERRIDE. If the gate's
+// controller can't be reached, the command is queued and retried (delivered: false).
+router.post("/gates/:id/override", async (req, res) => {
+  res.json(await gates.overrideGate(req.user, req.params.id, req.body));
 });
 
 module.exports = router;

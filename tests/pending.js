@@ -5,5 +5,4 @@
 // tests run and must pass. Set RUN_PENDING=1 to run them anyway while building one.
 module.exports = [
   "api/admin.test.js", //       Lot / zone / slot config, rates, reports (TC-Admin-01–04)
-  "api/hardware.test.js", //    Hardware Abstraction Service
 ];
