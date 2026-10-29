@@ -1,7 +1,4 @@
-// Builds the Requirements Traceability Matrix (Test Plan §13) from Jest results.
-// Usage: node rtm-report.js results/jest-results.json [perf-summary.json]
-// Prints Markdown and, in GitHub Actions, writes it to the job summary.
-// Exits 1 if any test case failed.
+
 const fs = require("fs");
 
 const RTM = [
@@ -24,51 +21,88 @@ const RTM = [
   ["VPS-F-041", "Pricing rules", "TC-Admin-02"],
   ["VPS-F-042", "Attendant accounts and manual override", "TC-Admin-03"],
   ["VPS-F-043", "Reports", "TC-Admin-04"],
-  ["VPS-NF-001", "Response time ≤ 3 s (p90)", "TC-Perf-01"],
-  ["VPS-NF-002", "99.5 % availability", "Ops uptime reports"],
+  ["VPS-NF-001", "Response time <= 3 s (p90)", "TC-Perf-01"],
+  ["VPS-NF-002", "99.5% availability", "Ops uptime reports"],
   ["VPS-NF-003", "Data protection", "TC-Sec-01"],
-  ["VPS-NF-004", "Log retention ≥ 1 year", "TC-OPS-01"],
-  ["VPS-NF-005", "10× scalability", "TC-Perf-02"],
+  ["VPS-NF-004", "Log retention >= 1 year", "TC-OPS-01"],
+  ["VPS-NF-005", "10x scalability", "TC-Perf-02"],
   ["VPS-SR-001", "TLS 1.2+", "TC-Sec-02"],
   ["VPS-SR-002", "Password hashing", "TC-Sec-03"],
   ["VPS-SR-003", "RBAC", "TC-Sec-04"],
   ["VPS-SR-004", "Tokenized card data", "TC-Sec-05"],
   ["VPS-SR-005", "Account lockout", "TC-Sec-06"],
 ];
-// Checked outside this Jest run
+
 const ELSEWHERE = {
-  "TC-Perf-01": "Nightly (JMeter)", "TC-Perf-02": "Nightly (JMeter)", "TC-Sec-02": "Nightly (testssl.sh)",
-  "TC-OPS-01": "Manual", "Ops uptime reports": "Manual",
+  "TC-Perf-01": "Nightly (JMeter)",
+  "TC-Perf-02": "Nightly (JMeter)",
+  "TC-Sec-02": "Nightly (testssl.sh)",
+  "TC-OPS-01": "Manual",
+  "Ops uptime reports": "Manual",
 };
 
-const results = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const results = JSON.parse(
+  fs.readFileSync(process.argv[2], "utf8")
+);
+
 const byCase = {};
-for (const file of results.testResults) {
-  for (const t of file.assertionResults) {
-    for (const id of t.title.match(/TC-[A-Za-z]+-\d+/g) || []) (byCase[id] ??= []).push(t);
+
+for (const file of results.testResults || []) {
+  for (const test of file.assertionResults || []) {
+    const ids = test.title.match(/TC-[A-Za-z]+-\d+/g) || [];
+
+    for (const id of ids) {
+      (byCase[id] ??= []).push(test);
+    }
   }
 }
 
 function status(tc) {
   const tests = byCase[tc];
-  if (!tests) return ELSEWHERE[tc] ?? "No automated test";
-  if (tests.some((t) => t.status === "failed")) return "❌ A (failed)";
-  if (tests.every((t) => t.status === "passed")) return "✅ P (passed)";
-  return "⏸ N (not run)";
+
+  if (!tests || tests.length === 0) {
+    return ELSEWHERE[tc] || "NO AUTOMATED TEST";
+  }
+
+  if (tests.some((test) => test.status === "failed")) {
+    return "FAIL";
+  }
+
+  if (tests.some((test) => test.status === "pending")) {
+    return "PARTIAL / NOT RUN";
+  }
+
+  if (tests.every((test) => test.status === "passed")) {
+    return "PASS";
+  }
+
+  return "PARTIAL / NOT RUN";
 }
 
-const rows = RTM.map(([req, name, tc]) => `| ${req} | ${name} | ${tc} | ${byCase[tc]?.length ?? 0} | ${status(tc)} |`);
-const s = { passed: results.numPassedTests, failed: results.numFailedTests, skipped: results.numPendingTests };
+const rows = RTM.map(([req, description, tc]) => {
+  const count = byCase[tc]?.length ?? 0;
+
+  return `| ${req} | ${description} | ${tc} | ${count} | ${status(tc)} |`;
+});
+
+const passed = results.numPassedTests ?? 0;
+const failed = results.numFailedTests ?? 0;
+const skipped = results.numPendingTests ?? 0;
+
 const md = [
   "## Requirements Traceability Matrix",
   "",
-  `Automated tests: **${s.passed} passed, ${s.failed} failed, ${s.skipped} not run**`,
-  s.passed + s.failed === 0 ? "\n> ⚠️ No backend found: API tests were not run. They run automatically once `backend/` exists.\n" : "",
+  `Automated tests: **${passed} passed, ${failed} failed, ${skipped} not run**`,
+  "",
   "| Requirement | Description | Test case | Tests | Status |",
-  "|---|---|---|---|---|",
+  "|---|---|---|---:|---|",
   ...rows,
 ].join("\n");
 
 console.log(md);
-if (process.env.GITHUB_STEP_SUMMARY) fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + "\n");
-process.exit(s.failed > 0 ? 1 : 0);
+
+if (process.env.GITHUB_STEP_SUMMARY) {
+  fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md + "\n");
+}
+
+process.exit(failed > 0 ? 1 : 0);
