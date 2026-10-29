@@ -262,3 +262,15 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .link-ok { color: var(--success-text); font-weight: 600; }
 .override-form { margin-top: 12px; padding: 12px; border: 1px dashed var(--border); border-radius: var(--radius); }
 .override-form .field select { width: 100%; }
+
+/* Reports */
+.page.wide { max-width: 1280px; }
+.report-filters { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.report-filters .field { min-width: 160px; flex: 0 1 220px; margin-bottom: 0; }
+.report-filters > .btn { margin-top: 26px; margin-left: auto; }
+.report, .report-error { margin-top: 20px; }
+.report-summary { display: flex; gap: 32px; flex-wrap: wrap; margin: 0 0 20px; }
+.report-summary dt { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 600; }
+.report-summary dd { margin: 0; font-size: 1.5rem; font-weight: 700; }
+table.numeric td:not(:first-child), table.numeric th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+table.numeric tfoot th, table.numeric tfoot td { font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }

@@ -40,6 +40,7 @@ function createApp() {
   app.use("/api/payments", require("./routes/payments"));
   app.use("/api/events", require("./routes/events"));
   app.use("/api/admin", require("./routes/admin"));
+  app.use("/api/reports", require("./routes/reports"));
   if (config.isTest) app.use("/api/test", require("./routes/test"));
 
   app.use("/api", (_req, _res, next) => next(new ApiError(404, "NOT_FOUND", "No such endpoint")));

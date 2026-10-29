@@ -27,6 +27,7 @@ const reservationSchema = new mongoose.Schema({
 
 reservationSchema.index({ slot: 1, startTime: 1, endTime: 1 });
 reservationSchema.index({ status: 1, holdExpiresAt: 1 });
+reservationSchema.index({ facility: 1, startTime: 1 }); // usage reports
 
 // The API view. Pass the related documents to include their names.
 reservationSchema.methods.toPublic = function toPublic({ slot, zone, facility, vehicle } = {}) {
