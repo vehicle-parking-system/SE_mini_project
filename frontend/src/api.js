@@ -101,6 +101,15 @@ export const api = {
   lockedAccounts: () => request("GET", "/api/admin/locked-accounts"),
   unlockUser: (id) => request("POST", `/api/admin/users/${id}/unlock`),
   auditLogs: (events) => request("GET", `/api/admin/audit-logs?event=${encodeURIComponent(events.join(","))}`),
+  adminFacilities: () => request("GET", "/api/admin/facilities"),
+  createFacility: (facility) => request("POST", "/api/admin/facilities", facility),
+  updateFacility: (id, fields) => request("PATCH", `/api/admin/facilities/${id}`, fields),
+  addZone: (facilityId, zone) => request("POST", `/api/admin/facilities/${facilityId}/zones`, zone),
+  addGate: (facilityId, gate) => request("POST", `/api/admin/facilities/${facilityId}/gates`, gate),
+  addSlots: (zoneId, slots) => request("POST", `/api/admin/zones/${zoneId}/slots`, { slots }),
+  updateSlot: (id, fields) => request("PATCH", `/api/admin/slots/${id}`, fields),
+  setRate: (rate) => request("PUT", "/api/admin/rates", rate),
+  deleteRate: (id) => request("DELETE", `/api/admin/rates/${id}`),
 };
 
 // No real payment gateway is connected yet: the sandbox accepts this token in place of the one

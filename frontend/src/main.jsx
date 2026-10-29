@@ -12,6 +12,7 @@ import Bookings from "./pages/Bookings";
 import Gate from "./pages/Gate";
 import ReceiptPage from "./pages/ReceiptPage";
 import Transactions from "./pages/Transactions";
+import Facilities from "./pages/Facilities";
 import "./styles.css";
 
 function NavBar() {
@@ -24,6 +25,7 @@ function NavBar() {
           {user.role === "DRIVER" && <Link to="/search">Find parking</Link>}
           {user.role === "DRIVER" && <Link to="/bookings">My bookings</Link>}
           {user.role !== "DRIVER" && <Link to="/gate">Gate</Link>}
+          {user.role === "ADMIN" && <Link to="/admin/facilities">Facilities</Link>}
           {user.role === "ADMIN" && <Link to="/admin/staff">Staff</Link>}
           {user.role === "ADMIN" && <Link to="/admin/transactions">Payments</Link>}
           {user.role === "ADMIN" && <Link to="/admin/security">Security</Link>}
@@ -52,6 +54,7 @@ function App() {
         <Route path="/bookings" element={<RequireAuth roles={["DRIVER"]}><Bookings /></RequireAuth>} />
         <Route path="/receipts/:id" element={<RequireAuth><ReceiptPage /></RequireAuth>} />
         <Route path="/gate" element={<RequireAuth roles={["ATTENDANT", "ADMIN"]}><Gate /></RequireAuth>} />
+        <Route path="/admin/facilities" element={<RequireAuth roles={["ADMIN"]}><Facilities /></RequireAuth>} />
         <Route path="/admin/staff" element={<RequireAuth roles={["ADMIN"]}><Staff /></RequireAuth>} />
         <Route path="/admin/transactions" element={<RequireAuth roles={["ADMIN"]}><Transactions /></RequireAuth>} />
         <Route path="/admin/security" element={<RequireAuth roles={["ADMIN"]}><Security /></RequireAuth>} />
