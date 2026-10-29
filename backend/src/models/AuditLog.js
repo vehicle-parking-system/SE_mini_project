@@ -10,6 +10,8 @@ const auditLogSchema = new mongoose.Schema({
   at: { type: Date, required: true },
 });
 
+auditLogSchema.index({ at: 1 }); // archival by age (archive.js)
+
 auditLogSchema.methods.toPublic = function toPublic() {
   return { id: this.id, event: this.event, actorId: this.actorId?.toString() ?? null,
     actorEmail: this.actorEmail ?? null, details: this.details, at: this.at };

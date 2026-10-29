@@ -9,7 +9,7 @@ Automated versions of the test cases in the [Software Test Plan](https://github.
 | `performance/` | JMeter load test and result checker | TC-Perf-01, TC-Perf-02 | Nightly / on demand (`nightly.yml`) |
 | — | TLS scan (testssl.sh), OWASP ZAP baseline | TC-Sec-02 | Nightly / on demand (`nightly.yml`) |
 
-Not automated: TC-OPS-01 (1-year log retention) and the monthly uptime reports for VPS-NF-002 — these stay manual.
+TC-OPS-01 (log retention, VPS-NF-004) is covered by the backend's `test/archive.api.test.js`: archival, retrieval, integrity checks and the one-year retention floor. The monthly uptime reports for VPS-NF-002 stay manual.
 
 ## What CI does
 
