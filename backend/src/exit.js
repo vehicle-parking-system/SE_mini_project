@@ -6,7 +6,7 @@ const clock = require("./clock");
 const hardware = require("./hardware");
 const logger = require("./logger");
 const qr = require("./qr");
-const Gate = require("./models/Gate");
+const { findGate } = require("./cache");
 const Reservation = require("./models/Reservation");
 const Session = require("./models/Session");
 const Slot = require("./models/Slot");
@@ -48,9 +48,8 @@ async function findSession({ sessionId, qrCode, plateNumber }) {
 
 async function processExit(user, body) {
   const input = parseExit(body);
-  const gate = await Gate.findById(input.gateId);
+  const [gate, session] = await Promise.all([findGate(input.gateId), findSession(input)]);
   if (!gate || gate.type !== "EXIT") throw notFound("Exit gate not found");
-  const session = await findSession(input);
   if (session.status !== "ACTIVE") throw conflict("This vehicle has already left");
   if (!session.facility.equals(gate.facility)) throw conflict("This vehicle is parked at another facility");
 
@@ -74,8 +73,7 @@ async function processExit(user, body) {
   if (!closed) throw conflict("This vehicle has already left");
   hardware.display(gate.id, "Thank you. Drive safely");
   hardware.openBarrier(gate.id);
-  await releaseSlot(closed);
-  const receipt = await issueReceipt(closed);
+  const [, receipt] = await Promise.all([releaseSlot(closed), issueReceipt(closed)]);
   logger.info("vehicle exited", { sessionId: closed.id, gateId: gate.id, amount: total });
   return { sessionId: closed.id, plateNumber: closed.plateNumber, entryTime: closed.entryTime.toISOString(),
     exitTime: now.toISOString(), duration: quote.duration, chargedHours: quote.chargedHours, ratePerHour: quote.ratePerHour,
@@ -88,11 +86,10 @@ async function processExit(user, body) {
 // booking see the change, a booking the vehicle came in on is COMPLETED (so it stops holding
 // the slot for the rest of its window), and gate screens and searches are told at once.
 async function releaseSlot(session) {
-  const slot = await Slot.findOneAndUpdate({ _id: session.slot, status: "OCCUPIED" },
-    { status: "AVAILABLE", $inc: { version: 1 } }, { new: true });
-  if (session.reservation) {
-    await Reservation.updateOne({ _id: session.reservation, status: "CHECKED_IN" }, { status: "COMPLETED" });
-  }
+  const [slot] = await Promise.all([
+    Slot.findOneAndUpdate({ _id: session.slot, status: "OCCUPIED" }, { status: "AVAILABLE", $inc: { version: 1 } }, { new: true }),
+    session.reservation && Reservation.updateOne({ _id: session.reservation, status: "CHECKED_IN" }, { status: "COMPLETED" }),
+  ]);
   if (slot) {
     events.slotChanged(slot, "EXIT");
     logger.info("slot released", { slotId: slot.id, sessionId: session.id });

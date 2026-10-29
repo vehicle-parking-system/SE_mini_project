@@ -60,9 +60,10 @@ async function claimSlot(slotId, doc, now) {
 
 // HELD reservations whose driver didn't arrive within the grace period become EXPIRED.
 // Search already ignores them; this makes their status say so too.
-async function expireHolds(now = clock.now()) {
+// facilityId limits it to one facility (an entry gate only needs its own).
+async function expireHolds(now = clock.now(), facilityId = null) {
   const { modifiedCount } = await Reservation.updateMany(
-    { status: "HELD", holdExpiresAt: { $lte: now } }, { status: "EXPIRED" });
+    { status: "HELD", holdExpiresAt: { $lte: now }, ...(facilityId && { facility: facilityId }) }, { status: "EXPIRED" });
   if (modifiedCount) logger.info("reservation holds expired", { count: modifiedCount });
 }
 

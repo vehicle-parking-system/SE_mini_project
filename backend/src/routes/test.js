@@ -1,6 +1,7 @@
 // Test-support hooks for the acceptance tests in tests/. Mounted ONLY when NODE_ENV=test.
 const express = require("express");
 const mongoose = require("mongoose");
+const cache = require("../cache");
 const clock = require("../clock");
 const notifications = require("../notifications");
 const hardware = require("../hardware");
@@ -18,6 +19,7 @@ router.post("/reset", async (req, res) => {
   await mongoose.connection.db.dropDatabase();
   await Promise.all(Object.values(mongoose.models).map((m) => m.syncIndexes()));
   clock.reset();
+  cache.clear();
   notifications.clear();
   hardware.clear();
 

@@ -8,6 +8,7 @@
 // - Rates are upserted per facility, zone (or facility-wide) and vehicle type. A vehicle keeps the
 //   rate it entered with (pricing.js), so a change applies to vehicles that enter after it.
 // - Every change is audited as CONFIG_CHANGED.
+const cache = require("./cache");
 const clock = require("./clock");
 const logger = require("./logger");
 const events = require("./events");
@@ -141,7 +142,9 @@ function parseNewFacility(body = {}) {
   };
 }
 
+// Every change ends here: the gates' cached configuration is dropped so it is read fresh.
 async function audit(user, action, details) {
+  cache.clear();
   await AuditLog.create({ event: "CONFIG_CHANGED", actorId: user._id, at: clock.now(), details: { action, ...details } });
   logger.info("configuration changed", { action, by: user.id, ...details });
 }
