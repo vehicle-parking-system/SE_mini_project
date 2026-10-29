@@ -5,11 +5,15 @@ const logger = require("./logger");
 const { ApiError } = require("./errors");
 const { authorize } = require("./middleware/auth");
 const { rejectCardData } = require("./middleware/cardData");
+const { requireHttps } = require("./transport");
 
-function createApp() {
+// options.https and options.trustProxy override config (tests run the app in each TLS mode)
+function createApp(options = {}) {
   const app = express();
   app.disable("x-powered-by");
-  app.set("trust proxy", config.trustProxy);
+  app.set("trust proxy", options.trustProxy ?? config.trustProxy);
+  // Plain HTTP is redirected or refused before anything else runs (VPS-SR-001)
+  app.use(requireHttps(options.https ?? config.https));
   // The raw body is kept for verifying payment webhook signatures.
   app.use(express.json({ limit: "100kb", verify: (req, _res, buf) => { req.rawBody = buf; } }));
 
