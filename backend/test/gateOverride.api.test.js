@@ -25,8 +25,7 @@ const lot = {
 };
 
 describeDb("gate override and network loss", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -38,6 +37,8 @@ describeDb("gate override and network loss", () => {
   }
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_gate_override";
     await mongoose.connect(url.toString());

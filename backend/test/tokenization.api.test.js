@@ -45,8 +45,7 @@ const lot = {
 };
 
 describeDb("booking payments, refunds and the transaction log", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -60,6 +59,8 @@ describeDb("booking payments, refunds and the transaction log", () => {
   const transactions = async (query = "") => (await api.get(`/api/admin/transactions${query}`).set(as("admin"))).body.transactions;
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_tokenization";
     await mongoose.connect(url.toString());

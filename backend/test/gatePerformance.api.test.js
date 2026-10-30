@@ -27,8 +27,7 @@ const lot = {
 };
 
 describeDb("gate performance", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
   const as = (key) => ({ authorization: `Bearer ${tokens[key]}` });
@@ -37,6 +36,8 @@ describeDb("gate performance", () => {
   const plate = (i) => `KA01PF${String(i).padStart(4, "0")}`;
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_gate_performance";
     await mongoose.connect(url.toString());

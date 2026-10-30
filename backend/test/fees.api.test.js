@@ -12,28 +12,6 @@ const pricing = require("../src/pricing");
 const Rate = require("../src/models/Rate");
 const Session = require("../src/models/Session");
 
-describe("fee rules", () => {
-  const t0 = new Date("2026-11-02T10:00:00Z");
-  const after = (ms) => new Date(t0.getTime() + ms);
-
-  test("duration is rounded to the nearest minute", () => {
-    expect(pricing.durationMinutes(t0, after(59 * 60000 + 29999))).toBe(59);
-    expect(pricing.durationMinutes(t0, after(59 * 60000 + 30000))).toBe(60);
-    expect(pricing.durationMinutes(t0, after(-5000))).toBe(0);
-  });
-
-  test.each([[0, 1], [1, 1], [30, 1], [60, 1], [61, 2], [120, 2], [165, 3]])(
-    "%i minutes are charged as %i started hour(s)", (minutes, hours) => {
-      expect(pricing.chargedHours(minutes)).toBe(hours);
-      expect(pricing.feeFor(minutes, 40)).toBe(hours * 40);
-    });
-
-  test("a quote describes the stay up to a moment", () => {
-    expect(pricing.quote({ entryTime: t0, ratePerHour: 40 }, after(90 * 60000))).toEqual({
-      duration: 90, chargedHours: 2, ratePerHour: 40, amount: 80, quotedAt: after(90 * 60000).toISOString(),
-    });
-  });
-});
 
 const MONGO_URL = process.env.MONGO_URL;
 const describeDb = MONGO_URL ? describe : describe.skip;
@@ -54,8 +32,7 @@ const other = { key: "other", name: "Other", openTime: "00:00", closeTime: "23:5
   gates: [{ key: "otherOut", type: "EXIT" }], zones: [] };
 
 describeDb("rate cards and the exit quote", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   let token;
 
@@ -64,6 +41,8 @@ describeDb("rate cards and the exit quote", () => {
   const exit = (body) => api.post("/api/exit").set("authorization", `Bearer ${token}`).send({ gateId: ids.out, ...body });
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_fees";
     await mongoose.connect(url.toString());

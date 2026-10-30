@@ -1,0 +1,1123 @@
+{"at":"2026-10-30T17:49:51.997Z","level":"info","message":"VPS API listening","port":4030,"protocol":"http","tlsAtProxy":false}
+{"at":"2026-10-30T17:49:52.260Z","level":"info","message":"request","method":"GET","path":"/api/health","status":200,"ms":35}
+{"at":"2026-10-30T17:50:33.819Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3393}
+{"at":"2026-10-30T17:50:33.885Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":10}
+{"at":"2026-10-30T17:50:34.491Z","level":"info","message":"login","userId":"6ae4d8e874466830b9852b61","role":"DRIVER"}
+{"at":"2026-10-30T17:50:34.513Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":615}
+{"at":"2026-10-30T17:50:35.084Z","level":"info","message":"login","userId":"6ae4d8e874466830b9852b68","role":"DRIVER"}
+{"at":"2026-10-30T17:50:35.093Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":567}
+{"at":"2026-10-30T17:50:35.695Z","level":"info","message":"login","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT"}
+{"at":"2026-10-30T17:50:35.707Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":600}
+{"at":"2026-10-30T17:50:36.253Z","level":"info","message":"login","userId":"6ae4d8e974466830b9852b71","role":"ADMIN"}
+{"at":"2026-10-30T17:50:36.261Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":540}
+{"at":"2026-10-30T17:50:36.562Z","level":"info","message":"reservation held","reservationId":"6ae4d8ec74466830b9852baa","userId":"6ae4d8e874466830b9852b61"}
+{"at":"2026-10-30T17:50:36.564Z","level":"info","message":"notification queued","userId":"6ae4d8e874466830b9852b61","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:50:36.602Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":328}
+{"at":"2026-10-30T17:50:36.645Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT","method":"POST","path":"/api/reservations"}
+{"at":"2026-10-30T17:50:36.654Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":403,"ms":34}
+{"at":"2026-10-30T17:50:36.697Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b71","role":"ADMIN","method":"POST","path":"/api/reservations"}
+{"at":"2026-10-30T17:50:36.700Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":403,"ms":27}
+{"at":"2026-10-30T17:50:36.743Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"POST","path":"/api/entry"}
+{"at":"2026-10-30T17:50:36.746Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":403,"ms":24}
+{"at":"2026-10-30T17:50:36.886Z","level":"info","message":"gate command","gateId":"6ae4d8e974466830b9852b75","command":"DISPLAY"}
+{"at":"2026-10-30T17:50:36.887Z","level":"info","message":"gate command","gateId":"6ae4d8e974466830b9852b75","command":"OPEN"}
+{"at":"2026-10-30T17:50:36.888Z","level":"info","message":"vehicle entered","sessionId":"6ae4d8ec74466830b9852bce","gateId":"6ae4d8e974466830b9852b75","source":"MANUAL","booked":false}
+{"at":"2026-10-30T17:50:36.909Z","level":"info","message":"notification queued","userId":"6ae4d8e874466830b9852b61","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:50:36.913Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":155}
+{"at":"2026-10-30T17:50:36.953Z","level":"info","message":"gate command","gateId":"6ae4d8e974466830b9852b75","command":"DISPLAY"}
+{"at":"2026-10-30T17:50:36.953Z","level":"info","message":"entry refused","gateId":"6ae4d8e974466830b9852b75","source":"MANUAL","status":409}
+{"at":"2026-10-30T17:50:36.957Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":34}
+{"at":"2026-10-30T17:50:36.990Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"GET","path":"/api/occupancy/6ae4d8e974466830b9852b73"}
+{"at":"2026-10-30T17:50:36.995Z","level":"info","message":"request","method":"GET","path":"/api/occupancy/6ae4d8e974466830b9852b73","status":403,"ms":30}
+{"at":"2026-10-30T17:50:37.048Z","level":"info","message":"request","method":"GET","path":"/api/occupancy/6ae4d8e974466830b9852b73","status":200,"ms":48}
+{"at":"2026-10-30T17:50:37.092Z","level":"info","message":"request","method":"GET","path":"/api/occupancy/6ae4d8e974466830b9852b73","status":200,"ms":40}
+{"at":"2026-10-30T17:50:37.122Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"GET","path":"/api/admin/transactions"}
+{"at":"2026-10-30T17:50:37.125Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":403,"ms":28}
+{"at":"2026-10-30T17:50:37.155Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT","method":"GET","path":"/api/admin/transactions"}
+{"at":"2026-10-30T17:50:37.158Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":403,"ms":29}
+{"at":"2026-10-30T17:50:37.185Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":200,"ms":22}
+{"at":"2026-10-30T17:50:37.213Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"GET","path":"/api/admin/audit-logs"}
+{"at":"2026-10-30T17:50:37.216Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":403,"ms":25}
+{"at":"2026-10-30T17:50:37.242Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT","method":"GET","path":"/api/admin/audit-logs"}
+{"at":"2026-10-30T17:50:37.245Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":403,"ms":23}
+{"at":"2026-10-30T17:50:37.280Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":200,"ms":30}
+{"at":"2026-10-30T17:50:37.309Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"GET","path":"/api/reports/revenue"}
+{"at":"2026-10-30T17:50:37.312Z","level":"info","message":"request","method":"GET","path":"/api/reports/revenue","status":403,"ms":24}
+{"at":"2026-10-30T17:50:37.338Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT","method":"GET","path":"/api/reports/revenue"}
+{"at":"2026-10-30T17:50:37.340Z","level":"info","message":"request","method":"GET","path":"/api/reports/revenue","status":403,"ms":21}
+{"at":"2026-10-30T17:50:37.392Z","level":"info","message":"request","method":"GET","path":"/api/reports/revenue","status":200,"ms":48}
+{"at":"2026-10-30T17:50:37.426Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"PUT","path":"/api/admin/rates"}
+{"at":"2026-10-30T17:50:37.430Z","level":"info","message":"request","method":"PUT","path":"/api/admin/rates","status":403,"ms":31}
+{"at":"2026-10-30T17:50:37.460Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT","method":"PUT","path":"/api/admin/rates"}
+{"at":"2026-10-30T17:50:37.463Z","level":"info","message":"request","method":"PUT","path":"/api/admin/rates","status":403,"ms":25}
+{"at":"2026-10-30T17:50:37.536Z","level":"info","message":"configuration changed","action":"RATE_SET","by":"6ae4d8e974466830b9852b71","facilityId":"6ae4d8e974466830b9852b73","zoneId":"6ae4d8e974466830b9852b79","vehicleType":"CAR","from":40,"to":40}
+{"at":"2026-10-30T17:50:37.542Z","level":"info","message":"request","method":"PUT","path":"/api/admin/rates","status":200,"ms":71}
+{"at":"2026-10-30T17:50:37.569Z","level":"warn","message":"access denied","userId":"6ae4d8e874466830b9852b61","role":"DRIVER","method":"POST","path":"/api/admin/attendants"}
+{"at":"2026-10-30T17:50:37.572Z","level":"info","message":"request","method":"POST","path":"/api/admin/attendants","status":403,"ms":25}
+{"at":"2026-10-30T17:50:37.605Z","level":"warn","message":"access denied","userId":"6ae4d8e974466830b9852b6e","role":"ATTENDANT","method":"POST","path":"/api/admin/attendants"}
+{"at":"2026-10-30T17:50:37.608Z","level":"info","message":"request","method":"POST","path":"/api/admin/attendants","status":403,"ms":28}
+{"at":"2026-10-30T17:50:37.637Z","level":"info","message":"request","method":"POST","path":"/api/admin/attendants","status":400,"ms":21}
+{"at":"2026-10-30T17:50:41.604Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3936}
+{"at":"2026-10-30T17:50:41.618Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:50:42.169Z","level":"info","message":"login","userId":"6ae4d8ef74466830b9852c57","role":"DRIVER"}
+{"at":"2026-10-30T17:50:42.176Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":552}
+{"at":"2026-10-30T17:50:42.769Z","level":"info","message":"login","userId":"6ae4d8f074466830b9852c5e","role":"DRIVER"}
+{"at":"2026-10-30T17:50:42.779Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":594}
+{"at":"2026-10-30T17:50:43.372Z","level":"info","message":"login","userId":"6ae4d8f074466830b9852c64","role":"ATTENDANT"}
+{"at":"2026-10-30T17:50:43.379Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":593}
+{"at":"2026-10-30T17:50:43.993Z","level":"info","message":"login","userId":"6ae4d8f174466830b9852c67","role":"ADMIN"}
+{"at":"2026-10-30T17:50:44.003Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":616}
+{"at":"2026-10-30T17:50:44.024Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":401,"ms":12}
+{"at":"2026-10-30T17:50:47.855Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3816}
+{"at":"2026-10-30T17:50:47.866Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:50:48.362Z","level":"info","message":"login","userId":"6ae4d8f674466830b9852cca","role":"DRIVER"}
+{"at":"2026-10-30T17:50:48.374Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":500}
+{"at":"2026-10-30T17:50:48.888Z","level":"info","message":"login","userId":"6ae4d8f674466830b9852cd1","role":"DRIVER"}
+{"at":"2026-10-30T17:50:48.895Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":513}
+{"at":"2026-10-30T17:50:49.420Z","level":"info","message":"login","userId":"6ae4d8f774466830b9852cd7","role":"ATTENDANT"}
+{"at":"2026-10-30T17:50:49.429Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":528}
+{"at":"2026-10-30T17:50:50.014Z","level":"info","message":"login","userId":"6ae4d8f774466830b9852cda","role":"ADMIN"}
+{"at":"2026-10-30T17:50:50.023Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":588}
+{"at":"2026-10-30T17:50:50.589Z","level":"info","message":"attendant created","userId":"6ae4d8fa74466830b9852d0f","by":"6ae4d8f774466830b9852cda"}
+{"at":"2026-10-30T17:50:50.591Z","level":"info","message":"request","method":"POST","path":"/api/admin/attendants","status":201,"ms":556}
+{"at":"2026-10-30T17:50:51.142Z","level":"info","message":"login","userId":"6ae4d8fa74466830b9852d0f","role":"ATTENDANT"}
+{"at":"2026-10-30T17:50:51.149Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":551}
+{"at":"2026-10-30T17:50:51.171Z","level":"info","message":"request","method":"GET","path":"/api/users/me","status":200,"ms":18}
+{"at":"2026-10-30T17:50:51.201Z","level":"warn","message":"access denied","userId":"6ae4d8fa74466830b9852d0f","role":"ATTENDANT","method":"POST","path":"/api/users/me/vehicles"}
+{"at":"2026-10-30T17:50:51.204Z","level":"info","message":"request","method":"POST","path":"/api/users/me/vehicles","status":403,"ms":25}
+{"at":"2026-10-30T17:50:51.233Z","level":"warn","message":"access denied","userId":"6ae4d8fa74466830b9852d0f","role":"ATTENDANT","method":"GET","path":"/api/admin/audit-logs"}
+{"at":"2026-10-30T17:50:51.236Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":403,"ms":25}
+{"at":"2026-10-30T17:50:51.280Z","level":"warn","message":"access denied","userId":"6ae4d8fa74466830b9852d0f","role":"ATTENDANT","method":"POST","path":"/api/admin/attendants"}
+{"at":"2026-10-30T17:50:51.283Z","level":"info","message":"request","method":"POST","path":"/api/admin/attendants","status":403,"ms":35}
+{"at":"2026-10-30T17:50:51.319Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":200,"ms":29}
+{"at":"2026-10-30T17:50:54.394Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3062}
+{"at":"2026-10-30T17:50:54.407Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:50:54.906Z","level":"info","message":"login","userId":"6ae4d8fc74466830b9852d5c","role":"DRIVER"}
+{"at":"2026-10-30T17:50:54.915Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":501}
+{"at":"2026-10-30T17:50:55.412Z","level":"info","message":"login","userId":"6ae4d8fd74466830b9852d63","role":"DRIVER"}
+{"at":"2026-10-30T17:50:55.421Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":500}
+{"at":"2026-10-30T17:50:55.985Z","level":"info","message":"login","userId":"6ae4d8fd74466830b9852d69","role":"ATTENDANT"}
+{"at":"2026-10-30T17:50:55.994Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":566}
+{"at":"2026-10-30T17:50:56.503Z","level":"info","message":"login","userId":"6ae4d8fe74466830b9852d6c","role":"ADMIN"}
+{"at":"2026-10-30T17:50:56.510Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":509}
+{"at":"2026-10-30T17:50:57.052Z","level":"info","message":"driver registered","userId":"6ae4d90174466830b9852da0"}
+{"at":"2026-10-30T17:50:57.061Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":201,"ms":546}
+{"at":"2026-10-30T17:50:57.088Z","level":"warn","message":"access denied","userId":"6ae4d90174466830b9852da0","role":"DRIVER","method":"GET","path":"/api/admin/transactions"}
+{"at":"2026-10-30T17:50:57.091Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":403,"ms":23}
+{"at":"2026-10-30T17:51:00.684Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3582}
+{"at":"2026-10-30T17:51:00.699Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:51:01.201Z","level":"info","message":"login","userId":"6ae4d90274466830b9852dd7","role":"DRIVER"}
+{"at":"2026-10-30T17:51:01.207Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":502}
+{"at":"2026-10-30T17:51:01.763Z","level":"info","message":"login","userId":"6ae4d90374466830b9852dde","role":"DRIVER"}
+{"at":"2026-10-30T17:51:01.772Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":559}
+{"at":"2026-10-30T17:51:02.340Z","level":"info","message":"login","userId":"6ae4d90474466830b9852de4","role":"ATTENDANT"}
+{"at":"2026-10-30T17:51:02.347Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":566}
+{"at":"2026-10-30T17:51:02.868Z","level":"info","message":"login","userId":"6ae4d90474466830b9852de7","role":"ADMIN"}
+{"at":"2026-10-30T17:51:02.875Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":520}
+{"at":"2026-10-30T17:51:03.407Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":526}
+{"at":"2026-10-30T17:51:03.939Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":526}
+{"at":"2026-10-30T17:51:04.504Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":557}
+{"at":"2026-10-30T17:51:05.024Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":514}
+{"at":"2026-10-30T17:51:05.510Z","level":"warn","message":"ALERT account locked after repeated failed logins","userId":"6ae4d90274466830b9852dd7","lockNumber":1,"lockedUntil":"2026-11-02T04:45:04.798Z"}
+{"at":"2026-10-30T17:51:05.511Z","level":"info","message":"notification queued","userId":"6ae4d90274466830b9852dd7","channel":"EMAIL","type":"ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:05.519Z","level":"info","message":"notification queued","userId":"6ae4d90474466830b9852de7","channel":"EMAIL","type":"ADMIN_ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:05.521Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":490}
+{"at":"2026-10-30T17:51:05.559Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":32}
+{"at":"2026-10-30T17:51:05.584Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":200,"ms":20}
+{"at":"2026-10-30T17:51:08.661Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3069}
+{"at":"2026-10-30T17:51:08.674Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:51:09.205Z","level":"info","message":"login","userId":"6ae4d90b74466830b9852e77","role":"DRIVER"}
+{"at":"2026-10-30T17:51:09.211Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":530}
+{"at":"2026-10-30T17:51:09.696Z","level":"info","message":"login","userId":"6ae4d90b74466830b9852e7e","role":"DRIVER"}
+{"at":"2026-10-30T17:51:09.702Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":486}
+{"at":"2026-10-30T17:51:10.233Z","level":"info","message":"login","userId":"6ae4d90c74466830b9852e84","role":"ATTENDANT"}
+{"at":"2026-10-30T17:51:10.239Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":530}
+{"at":"2026-10-30T17:51:10.740Z","level":"info","message":"login","userId":"6ae4d90c74466830b9852e87","role":"ADMIN"}
+{"at":"2026-10-30T17:51:10.746Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":502}
+{"at":"2026-10-30T17:51:11.261Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":509}
+{"at":"2026-10-30T17:51:11.732Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":465}
+{"at":"2026-10-30T17:51:12.245Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":508}
+{"at":"2026-10-30T17:51:12.739Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":487}
+{"at":"2026-10-30T17:51:13.233Z","level":"warn","message":"ALERT account locked after repeated failed logins","userId":"6ae4d90b74466830b9852e77","lockNumber":1,"lockedUntil":"2026-11-02T04:45:04.547Z"}
+{"at":"2026-10-30T17:51:13.234Z","level":"info","message":"notification queued","userId":"6ae4d90b74466830b9852e77","channel":"EMAIL","type":"ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:13.240Z","level":"info","message":"notification queued","userId":"6ae4d90c74466830b9852e87","channel":"EMAIL","type":"ADMIN_ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:13.243Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":499}
+{"at":"2026-10-30T17:51:13.271Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":200,"ms":23}
+{"at":"2026-10-30T17:51:13.281Z","level":"info","message":"request","method":"GET","path":"/api/test/notifications","status":200,"ms":4}
+{"at":"2026-10-30T17:51:16.436Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3143}
+{"at":"2026-10-30T17:51:16.449Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:51:16.934Z","level":"info","message":"login","userId":"6ae4d91274466830b9852f10","role":"DRIVER"}
+{"at":"2026-10-30T17:51:16.943Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":486}
+{"at":"2026-10-30T17:51:17.450Z","level":"info","message":"login","userId":"6ae4d91374466830b9852f17","role":"DRIVER"}
+{"at":"2026-10-30T17:51:17.459Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":509}
+{"at":"2026-10-30T17:51:17.999Z","level":"info","message":"login","userId":"6ae4d91374466830b9852f1d","role":"ATTENDANT"}
+{"at":"2026-10-30T17:51:18.008Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":544}
+{"at":"2026-10-30T17:51:18.537Z","level":"info","message":"login","userId":"6ae4d91474466830b9852f20","role":"ADMIN"}
+{"at":"2026-10-30T17:51:18.546Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":531}
+{"at":"2026-10-30T17:51:20.532Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":1698}
+{"at":"2026-10-30T17:51:20.959Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2140}
+{"at":"2026-10-30T17:51:20.962Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2138}
+{"at":"2026-10-30T17:51:20.964Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2137}
+{"at":"2026-10-30T17:51:20.966Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2136}
+{"at":"2026-10-30T17:51:20.967Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2127}
+{"at":"2026-10-30T17:51:20.970Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2123}
+{"at":"2026-10-30T17:51:20.972Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2120}
+{"at":"2026-10-30T17:51:20.975Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2120}
+{"at":"2026-10-30T17:51:20.978Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2118}
+{"at":"2026-10-30T17:51:20.980Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2118}
+{"at":"2026-10-30T17:51:20.983Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2117}
+{"at":"2026-10-30T17:51:20.984Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2116}
+{"at":"2026-10-30T17:51:20.986Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2112}
+{"at":"2026-10-30T17:51:20.988Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":2109}
+{"at":"2026-10-30T17:51:21.223Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":2645}
+{"at":"2026-10-30T17:51:21.249Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":2449}
+{"at":"2026-10-30T17:51:21.251Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":2446}
+{"at":"2026-10-30T17:51:21.258Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":2448}
+{"at":"2026-10-30T17:51:21.264Z","level":"warn","message":"ALERT account locked after repeated failed logins","userId":"6ae4d91274466830b9852f10","lockNumber":1,"lockedUntil":"2026-11-02T04:45:04.807Z"}
+{"at":"2026-10-30T17:51:21.265Z","level":"info","message":"notification queued","userId":"6ae4d91274466830b9852f10","channel":"EMAIL","type":"ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:21.273Z","level":"info","message":"notification queued","userId":"6ae4d91474466830b9852f20","channel":"EMAIL","type":"ADMIN_ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:21.277Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":2463}
+{"at":"2026-10-30T17:51:21.322Z","level":"warn","message":"ALERT login attempts throttled for an IP","until":"2026-11-02T04:45:00.000Z"}
+{"at":"2026-10-30T17:51:21.327Z","level":"info","message":"notification queued","userId":"6ae4d91474466830b9852f20","channel":"EMAIL","type":"ADMIN_LOGIN_RATE_LIMITED"}
+{"at":"2026-10-30T17:51:21.330Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":429,"ms":46}
+{"at":"2026-10-30T17:51:24.913Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3574}
+{"at":"2026-10-30T17:51:24.927Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:51:25.460Z","level":"info","message":"login","userId":"6ae4d91a74466830b9853006","role":"DRIVER"}
+{"at":"2026-10-30T17:51:25.468Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":534}
+{"at":"2026-10-30T17:51:25.959Z","level":"info","message":"login","userId":"6ae4d91b74466830b985300d","role":"DRIVER"}
+{"at":"2026-10-30T17:51:25.966Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":492}
+{"at":"2026-10-30T17:51:26.478Z","level":"info","message":"login","userId":"6ae4d91c74466830b9853013","role":"ATTENDANT"}
+{"at":"2026-10-30T17:51:26.487Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":515}
+{"at":"2026-10-30T17:51:27.123Z","level":"info","message":"login","userId":"6ae4d91c74466830b9853016","role":"ADMIN"}
+{"at":"2026-10-30T17:51:27.132Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":637}
+{"at":"2026-10-30T17:51:27.719Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":578}
+{"at":"2026-10-30T17:51:28.384Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":658}
+{"at":"2026-10-30T17:51:29.031Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":640}
+{"at":"2026-10-30T17:51:29.753Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":715}
+{"at":"2026-10-30T17:51:30.505Z","level":"warn","message":"ALERT account locked after repeated failed logins","userId":"6ae4d91a74466830b9853006","lockNumber":1,"lockedUntil":"2026-11-02T04:45:05.563Z"}
+{"at":"2026-10-30T17:51:30.506Z","level":"info","message":"notification queued","userId":"6ae4d91a74466830b9853006","channel":"EMAIL","type":"ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:30.513Z","level":"info","message":"notification queued","userId":"6ae4d91c74466830b9853016","channel":"EMAIL","type":"ADMIN_ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:30.517Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":751}
+{"at":"2026-10-30T17:51:30.556Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":31}
+{"at":"2026-10-30T17:51:30.568Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:51:31.113Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":539}
+{"at":"2026-10-30T17:51:31.720Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":601}
+{"at":"2026-10-30T17:51:32.310Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":583}
+{"at":"2026-10-30T17:51:32.910Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":594}
+{"at":"2026-10-30T17:51:33.527Z","level":"warn","message":"ALERT account locked after repeated failed logins","userId":"6ae4d91a74466830b9853006","lockNumber":2,"lockedUntil":"2026-11-02T05:50:02.949Z"}
+{"at":"2026-10-30T17:51:33.528Z","level":"info","message":"notification queued","userId":"6ae4d91a74466830b9853006","channel":"EMAIL","type":"ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:33.535Z","level":"info","message":"notification queued","userId":"6ae4d91c74466830b9853016","channel":"EMAIL","type":"ADMIN_ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:51:33.537Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":619}
+{"at":"2026-10-30T17:51:33.574Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":423,"ms":30}
+{"at":"2026-10-30T17:51:33.586Z","level":"info","message":"request","method":"GET","path":"/api/test/notifications","status":200,"ms":4}
+{"at":"2026-10-30T17:51:37.256Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3659}
+{"at":"2026-10-30T17:51:37.269Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:51:37.807Z","level":"info","message":"login","userId":"6ae4d92774466830b98530cd","role":"DRIVER"}
+{"at":"2026-10-30T17:51:37.814Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":538}
+{"at":"2026-10-30T17:51:38.351Z","level":"info","message":"login","userId":"6ae4d92874466830b98530d4","role":"DRIVER"}
+{"at":"2026-10-30T17:51:38.359Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":539}
+{"at":"2026-10-30T17:51:38.904Z","level":"info","message":"login","userId":"6ae4d92874466830b98530da","role":"ATTENDANT"}
+{"at":"2026-10-30T17:51:38.911Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":546}
+{"at":"2026-10-30T17:51:39.452Z","level":"info","message":"login","userId":"6ae4d92974466830b98530dd","role":"ADMIN"}
+{"at":"2026-10-30T17:51:39.461Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":545}
+{"at":"2026-10-30T17:51:40.010Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":541}
+{"at":"2026-10-30T17:51:40.511Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":494}
+{"at":"2026-10-30T17:51:41.116Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":599}
+{"at":"2026-10-30T17:51:41.718Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":596}
+{"at":"2026-10-30T17:51:42.433Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":707}
+{"at":"2026-10-30T17:51:43.067Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":626}
+{"at":"2026-10-30T17:51:43.853Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":777}
+{"at":"2026-10-30T17:51:44.750Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":889}
+{"at":"2026-10-30T17:51:45.497Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":739}
+{"at":"2026-10-30T17:51:46.261Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":756}
+{"at":"2026-10-30T17:51:47.025Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":755}
+{"at":"2026-10-30T17:51:47.770Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":738}
+{"at":"2026-10-30T17:51:48.542Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":764}
+{"at":"2026-10-30T17:51:49.203Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":654}
+{"at":"2026-10-30T17:51:50.018Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":808}
+{"at":"2026-10-30T17:51:50.755Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":730}
+{"at":"2026-10-30T17:51:51.590Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":827}
+{"at":"2026-10-30T17:51:52.310Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":713}
+{"at":"2026-10-30T17:51:53.022Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":704}
+{"at":"2026-10-30T17:51:53.737Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":708}
+{"at":"2026-10-30T17:51:53.823Z","level":"warn","message":"ALERT login attempts throttled for an IP","until":"2026-11-02T04:45:00.000Z"}
+{"at":"2026-10-30T17:51:53.833Z","level":"info","message":"notification queued","userId":"6ae4d92974466830b98530dd","channel":"EMAIL","type":"ADMIN_LOGIN_RATE_LIMITED"}
+{"at":"2026-10-30T17:51:53.836Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":429,"ms":90}
+{"at":"2026-10-30T17:51:53.875Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":200,"ms":32}
+{"at":"2026-10-30T17:51:53.883Z","level":"info","message":"request","method":"GET","path":"/api/test/notifications","status":200,"ms":2}
+{"at":"2026-10-30T17:51:58.310Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4410}
+{"at":"2026-10-30T17:51:58.322Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:51:59.052Z","level":"info","message":"login","userId":"6ae4d93c74466830b98531cc","role":"DRIVER"}
+{"at":"2026-10-30T17:51:59.063Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":735}
+{"at":"2026-10-30T17:51:59.762Z","level":"info","message":"login","userId":"6ae4d93c74466830b98531d3","role":"DRIVER"}
+{"at":"2026-10-30T17:51:59.773Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":702}
+{"at":"2026-10-30T17:52:00.491Z","level":"info","message":"login","userId":"6ae4d93d74466830b98531d9","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:00.500Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":720}
+{"at":"2026-10-30T17:52:01.353Z","level":"info","message":"login","userId":"6ae4d93e74466830b98531dc","role":"ADMIN"}
+{"at":"2026-10-30T17:52:01.363Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":855}
+{"at":"2026-10-30T17:52:02.176Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":804}
+{"at":"2026-10-30T17:52:03.018Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":834}
+{"at":"2026-10-30T17:52:03.932Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":908}
+{"at":"2026-10-30T17:52:04.736Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":797}
+{"at":"2026-10-30T17:52:05.477Z","level":"warn","message":"ALERT account locked after repeated failed logins","userId":"6ae4d93c74466830b98531cc","lockNumber":1,"lockedUntil":"2026-11-02T04:45:07.144Z"}
+{"at":"2026-10-30T17:52:05.477Z","level":"info","message":"notification queued","userId":"6ae4d93c74466830b98531cc","channel":"EMAIL","type":"ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:52:05.484Z","level":"info","message":"notification queued","userId":"6ae4d93e74466830b98531dc","channel":"EMAIL","type":"ADMIN_ACCOUNT_LOCKED"}
+{"at":"2026-10-30T17:52:05.487Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":745}
+{"at":"2026-10-30T17:52:05.521Z","level":"info","message":"request","method":"GET","path":"/api/admin/locked-accounts","status":200,"ms":29}
+{"at":"2026-10-30T17:52:05.549Z","level":"warn","message":"access denied","userId":"6ae4d93c74466830b98531d3","role":"DRIVER","method":"POST","path":"/api/admin/users/6ae4d93c74466830b98531cc/unlock"}
+{"at":"2026-10-30T17:52:05.551Z","level":"info","message":"request","method":"POST","path":"/api/admin/users/6ae4d93c74466830b98531cc/unlock","status":403,"ms":23}
+{"at":"2026-10-30T17:52:05.586Z","level":"info","message":"account unlocked","userId":"6ae4d93c74466830b98531cc","by":"6ae4d93e74466830b98531dc"}
+{"at":"2026-10-30T17:52:05.588Z","level":"info","message":"request","method":"POST","path":"/api/admin/users/6ae4d93c74466830b98531cc/unlock","status":204,"ms":32}
+{"at":"2026-10-30T17:52:06.258Z","level":"info","message":"login","userId":"6ae4d93c74466830b98531cc","role":"DRIVER"}
+{"at":"2026-10-30T17:52:06.269Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":673}
+{"at":"2026-10-30T17:52:10.745Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4461}
+{"at":"2026-10-30T17:52:10.757Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:52:11.407Z","level":"info","message":"login","userId":"6ae4d94874466830b9853274","role":"DRIVER"}
+{"at":"2026-10-30T17:52:11.416Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":653}
+{"at":"2026-10-30T17:52:12.131Z","level":"info","message":"login","userId":"6ae4d94974466830b985327b","role":"DRIVER"}
+{"at":"2026-10-30T17:52:12.140Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":717}
+{"at":"2026-10-30T17:52:12.873Z","level":"info","message":"login","userId":"6ae4d94974466830b9853281","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:12.883Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":735}
+{"at":"2026-10-30T17:52:13.777Z","level":"info","message":"login","userId":"6ae4d94a74466830b9853284","role":"ADMIN"}
+{"at":"2026-10-30T17:52:13.785Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":895}
+{"at":"2026-10-30T17:52:14.542Z","level":"info","message":"driver registered","userId":"6ae4d94e74466830b98532b9"}
+{"at":"2026-10-30T17:52:14.553Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":201,"ms":758}
+{"at":"2026-10-30T17:52:19.392Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4294}
+{"at":"2026-10-30T17:52:19.406Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:52:20.039Z","level":"info","message":"login","userId":"6ae4d95174466830b98532ef","role":"DRIVER"}
+{"at":"2026-10-30T17:52:20.052Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":640}
+{"at":"2026-10-30T17:52:20.790Z","level":"info","message":"login","userId":"6ae4d95174466830b98532f6","role":"DRIVER"}
+{"at":"2026-10-30T17:52:20.800Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":740}
+{"at":"2026-10-30T17:52:21.534Z","level":"info","message":"login","userId":"6ae4d95274466830b98532fc","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:21.543Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":737}
+{"at":"2026-10-30T17:52:22.309Z","level":"info","message":"login","userId":"6ae4d95374466830b98532ff","role":"ADMIN"}
+{"at":"2026-10-30T17:52:22.318Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":767}
+{"at":"2026-10-30T17:52:22.456Z","level":"info","message":"reservation held","reservationId":"6ae4d95674466830b9853338","userId":"6ae4d95174466830b98532ef"}
+{"at":"2026-10-30T17:52:22.458Z","level":"info","message":"notification queued","userId":"6ae4d95174466830b98532ef","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:52:22.494Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":166}
+{"at":"2026-10-30T17:52:22.501Z","level":"warn","message":"card data refused","method":"POST","path":"/api/payments"}
+{"at":"2026-10-30T17:52:22.504Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":400,"ms":3}
+{"at":"2026-10-30T17:52:26.898Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4201}
+{"at":"2026-10-30T17:52:26.914Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:52:27.728Z","level":"info","message":"login","userId":"6ae4d95874466830b9853375","role":"DRIVER"}
+{"at":"2026-10-30T17:52:27.737Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":817}
+{"at":"2026-10-30T17:52:28.468Z","level":"info","message":"login","userId":"6ae4d95974466830b985337c","role":"DRIVER"}
+{"at":"2026-10-30T17:52:28.477Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":734}
+{"at":"2026-10-30T17:52:29.436Z","level":"info","message":"login","userId":"6ae4d95a74466830b9853382","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:29.445Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":962}
+{"at":"2026-10-30T17:52:30.272Z","level":"info","message":"login","userId":"6ae4d95a74466830b9853385","role":"ADMIN"}
+{"at":"2026-10-30T17:52:30.281Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":822}
+{"at":"2026-10-30T17:52:31.146Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":856}
+{"at":"2026-10-30T17:52:31.610Z","level":"info","message":"gate command","gateId":"6ae4d95a74466830b9853389","command":"DISPLAY"}
+{"at":"2026-10-30T17:52:31.611Z","level":"info","message":"gate command","gateId":"6ae4d95a74466830b9853389","command":"OPEN"}
+{"at":"2026-10-30T17:52:31.611Z","level":"info","message":"vehicle entered","sessionId":"6ae4d95f74466830b98533c9","gateId":"6ae4d95a74466830b9853389","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:52:31.628Z","level":"info","message":"notification queued","userId":"6ae4d95874466830b9853375","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:52:31.630Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":476}
+{"at":"2026-10-30T17:52:31.638Z","level":"warn","message":"card data refused","method":"POST","path":"/api/payments"}
+{"at":"2026-10-30T17:52:31.640Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":400,"ms":3}
+{"at":"2026-10-30T17:52:38.265Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4735}
+{"at":"2026-10-30T17:52:38.282Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:52:39.016Z","level":"info","message":"login","userId":"6ae4d96374466830b9853400","role":"DRIVER"}
+{"at":"2026-10-30T17:52:39.026Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":737}
+{"at":"2026-10-30T17:52:39.701Z","level":"info","message":"login","userId":"6ae4d96474466830b9853407","role":"DRIVER"}
+{"at":"2026-10-30T17:52:39.711Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":677}
+{"at":"2026-10-30T17:52:40.416Z","level":"info","message":"login","userId":"6ae4d96574466830b985340d","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:40.426Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":708}
+{"at":"2026-10-30T17:52:41.098Z","level":"info","message":"login","userId":"6ae4d96674466830b9853410","role":"ADMIN"}
+{"at":"2026-10-30T17:52:41.107Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":675}
+{"at":"2026-10-30T17:52:41.357Z","level":"info","message":"reservation held","reservationId":"6ae4d96974466830b9853449","userId":"6ae4d96374466830b9853400"}
+{"at":"2026-10-30T17:52:41.357Z","level":"info","message":"notification queued","userId":"6ae4d96374466830b9853400","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:52:41.389Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":274}
+{"at":"2026-10-30T17:52:41.446Z","level":"info","message":"gateway charge created","paymentId":"6ae4d96974466830b985345b","amount":80}
+{"at":"2026-10-30T17:52:41.457Z","level":"info","message":"payment created","paymentId":"6ae4d96974466830b985345b","reservation":"6ae4d96974466830b9853449","method":"ONLINE","amount":80}
+{"at":"2026-10-30T17:52:41.460Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":64}
+{"at":"2026-10-30T17:52:41.488Z","level":"info","message":"payment settled","paymentId":"6ae4d96974466830b985345b","status":"CONFIRMED"}
+{"at":"2026-10-30T17:52:41.504Z","level":"info","message":"notification queued","userId":"6ae4d96374466830b9853400","channel":"EMAIL","type":"BOOKING_CONFIRMED"}
+{"at":"2026-10-30T17:52:41.506Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":31}
+{"at":"2026-10-30T17:52:41.572Z","level":"info","message":"request","method":"GET","path":"/api/reservations/6ae4d96974466830b9853449","status":200,"ms":60}
+{"at":"2026-10-30T17:52:41.588Z","level":"info","message":"request","method":"GET","path":"/api/test/notifications","status":200,"ms":3}
+{"at":"2026-10-30T17:52:45.629Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4026}
+{"at":"2026-10-30T17:52:45.643Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:52:46.417Z","level":"info","message":"login","userId":"6ae4d96b74466830b985349d","role":"DRIVER"}
+{"at":"2026-10-30T17:52:46.428Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":779}
+{"at":"2026-10-30T17:52:47.190Z","level":"info","message":"login","userId":"6ae4d96c74466830b98534a4","role":"DRIVER"}
+{"at":"2026-10-30T17:52:47.202Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":767}
+{"at":"2026-10-30T17:52:47.882Z","level":"info","message":"login","userId":"6ae4d96c74466830b98534aa","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:47.892Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":684}
+{"at":"2026-10-30T17:52:48.606Z","level":"info","message":"login","userId":"6ae4d96d74466830b98534ad","role":"ADMIN"}
+{"at":"2026-10-30T17:52:48.615Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":716}
+{"at":"2026-10-30T17:52:48.830Z","level":"info","message":"gate command","gateId":"6ae4d96d74466830b98534b1","command":"DISPLAY"}
+{"at":"2026-10-30T17:52:48.831Z","level":"info","message":"gate command","gateId":"6ae4d96d74466830b98534b1","command":"OPEN"}
+{"at":"2026-10-30T17:52:48.831Z","level":"info","message":"vehicle entered","sessionId":"6ae4d97074466830b98534e8","gateId":"6ae4d96d74466830b98534b1","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:52:48.841Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":215}
+{"at":"2026-10-30T17:52:48.894Z","level":"info","message":"gateway charge created","paymentId":"6ae4d97074466830b98534f3","amount":40}
+{"at":"2026-10-30T17:52:48.904Z","level":"info","message":"payment created","paymentId":"6ae4d97074466830b98534f3","session":"6ae4d97074466830b98534e8","method":"AT_GATE","amount":40}
+{"at":"2026-10-30T17:52:48.906Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":57}
+{"at":"2026-10-30T17:52:48.924Z","level":"info","message":"payment settled","paymentId":"6ae4d97074466830b98534f3","status":"CONFIRMED"}
+{"at":"2026-10-30T17:52:48.926Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":12}
+{"at":"2026-10-30T17:52:49.018Z","level":"info","message":"gate command","gateId":"6ae4d96d74466830b98534b3","command":"DISPLAY"}
+{"at":"2026-10-30T17:52:49.019Z","level":"info","message":"gate command","gateId":"6ae4d96d74466830b98534b3","command":"OPEN"}
+{"at":"2026-10-30T17:52:49.041Z","level":"info","message":"slot released","slotId":"6ae4d96d74466830b98534b8","sessionId":"6ae4d97074466830b98534e8"}
+{"at":"2026-10-30T17:52:49.114Z","level":"info","message":"receipt issued","receiptId":"6ae4d97174466830b9853501","sessionId":"6ae4d97074466830b98534e8"}
+{"at":"2026-10-30T17:52:49.115Z","level":"info","message":"vehicle exited","sessionId":"6ae4d97074466830b98534e8","gateId":"6ae4d96d74466830b98534b3","amount":40}
+{"at":"2026-10-30T17:52:49.117Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":200,"ms":184}
+{"at":"2026-10-30T17:52:53.340Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4212}
+{"at":"2026-10-30T17:52:53.352Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:52:54.002Z","level":"info","message":"login","userId":"6ae4d97374466830b9853536","role":"DRIVER"}
+{"at":"2026-10-30T17:52:54.012Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":651}
+{"at":"2026-10-30T17:52:54.674Z","level":"info","message":"login","userId":"6ae4d97374466830b985353d","role":"DRIVER"}
+{"at":"2026-10-30T17:52:54.683Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":665}
+{"at":"2026-10-30T17:52:55.305Z","level":"info","message":"login","userId":"6ae4d97474466830b9853544","role":"ATTENDANT"}
+{"at":"2026-10-30T17:52:55.314Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":623}
+{"at":"2026-10-30T17:52:55.921Z","level":"info","message":"login","userId":"6ae4d97574466830b9853547","role":"ADMIN"}
+{"at":"2026-10-30T17:52:55.931Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":611}
+{"at":"2026-10-30T17:52:56.034Z","level":"info","message":"reservation held","reservationId":"6ae4d97874466830b9853580","userId":"6ae4d97374466830b9853536"}
+{"at":"2026-10-30T17:52:56.035Z","level":"info","message":"notification queued","userId":"6ae4d97374466830b9853536","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:52:56.067Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":128}
+{"at":"2026-10-30T17:52:56.113Z","level":"info","message":"gateway charge created","paymentId":"6ae4d97874466830b985358e","amount":80}
+{"at":"2026-10-30T17:52:56.122Z","level":"info","message":"payment created","paymentId":"6ae4d97874466830b985358e","reservation":"6ae4d97874466830b9853580","method":"ONLINE","amount":80}
+{"at":"2026-10-30T17:52:56.124Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":51}
+{"at":"2026-10-30T17:52:56.142Z","level":"info","message":"payment settled","paymentId":"6ae4d97874466830b985358e","status":"CONFIRMED"}
+{"at":"2026-10-30T17:52:56.156Z","level":"info","message":"notification queued","userId":"6ae4d97374466830b9853536","channel":"EMAIL","type":"BOOKING_CONFIRMED"}
+{"at":"2026-10-30T17:52:56.158Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":26}
+{"at":"2026-10-30T17:52:56.277Z","level":"info","message":"reservation held","reservationId":"6ae4d97874466830b985359d","userId":"6ae4d97374466830b9853536"}
+{"at":"2026-10-30T17:52:56.277Z","level":"info","message":"notification queued","userId":"6ae4d97374466830b9853536","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:52:56.307Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":131}
+{"at":"2026-10-30T17:52:56.358Z","level":"info","message":"gateway charge created","paymentId":"6ae4d97874466830b98535b2","amount":40}
+{"at":"2026-10-30T17:52:56.368Z","level":"info","message":"payment created","paymentId":"6ae4d97874466830b98535b2","reservation":"6ae4d97874466830b985359d","method":"ONLINE","amount":40}
+{"at":"2026-10-30T17:52:56.371Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":57}
+{"at":"2026-10-30T17:52:56.387Z","level":"info","message":"payment settled","paymentId":"6ae4d97874466830b98535b2","status":"CONFIRMED"}
+{"at":"2026-10-30T17:52:56.402Z","level":"info","message":"notification queued","userId":"6ae4d97374466830b9853536","channel":"EMAIL","type":"BOOKING_CONFIRMED"}
+{"at":"2026-10-30T17:52:56.405Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":27}
+{"at":"2026-10-30T17:52:56.471Z","level":"info","message":"gateway refund created","paymentId":"6ae4d97874466830b985358e","amount":80}
+{"at":"2026-10-30T17:52:56.478Z","level":"info","message":"payment refunded","paymentId":"6ae4d97874466830b985358e","refundId":"6ae4d97874466830b98535bf","reason":"CANCELLED_IN_TIME"}
+{"at":"2026-10-30T17:52:56.484Z","level":"info","message":"reservation cancelled","reservationId":"6ae4d97874466830b9853580","by":"6ae4d97374466830b9853536","status":"REFUNDED"}
+{"at":"2026-10-30T17:52:56.514Z","level":"info","message":"request","method":"POST","path":"/api/reservations/6ae4d97874466830b9853580/cancel","status":200,"ms":102}
+{"at":"2026-10-30T17:52:56.563Z","level":"info","message":"reservation cancelled","reservationId":"6ae4d97874466830b985359d","by":"6ae4d97374466830b9853536","status":"CANCELLED"}
+{"at":"2026-10-30T17:52:56.594Z","level":"info","message":"request","method":"POST","path":"/api/reservations/6ae4d97874466830b985359d/cancel","status":200,"ms":73}
+{"at":"2026-10-30T17:52:56.656Z","level":"info","message":"request","method":"GET","path":"/api/reservations/6ae4d97874466830b9853580","status":200,"ms":57}
+{"at":"2026-10-30T17:52:56.718Z","level":"info","message":"request","method":"GET","path":"/api/reservations/6ae4d97874466830b985359d","status":200,"ms":56}
+{"at":"2026-10-30T17:52:56.750Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":200,"ms":26}
+{"at":"2026-10-30T17:53:00.191Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3431}
+{"at":"2026-10-30T17:53:00.205Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:53:00.805Z","level":"info","message":"login","userId":"6ae4d97a74466830b985361e","role":"DRIVER"}
+{"at":"2026-10-30T17:53:00.812Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":601}
+{"at":"2026-10-30T17:53:01.401Z","level":"info","message":"login","userId":"6ae4d97a74466830b9853625","role":"DRIVER"}
+{"at":"2026-10-30T17:53:01.410Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":593}
+{"at":"2026-10-30T17:53:02.040Z","level":"info","message":"login","userId":"6ae4d97b74466830b985362b","role":"ATTENDANT"}
+{"at":"2026-10-30T17:53:02.050Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":634}
+{"at":"2026-10-30T17:53:02.765Z","level":"info","message":"login","userId":"6ae4d97c74466830b985362e","role":"ADMIN"}
+{"at":"2026-10-30T17:53:02.774Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":717}
+{"at":"2026-10-30T17:53:02.877Z","level":"info","message":"reservation held","reservationId":"6ae4d97e74466830b9853667","userId":"6ae4d97a74466830b985361e"}
+{"at":"2026-10-30T17:53:02.878Z","level":"info","message":"notification queued","userId":"6ae4d97a74466830b985361e","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:53:02.908Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":126}
+{"at":"2026-10-30T17:53:02.958Z","level":"info","message":"gateway charge created","paymentId":"6ae4d97e74466830b9853675","amount":80}
+{"at":"2026-10-30T17:53:02.975Z","level":"info","message":"payment created","paymentId":"6ae4d97e74466830b9853675","reservation":"6ae4d97e74466830b9853667","method":"ONLINE","amount":80}
+{"at":"2026-10-30T17:53:02.978Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":64}
+{"at":"2026-10-30T17:53:02.999Z","level":"info","message":"payment settled","paymentId":"6ae4d97e74466830b9853675","status":"CONFIRMED"}
+{"at":"2026-10-30T17:53:03.021Z","level":"info","message":"notification queued","userId":"6ae4d97a74466830b985361e","channel":"EMAIL","type":"BOOKING_CONFIRMED"}
+{"at":"2026-10-30T17:53:03.023Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":33}
+{"at":"2026-10-30T17:53:03.096Z","level":"info","message":"gateway refund created","paymentId":"6ae4d97e74466830b9853675","amount":80}
+{"at":"2026-10-30T17:53:03.104Z","level":"info","message":"payment refunded","paymentId":"6ae4d97e74466830b9853675","refundId":"6ae4d97f74466830b9853688","reason":"CANCELLED_IN_TIME"}
+{"at":"2026-10-30T17:53:03.111Z","level":"info","message":"reservation cancelled","reservationId":"6ae4d97e74466830b9853667","by":"6ae4d97a74466830b985361e","status":"REFUNDED"}
+{"at":"2026-10-30T17:53:03.163Z","level":"info","message":"request","method":"POST","path":"/api/reservations/6ae4d97e74466830b9853667/cancel","status":200,"ms":132}
+{"at":"2026-10-30T17:53:03.196Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":200,"ms":29}
+{"at":"2026-10-30T17:53:08.787Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":5577}
+{"at":"2026-10-30T17:53:08.801Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:53:09.702Z","level":"info","message":"login","userId":"6ae4d98174466830b98536c5","role":"DRIVER"}
+{"at":"2026-10-30T17:53:09.714Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":907}
+{"at":"2026-10-30T17:53:12.697Z","level":"info","message":"login","userId":"6ae4d98274466830b98536cc","role":"DRIVER"}
+{"at":"2026-10-30T17:53:12.710Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":2988}
+{"at":"2026-10-30T17:53:14.141Z","level":"info","message":"login","userId":"6ae4d98374466830b98536d2","role":"ATTENDANT"}
+{"at":"2026-10-30T17:53:14.150Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":1433}
+{"at":"2026-10-30T17:53:16.298Z","level":"info","message":"login","userId":"6ae4d98474466830b98536d5","role":"ADMIN"}
+{"at":"2026-10-30T17:53:16.307Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":2145}
+{"at":"2026-10-30T17:53:17.145Z","level":"info","message":"reservation held","reservationId":"6ae4d98c74466830b9853711","userId":"6ae4d98174466830b98536c5"}
+{"at":"2026-10-30T17:53:17.146Z","level":"info","message":"notification queued","userId":"6ae4d98174466830b98536c5","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:53:17.310Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":988}
+{"at":"2026-10-30T17:53:17.530Z","level":"info","message":"gateway charge created","paymentId":"6ae4d98d74466830b9853722","amount":80}
+{"at":"2026-10-30T17:53:17.594Z","level":"info","message":"payment created","paymentId":"6ae4d98d74466830b9853722","reservation":"6ae4d98c74466830b9853711","method":"ONLINE","amount":80}
+{"at":"2026-10-30T17:53:17.597Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":279}
+{"at":"2026-10-30T17:53:17.604Z","level":"warn","message":"payment webhook rejected: bad signature"}
+{"at":"2026-10-30T17:53:17.606Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":401,"ms":3}
+{"at":"2026-10-30T17:53:17.814Z","level":"info","message":"request","method":"GET","path":"/api/reservations/6ae4d98c74466830b9853711","status":200,"ms":203}
+{"at":"2026-10-30T17:53:26.181Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":8355}
+{"at":"2026-10-30T17:53:26.201Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:53:27.510Z","level":"info","message":"login","userId":"6ae4d99274466830b9853761","role":"DRIVER"}
+{"at":"2026-10-30T17:53:27.523Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":1317}
+{"at":"2026-10-30T17:53:29.066Z","level":"info","message":"login","userId":"6ae4d99374466830b9853768","role":"DRIVER"}
+{"at":"2026-10-30T17:53:29.075Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":1546}
+{"at":"2026-10-30T17:53:30.016Z","level":"info","message":"login","userId":"6ae4d99474466830b985376e","role":"ATTENDANT"}
+{"at":"2026-10-30T17:53:30.025Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":943}
+{"at":"2026-10-30T17:53:31.472Z","level":"info","message":"login","userId":"6ae4d99574466830b9853771","role":"ADMIN"}
+{"at":"2026-10-30T17:53:31.481Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":1448}
+{"at":"2026-10-30T17:53:31.630Z","level":"info","message":"reservation held","reservationId":"6ae4d99b74466830b98537ac","userId":"6ae4d99274466830b9853761"}
+{"at":"2026-10-30T17:53:31.631Z","level":"info","message":"notification queued","userId":"6ae4d99274466830b9853761","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:53:31.664Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":175}
+{"at":"2026-10-30T17:53:31.708Z","level":"info","message":"gateway charge created","paymentId":"6ae4d99b74466830b98537ba","amount":80}
+{"at":"2026-10-30T17:53:31.718Z","level":"info","message":"payment created","paymentId":"6ae4d99b74466830b98537ba","reservation":"6ae4d99b74466830b98537ac","method":"ONLINE","amount":80}
+{"at":"2026-10-30T17:53:31.721Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":51}
+{"at":"2026-10-30T17:53:31.738Z","level":"info","message":"payment settled","paymentId":"6ae4d99b74466830b98537ba","status":"CONFIRMED"}
+{"at":"2026-10-30T17:53:31.753Z","level":"info","message":"notification queued","userId":"6ae4d99274466830b9853761","channel":"EMAIL","type":"BOOKING_CONFIRMED"}
+{"at":"2026-10-30T17:53:31.756Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":26}
+{"at":"2026-10-30T17:53:31.775Z","level":"info","message":"payment event ignored: already settled","paymentId":"6ae4d99b74466830b98537ba"}
+{"at":"2026-10-30T17:53:31.778Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":15}
+{"at":"2026-10-30T17:53:31.806Z","level":"info","message":"request","method":"GET","path":"/api/admin/transactions","status":200,"ms":23}
+{"at":"2026-10-30T17:53:40.202Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4537}
+{"at":"2026-10-30T17:53:40.220Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:53:40.930Z","level":"info","message":"login","userId":"6ae4d9a174466830b98537fa","role":"DRIVER"}
+{"at":"2026-10-30T17:53:40.939Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":711}
+{"at":"2026-10-30T17:53:41.607Z","level":"info","message":"login","userId":"6ae4d9a274466830b9853801","role":"DRIVER"}
+{"at":"2026-10-30T17:53:41.617Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":672}
+{"at":"2026-10-30T17:53:42.238Z","level":"info","message":"login","userId":"6ae4d9a374466830b9853807","role":"ATTENDANT"}
+{"at":"2026-10-30T17:53:42.246Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":622}
+{"at":"2026-10-30T17:53:42.886Z","level":"info","message":"login","userId":"6ae4d9a474466830b985380a","role":"ADMIN"}
+{"at":"2026-10-30T17:53:42.895Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":642}
+{"at":"2026-10-30T17:53:43.013Z","level":"info","message":"gate command","gateId":"6ae4d9a474466830b985380e","command":"DISPLAY"}
+{"at":"2026-10-30T17:53:43.016Z","level":"info","message":"gate command","gateId":"6ae4d9a474466830b985380e","command":"OPEN"}
+{"at":"2026-10-30T17:53:43.017Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9a774466830b9853846","gateId":"6ae4d9a474466830b985380e","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:53:43.027Z","level":"info","message":"notification queued","userId":"6ae4d9a174466830b98537fa","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:53:43.030Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":127}
+{"at":"2026-10-30T17:53:43.040Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:53:43.075Z","level":"info","message":"gate command","gateId":"6ae4d9a474466830b9853810","command":"DISPLAY"}
+{"at":"2026-10-30T17:53:43.075Z","level":"info","message":"exit: payment required","sessionId":"6ae4d9a774466830b9853846","gateId":"6ae4d9a474466830b9853810","due":40,"paymentStatus":"UNPAID"}
+{"at":"2026-10-30T17:53:43.078Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":31}
+{"at":"2026-10-30T17:53:47.144Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4052}
+{"at":"2026-10-30T17:53:47.159Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:53:47.837Z","level":"info","message":"login","userId":"6ae4d9a974466830b9853882","role":"DRIVER"}
+{"at":"2026-10-30T17:53:47.853Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":688}
+{"at":"2026-10-30T17:53:48.558Z","level":"info","message":"login","userId":"6ae4d9a974466830b9853889","role":"DRIVER"}
+{"at":"2026-10-30T17:53:48.568Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":709}
+{"at":"2026-10-30T17:53:49.259Z","level":"info","message":"login","userId":"6ae4d9aa74466830b985388f","role":"ATTENDANT"}
+{"at":"2026-10-30T17:53:49.268Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":694}
+{"at":"2026-10-30T17:53:49.941Z","level":"info","message":"login","userId":"6ae4d9ab74466830b9853892","role":"ADMIN"}
+{"at":"2026-10-30T17:53:49.951Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":676}
+{"at":"2026-10-30T17:53:50.058Z","level":"info","message":"gate command","gateId":"6ae4d9ab74466830b9853896","command":"DISPLAY"}
+{"at":"2026-10-30T17:53:50.059Z","level":"info","message":"gate command","gateId":"6ae4d9ab74466830b9853896","command":"OPEN"}
+{"at":"2026-10-30T17:53:50.059Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9ae74466830b98538ce","gateId":"6ae4d9ab74466830b9853896","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:53:50.071Z","level":"info","message":"notification queued","userId":"6ae4d9a974466830b9853882","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:53:50.073Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":115}
+{"at":"2026-10-30T17:53:50.084Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:53:50.126Z","level":"info","message":"gate command","gateId":"6ae4d9ab74466830b9853898","command":"DISPLAY"}
+{"at":"2026-10-30T17:53:50.127Z","level":"info","message":"exit: payment required","sessionId":"6ae4d9ae74466830b98538ce","gateId":"6ae4d9ab74466830b9853898","due":40,"paymentStatus":"UNPAID"}
+{"at":"2026-10-30T17:53:50.129Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":39}
+{"at":"2026-10-30T17:53:54.111Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3972}
+{"at":"2026-10-30T17:53:54.123Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:53:54.723Z","level":"info","message":"login","userId":"6ae4d9b074466830b985390b","role":"DRIVER"}
+{"at":"2026-10-30T17:53:54.734Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":605}
+{"at":"2026-10-30T17:53:55.375Z","level":"info","message":"login","userId":"6ae4d9b074466830b9853912","role":"DRIVER"}
+{"at":"2026-10-30T17:53:55.385Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":644}
+{"at":"2026-10-30T17:53:55.945Z","level":"info","message":"login","userId":"6ae4d9b174466830b9853918","role":"ATTENDANT"}
+{"at":"2026-10-30T17:53:55.952Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":561}
+{"at":"2026-10-30T17:53:56.566Z","level":"info","message":"login","userId":"6ae4d9b274466830b985391b","role":"ADMIN"}
+{"at":"2026-10-30T17:53:56.575Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":616}
+{"at":"2026-10-30T17:53:56.672Z","level":"info","message":"gate command","gateId":"6ae4d9b274466830b985391f","command":"DISPLAY"}
+{"at":"2026-10-30T17:53:56.672Z","level":"info","message":"gate command","gateId":"6ae4d9b274466830b985391f","command":"OPEN"}
+{"at":"2026-10-30T17:53:56.674Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9b474466830b9853957","gateId":"6ae4d9b274466830b985391f","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:53:56.685Z","level":"info","message":"notification queued","userId":"6ae4d9b074466830b985390b","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:53:56.687Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":104}
+{"at":"2026-10-30T17:53:56.696Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:53:56.733Z","level":"info","message":"gate command","gateId":"6ae4d9b274466830b9853921","command":"DISPLAY"}
+{"at":"2026-10-30T17:53:56.734Z","level":"info","message":"exit: payment required","sessionId":"6ae4d9b474466830b9853957","gateId":"6ae4d9b274466830b9853921","due":80,"paymentStatus":"UNPAID"}
+{"at":"2026-10-30T17:53:56.736Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":34}
+{"at":"2026-10-30T17:54:00.992Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4244}
+{"at":"2026-10-30T17:54:01.004Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:01.711Z","level":"info","message":"login","userId":"6ae4d9b674466830b9853993","role":"DRIVER"}
+{"at":"2026-10-30T17:54:01.719Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":709}
+{"at":"2026-10-30T17:54:02.324Z","level":"info","message":"login","userId":"6ae4d9b774466830b985399a","role":"DRIVER"}
+{"at":"2026-10-30T17:54:02.333Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":609}
+{"at":"2026-10-30T17:54:02.951Z","level":"info","message":"login","userId":"6ae4d9b874466830b98539a0","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:02.960Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":620}
+{"at":"2026-10-30T17:54:03.659Z","level":"info","message":"login","userId":"6ae4d9b874466830b98539a3","role":"ADMIN"}
+{"at":"2026-10-30T17:54:03.668Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":701}
+{"at":"2026-10-30T17:54:03.776Z","level":"info","message":"gate command","gateId":"6ae4d9b874466830b98539a7","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:03.777Z","level":"info","message":"gate command","gateId":"6ae4d9b874466830b98539a7","command":"OPEN"}
+{"at":"2026-10-30T17:54:03.777Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9bb74466830b98539df","gateId":"6ae4d9b874466830b98539a7","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:03.787Z","level":"info","message":"notification queued","userId":"6ae4d9b674466830b9853993","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:03.789Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":113}
+{"at":"2026-10-30T17:54:03.799Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:03.837Z","level":"info","message":"gate command","gateId":"6ae4d9b874466830b98539a9","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:03.837Z","level":"info","message":"exit: payment required","sessionId":"6ae4d9bb74466830b98539df","gateId":"6ae4d9b874466830b98539a9","due":120,"paymentStatus":"UNPAID"}
+{"at":"2026-10-30T17:54:03.840Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":34}
+{"at":"2026-10-30T17:54:07.994Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4132}
+{"at":"2026-10-30T17:54:08.006Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:08.631Z","level":"info","message":"login","userId":"6ae4d9be74466830b9853a1b","role":"DRIVER"}
+{"at":"2026-10-30T17:54:08.641Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":628}
+{"at":"2026-10-30T17:54:09.233Z","level":"info","message":"login","userId":"6ae4d9be74466830b9853a22","role":"DRIVER"}
+{"at":"2026-10-30T17:54:09.242Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":594}
+{"at":"2026-10-30T17:54:09.831Z","level":"info","message":"login","userId":"6ae4d9bf74466830b9853a28","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:09.842Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":594}
+{"at":"2026-10-30T17:54:10.499Z","level":"info","message":"login","userId":"6ae4d9bf74466830b9853a2b","role":"ADMIN"}
+{"at":"2026-10-30T17:54:10.508Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":658}
+{"at":"2026-10-30T17:54:10.612Z","level":"info","message":"gate command","gateId":"6ae4d9bf74466830b9853a2f","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:10.612Z","level":"info","message":"gate command","gateId":"6ae4d9bf74466830b9853a2f","command":"OPEN"}
+{"at":"2026-10-30T17:54:10.613Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9c274466830b9853a67","gateId":"6ae4d9bf74466830b9853a2f","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:10.625Z","level":"info","message":"notification queued","userId":"6ae4d9be74466830b9853a1b","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:10.629Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":113}
+{"at":"2026-10-30T17:54:10.644Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:54:10.685Z","level":"info","message":"gate command","gateId":"6ae4d9bf74466830b9853a31","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:10.686Z","level":"info","message":"exit: payment required","sessionId":"6ae4d9c274466830b9853a67","gateId":"6ae4d9bf74466830b9853a31","due":80,"paymentStatus":"UNPAID"}
+{"at":"2026-10-30T17:54:10.690Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":40}
+{"at":"2026-10-30T17:54:10.735Z","level":"info","message":"gateway charge created","paymentId":"6ae4d9c274466830b9853a73","amount":80}
+{"at":"2026-10-30T17:54:10.746Z","level":"info","message":"payment created","paymentId":"6ae4d9c274466830b9853a73","session":"6ae4d9c274466830b9853a67","method":"AT_GATE","amount":80}
+{"at":"2026-10-30T17:54:10.748Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":51}
+{"at":"2026-10-30T17:54:10.791Z","level":"info","message":"gate command","gateId":"6ae4d9bf74466830b9853a31","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:10.792Z","level":"info","message":"exit: payment required","sessionId":"6ae4d9c274466830b9853a67","gateId":"6ae4d9bf74466830b9853a31","due":80,"paymentStatus":"PENDING"}
+{"at":"2026-10-30T17:54:10.794Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":39}
+{"at":"2026-10-30T17:54:10.806Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":3}
+{"at":"2026-10-30T17:54:10.827Z","level":"info","message":"payment settled","paymentId":"6ae4d9c274466830b9853a73","status":"CONFIRMED"}
+{"at":"2026-10-30T17:54:10.830Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":15}
+{"at":"2026-10-30T17:54:10.909Z","level":"info","message":"gate command","gateId":"6ae4d9bf74466830b9853a31","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:10.910Z","level":"info","message":"gate command","gateId":"6ae4d9bf74466830b9853a31","command":"OPEN"}
+{"at":"2026-10-30T17:54:10.927Z","level":"info","message":"slot released","slotId":"6ae4d9bf74466830b9853a36","sessionId":"6ae4d9c274466830b9853a67"}
+{"at":"2026-10-30T17:54:10.953Z","level":"info","message":"receipt issued","receiptId":"6ae4d9c274466830b9853a8b","sessionId":"6ae4d9c274466830b9853a67"}
+{"at":"2026-10-30T17:54:10.961Z","level":"info","message":"notification queued","userId":"6ae4d9be74466830b9853a1b","channel":"EMAIL","type":"EXIT_RECEIPT"}
+{"at":"2026-10-30T17:54:10.962Z","level":"info","message":"vehicle exited","sessionId":"6ae4d9c274466830b9853a67","gateId":"6ae4d9bf74466830b9853a31","amount":80}
+{"at":"2026-10-30T17:54:10.965Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":200,"ms":125}
+{"at":"2026-10-30T17:54:10.974Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":2}
+{"at":"2026-10-30T17:54:15.116Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4134}
+{"at":"2026-10-30T17:54:15.126Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:15.797Z","level":"info","message":"login","userId":"6ae4d9c474466830b9853abf","role":"DRIVER"}
+{"at":"2026-10-30T17:54:15.806Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":675}
+{"at":"2026-10-30T17:54:16.431Z","level":"info","message":"login","userId":"6ae4d9c574466830b9853ac6","role":"DRIVER"}
+{"at":"2026-10-30T17:54:16.442Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":629}
+{"at":"2026-10-30T17:54:17.151Z","level":"info","message":"login","userId":"6ae4d9c674466830b9853acc","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:17.160Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":709}
+{"at":"2026-10-30T17:54:17.843Z","level":"info","message":"login","userId":"6ae4d9c774466830b9853acf","role":"ADMIN"}
+{"at":"2026-10-30T17:54:17.852Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":685}
+{"at":"2026-10-30T17:54:17.972Z","level":"info","message":"gate command","gateId":"6ae4d9c774466830b9853ad3","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:17.973Z","level":"info","message":"gate command","gateId":"6ae4d9c774466830b9853ad3","command":"OPEN"}
+{"at":"2026-10-30T17:54:17.973Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9c974466830b9853b0b","gateId":"6ae4d9c774466830b9853ad3","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:17.986Z","level":"info","message":"notification queued","userId":"6ae4d9c474466830b9853abf","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:17.988Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":128}
+{"at":"2026-10-30T17:54:17.997Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:54:18.043Z","level":"info","message":"gateway charge created","paymentId":"6ae4d9ca74466830b9853b13","amount":40}
+{"at":"2026-10-30T17:54:18.053Z","level":"info","message":"payment created","paymentId":"6ae4d9ca74466830b9853b13","session":"6ae4d9c974466830b9853b0b","method":"AT_GATE","amount":40}
+{"at":"2026-10-30T17:54:18.057Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":55}
+{"at":"2026-10-30T17:54:18.073Z","level":"info","message":"payment settled","paymentId":"6ae4d9ca74466830b9853b13","status":"CONFIRMED"}
+{"at":"2026-10-30T17:54:18.080Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":16}
+{"at":"2026-10-30T17:54:18.123Z","level":"info","message":"gate command","gateId":"6ae4d9c774466830b9853ad5","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:18.123Z","level":"info","message":"gate command","gateId":"6ae4d9c774466830b9853ad5","command":"OPEN"}
+{"at":"2026-10-30T17:54:18.138Z","level":"info","message":"slot released","slotId":"6ae4d9c774466830b9853ada","sessionId":"6ae4d9c974466830b9853b0b"}
+{"at":"2026-10-30T17:54:18.184Z","level":"info","message":"receipt issued","receiptId":"6ae4d9ca74466830b9853b21","sessionId":"6ae4d9c974466830b9853b0b"}
+{"at":"2026-10-30T17:54:18.220Z","level":"info","message":"notification queued","userId":"6ae4d9c474466830b9853abf","channel":"EMAIL","type":"EXIT_RECEIPT"}
+{"at":"2026-10-30T17:54:18.221Z","level":"info","message":"vehicle exited","sessionId":"6ae4d9c974466830b9853b0b","gateId":"6ae4d9c774466830b9853ad5","amount":40}
+{"at":"2026-10-30T17:54:18.224Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":200,"ms":139}
+{"at":"2026-10-30T17:54:18.270Z","level":"info","message":"request","method":"GET","path":"/api/slots/6ae4d9c774466830b9853ada","status":200,"ms":30}
+{"at":"2026-10-30T17:54:22.744Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4458}
+{"at":"2026-10-30T17:54:22.759Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":4}
+{"at":"2026-10-30T17:54:23.402Z","level":"info","message":"login","userId":"6ae4d9cc74466830b9853b5f","role":"DRIVER"}
+{"at":"2026-10-30T17:54:23.409Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":642}
+{"at":"2026-10-30T17:54:24.020Z","level":"info","message":"login","userId":"6ae4d9cd74466830b9853b66","role":"DRIVER"}
+{"at":"2026-10-30T17:54:24.030Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":614}
+{"at":"2026-10-30T17:54:24.679Z","level":"info","message":"login","userId":"6ae4d9cd74466830b9853b6c","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:24.687Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":651}
+{"at":"2026-10-30T17:54:25.326Z","level":"info","message":"login","userId":"6ae4d9ce74466830b9853b6f","role":"ADMIN"}
+{"at":"2026-10-30T17:54:25.335Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":641}
+{"at":"2026-10-30T17:54:25.439Z","level":"info","message":"gate command","gateId":"6ae4d9ce74466830b9853b73","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:25.439Z","level":"info","message":"gate command","gateId":"6ae4d9ce74466830b9853b73","command":"OPEN"}
+{"at":"2026-10-30T17:54:25.439Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9d174466830b9853bab","gateId":"6ae4d9ce74466830b9853b73","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:25.451Z","level":"info","message":"notification queued","userId":"6ae4d9cc74466830b9853b5f","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:25.453Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":110}
+{"at":"2026-10-30T17:54:25.464Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:54:25.505Z","level":"info","message":"gateway charge created","paymentId":"6ae4d9d174466830b9853bb3","amount":120}
+{"at":"2026-10-30T17:54:25.514Z","level":"info","message":"payment created","paymentId":"6ae4d9d174466830b9853bb3","session":"6ae4d9d174466830b9853bab","method":"AT_GATE","amount":120}
+{"at":"2026-10-30T17:54:25.516Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":45}
+{"at":"2026-10-30T17:54:25.535Z","level":"info","message":"payment settled","paymentId":"6ae4d9d174466830b9853bb3","status":"CONFIRMED"}
+{"at":"2026-10-30T17:54:25.537Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":13}
+{"at":"2026-10-30T17:54:25.587Z","level":"info","message":"gate command","gateId":"6ae4d9ce74466830b9853b75","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:25.587Z","level":"info","message":"gate command","gateId":"6ae4d9ce74466830b9853b75","command":"OPEN"}
+{"at":"2026-10-30T17:54:25.607Z","level":"info","message":"slot released","slotId":"6ae4d9ce74466830b9853b7a","sessionId":"6ae4d9d174466830b9853bab"}
+{"at":"2026-10-30T17:54:25.631Z","level":"info","message":"receipt issued","receiptId":"6ae4d9d174466830b9853bc1","sessionId":"6ae4d9d174466830b9853bab"}
+{"at":"2026-10-30T17:54:25.638Z","level":"info","message":"notification queued","userId":"6ae4d9cc74466830b9853b5f","channel":"EMAIL","type":"EXIT_RECEIPT"}
+{"at":"2026-10-30T17:54:25.639Z","level":"info","message":"vehicle exited","sessionId":"6ae4d9d174466830b9853bab","gateId":"6ae4d9ce74466830b9853b75","amount":120}
+{"at":"2026-10-30T17:54:25.641Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":200,"ms":95}
+{"at":"2026-10-30T17:54:25.682Z","level":"info","message":"request","method":"GET","path":"/api/receipts/6ae4d9d174466830b9853bc1","status":200,"ms":35}
+{"at":"2026-10-30T17:54:25.743Z","level":"info","message":"request","method":"GET","path":"/api/sessions/6ae4d9d174466830b9853bab","status":200,"ms":56}
+{"at":"2026-10-30T17:54:29.988Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4228}
+{"at":"2026-10-30T17:54:30.000Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:30.662Z","level":"info","message":"login","userId":"6ae4d9d374466830b9853c06","role":"DRIVER"}
+{"at":"2026-10-30T17:54:30.673Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":667}
+{"at":"2026-10-30T17:54:31.321Z","level":"info","message":"login","userId":"6ae4d9d474466830b9853c0d","role":"DRIVER"}
+{"at":"2026-10-30T17:54:31.327Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":641}
+{"at":"2026-10-30T17:54:31.973Z","level":"info","message":"login","userId":"6ae4d9d574466830b9853c13","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:31.982Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":649}
+{"at":"2026-10-30T17:54:32.990Z","level":"info","message":"login","userId":"6ae4d9d574466830b9853c16","role":"ADMIN"}
+{"at":"2026-10-30T17:54:32.999Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":1011}
+{"at":"2026-10-30T17:54:33.036Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":404,"ms":30}
+{"at":"2026-10-30T17:54:39.741Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3769}
+{"at":"2026-10-30T17:54:39.753Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:40.373Z","level":"info","message":"login","userId":"6ae4d9dd74466830b9853c7d","role":"DRIVER"}
+{"at":"2026-10-30T17:54:40.381Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":622}
+{"at":"2026-10-30T17:54:41.037Z","level":"info","message":"login","userId":"6ae4d9de74466830b9853c84","role":"DRIVER"}
+{"at":"2026-10-30T17:54:41.045Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":658}
+{"at":"2026-10-30T17:54:41.651Z","level":"info","message":"login","userId":"6ae4d9df74466830b9853c8a","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:41.658Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":606}
+{"at":"2026-10-30T17:54:42.262Z","level":"info","message":"login","userId":"6ae4d9df74466830b9853c8d","role":"ADMIN"}
+{"at":"2026-10-30T17:54:42.271Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":605}
+{"at":"2026-10-30T17:54:42.372Z","level":"info","message":"reservation held","reservationId":"6ae4d9e274466830b9853cc6","userId":"6ae4d9de74466830b9853c84"}
+{"at":"2026-10-30T17:54:42.373Z","level":"info","message":"notification queued","userId":"6ae4d9de74466830b9853c84","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:54:42.405Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":124}
+{"at":"2026-10-30T17:54:42.505Z","level":"info","message":"gate command","gateId":"6ae4d9df74466830b9853c91","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:42.505Z","level":"info","message":"gate command","gateId":"6ae4d9df74466830b9853c91","command":"OPEN"}
+{"at":"2026-10-30T17:54:42.506Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9e274466830b9853cdb","gateId":"6ae4d9df74466830b9853c91","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:42.516Z","level":"info","message":"notification queued","userId":"6ae4d9dd74466830b9853c7d","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:42.519Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":104}
+{"at":"2026-10-30T17:54:42.558Z","level":"info","message":"request","method":"GET","path":"/api/sessions/6ae4d9e274466830b9853cdb","status":200,"ms":33}
+{"at":"2026-10-30T17:54:42.631Z","level":"info","message":"gate command","gateId":"6ae4d9df74466830b9853c91","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:42.632Z","level":"info","message":"gate command","gateId":"6ae4d9df74466830b9853c91","command":"OPEN"}
+{"at":"2026-10-30T17:54:42.632Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9e274466830b9853cec","gateId":"6ae4d9df74466830b9853c91","source":"QR","booked":true}
+{"at":"2026-10-30T17:54:42.647Z","level":"info","message":"notification queued","userId":"6ae4d9de74466830b9853c84","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:42.649Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":80}
+{"at":"2026-10-30T17:54:42.695Z","level":"info","message":"request","method":"GET","path":"/api/sessions/6ae4d9e274466830b9853cec","status":200,"ms":37}
+{"at":"2026-10-30T17:54:42.774Z","level":"info","message":"gate command","gateId":"6ae4d9df74466830b9853c91","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:42.774Z","level":"info","message":"gate command","gateId":"6ae4d9df74466830b9853c91","command":"OPEN"}
+{"at":"2026-10-30T17:54:42.774Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9e274466830b9853d06","gateId":"6ae4d9df74466830b9853c91","source":"MANUAL","booked":false}
+{"at":"2026-10-30T17:54:42.787Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":83}
+{"at":"2026-10-30T17:54:42.825Z","level":"info","message":"request","method":"GET","path":"/api/sessions/6ae4d9e274466830b9853d06","status":200,"ms":31}
+{"at":"2026-10-30T17:54:46.245Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3404}
+{"at":"2026-10-30T17:54:46.256Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:46.842Z","level":"info","message":"login","userId":"6ae4d9e474466830b9853d44","role":"DRIVER"}
+{"at":"2026-10-30T17:54:46.853Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":590}
+{"at":"2026-10-30T17:54:47.453Z","level":"info","message":"login","userId":"6ae4d9e574466830b9853d4b","role":"DRIVER"}
+{"at":"2026-10-30T17:54:47.460Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":598}
+{"at":"2026-10-30T17:54:48.062Z","level":"info","message":"login","userId":"6ae4d9e574466830b9853d51","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:48.071Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":605}
+{"at":"2026-10-30T17:54:48.664Z","level":"info","message":"login","userId":"6ae4d9e674466830b9853d54","role":"ADMIN"}
+{"at":"2026-10-30T17:54:48.672Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":592}
+{"at":"2026-10-30T17:54:48.767Z","level":"info","message":"gate command","gateId":"6ae4d9e674466830b9853d58","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:48.768Z","level":"info","message":"gate command","gateId":"6ae4d9e674466830b9853d58","command":"OPEN"}
+{"at":"2026-10-30T17:54:48.768Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9e874466830b9853d90","gateId":"6ae4d9e674466830b9853d58","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:48.777Z","level":"info","message":"notification queued","userId":"6ae4d9e474466830b9853d44","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:48.779Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":100}
+{"at":"2026-10-30T17:54:48.811Z","level":"info","message":"request","method":"GET","path":"/api/slots/6ae4d9e674466830b9853d5f","status":200,"ms":26}
+{"at":"2026-10-30T17:54:48.887Z","level":"info","message":"gate command","gateId":"6ae4d9e674466830b9853d58","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:48.887Z","level":"info","message":"gate command","gateId":"6ae4d9e674466830b9853d58","command":"OPEN"}
+{"at":"2026-10-30T17:54:48.888Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9e874466830b9853da0","gateId":"6ae4d9e674466830b9853d58","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:48.897Z","level":"info","message":"notification queued","userId":"6ae4d9e574466830b9853d4b","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:54:48.900Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":80}
+{"at":"2026-10-30T17:54:52.619Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3709}
+{"at":"2026-10-30T17:54:52.631Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:54:53.237Z","level":"info","message":"login","userId":"6ae4d9ea74466830b9853dd9","role":"DRIVER"}
+{"at":"2026-10-30T17:54:53.245Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":609}
+{"at":"2026-10-30T17:54:53.814Z","level":"info","message":"login","userId":"6ae4d9eb74466830b9853de0","role":"DRIVER"}
+{"at":"2026-10-30T17:54:53.824Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":572}
+{"at":"2026-10-30T17:54:54.419Z","level":"info","message":"login","userId":"6ae4d9eb74466830b9853de6","role":"ATTENDANT"}
+{"at":"2026-10-30T17:54:54.429Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":599}
+{"at":"2026-10-30T17:54:54.992Z","level":"info","message":"login","userId":"6ae4d9ec74466830b9853dea","role":"ADMIN"}
+{"at":"2026-10-30T17:54:55.000Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":564}
+{"at":"2026-10-30T17:54:55.767Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.768Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.769Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.771Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":640}
+{"at":"2026-10-30T17:54:55.772Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.773Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.773Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.776Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":634}
+{"at":"2026-10-30T17:54:55.778Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.779Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.780Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.783Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":628}
+{"at":"2026-10-30T17:54:55.785Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.786Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.786Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.789Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":621}
+{"at":"2026-10-30T17:54:55.791Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.791Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.792Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.794Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":613}
+{"at":"2026-10-30T17:54:55.796Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.796Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.796Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.798Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":598}
+{"at":"2026-10-30T17:54:55.799Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.800Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.800Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.802Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":577}
+{"at":"2026-10-30T17:54:55.810Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.811Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.811Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.813Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":577}
+{"at":"2026-10-30T17:54:55.816Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.817Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.818Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.822Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":574}
+{"at":"2026-10-30T17:54:55.833Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.834Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.834Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.837Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":563}
+{"at":"2026-10-30T17:54:55.843Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.843Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.843Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.846Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":553}
+{"at":"2026-10-30T17:54:55.848Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.849Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.849Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.852Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":549}
+{"at":"2026-10-30T17:54:55.869Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.870Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"OPEN"}
+{"at":"2026-10-30T17:54:55.870Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9ef74466830b9853e9b","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:54:55.938Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":903}
+{"at":"2026-10-30T17:54:55.940Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.940Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.941Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.943Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":876}
+{"at":"2026-10-30T17:54:55.947Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.948Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.948Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.951Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":692}
+{"at":"2026-10-30T17:54:55.953Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.954Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.954Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.957Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":879}
+{"at":"2026-10-30T17:54:55.958Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.959Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.959Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.961Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":680}
+{"at":"2026-10-30T17:54:55.962Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.963Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.963Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.967Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":878}
+{"at":"2026-10-30T17:54:55.968Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.969Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.969Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.971Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":871}
+{"at":"2026-10-30T17:54:55.972Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9ec74466830b9853dfd","gateId":"6ae4d9ec74466830b9853dff","vehicleType":"CAR"}
+{"at":"2026-10-30T17:54:55.973Z","level":"info","message":"gate command","gateId":"6ae4d9ec74466830b9853dff","command":"DISPLAY"}
+{"at":"2026-10-30T17:54:55.973Z","level":"info","message":"entry refused","gateId":"6ae4d9ec74466830b9853dff","source":"ANPR","status":409}
+{"at":"2026-10-30T17:54:55.975Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":863}
+{"at":"2026-10-30T17:54:59.964Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3979}
+{"at":"2026-10-30T17:54:59.977Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:55:00.567Z","level":"info","message":"login","userId":"6ae4d9f174466830b9853ef0","role":"DRIVER"}
+{"at":"2026-10-30T17:55:00.577Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":594}
+{"at":"2026-10-30T17:55:01.216Z","level":"info","message":"login","userId":"6ae4d9f274466830b9853ef7","role":"DRIVER"}
+{"at":"2026-10-30T17:55:01.225Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":641}
+{"at":"2026-10-30T17:55:01.833Z","level":"info","message":"login","userId":"6ae4d9f374466830b9853efd","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:01.844Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":613}
+{"at":"2026-10-30T17:55:02.474Z","level":"info","message":"login","userId":"6ae4d9f374466830b9853f00","role":"ADMIN"}
+{"at":"2026-10-30T17:55:02.483Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":633}
+{"at":"2026-10-30T17:55:02.594Z","level":"info","message":"gate command","gateId":"6ae4d9f374466830b9853f15","command":"DISPLAY"}
+{"at":"2026-10-30T17:55:02.595Z","level":"info","message":"gate command","gateId":"6ae4d9f374466830b9853f15","command":"OPEN"}
+{"at":"2026-10-30T17:55:02.595Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9f674466830b9853f3c","gateId":"6ae4d9f374466830b9853f15","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:55:02.607Z","level":"info","message":"notification queued","userId":"6ae4d9f174466830b9853ef0","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:55:02.610Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":119}
+{"at":"2026-10-30T17:55:02.652Z","level":"info","message":"request","method":"GET","path":"/api/occupancy/6ae4d9f374466830b9853f13","status":200,"ms":37}
+{"at":"2026-10-30T17:55:02.658Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":3}
+{"at":"2026-10-30T17:55:02.719Z","level":"warn","message":"facility full: entry refused","facilityId":"6ae4d9f374466830b9853f13","gateId":"6ae4d9f374466830b9853f15","vehicleType":"CAR"}
+{"at":"2026-10-30T17:55:02.720Z","level":"info","message":"gate command","gateId":"6ae4d9f374466830b9853f15","command":"DISPLAY"}
+{"at":"2026-10-30T17:55:02.720Z","level":"info","message":"entry refused","gateId":"6ae4d9f374466830b9853f15","source":"ANPR","status":409}
+{"at":"2026-10-30T17:55:02.723Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":409,"ms":59}
+{"at":"2026-10-30T17:55:02.763Z","level":"info","message":"request","method":"GET","path":"/api/occupancy/6ae4d9f374466830b9853f13","status":200,"ms":35}
+{"at":"2026-10-30T17:55:02.770Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":2}
+{"at":"2026-10-30T17:55:06.783Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4001}
+{"at":"2026-10-30T17:55:06.798Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:55:07.493Z","level":"info","message":"login","userId":"6ae4d9f874466830b9853f87","role":"DRIVER"}
+{"at":"2026-10-30T17:55:07.502Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":698}
+{"at":"2026-10-30T17:55:08.366Z","level":"info","message":"login","userId":"6ae4d9f974466830b9853f8e","role":"DRIVER"}
+{"at":"2026-10-30T17:55:08.375Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":867}
+{"at":"2026-10-30T17:55:08.980Z","level":"info","message":"login","userId":"6ae4d9fa74466830b9853f94","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:08.989Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":608}
+{"at":"2026-10-30T17:55:09.678Z","level":"info","message":"login","userId":"6ae4d9fa74466830b9853f97","role":"ADMIN"}
+{"at":"2026-10-30T17:55:09.687Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":692}
+{"at":"2026-10-30T17:55:09.806Z","level":"info","message":"gate command","gateId":"6ae4d9fa74466830b9853f9b","command":"DISPLAY"}
+{"at":"2026-10-30T17:55:09.806Z","level":"info","message":"gate command","gateId":"6ae4d9fa74466830b9853f9b","command":"OPEN"}
+{"at":"2026-10-30T17:55:09.807Z","level":"info","message":"vehicle entered","sessionId":"6ae4d9fd74466830b9853fd3","gateId":"6ae4d9fa74466830b9853f9b","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:55:09.816Z","level":"info","message":"notification queued","userId":"6ae4d9f874466830b9853f87","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:55:09.818Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":123}
+{"at":"2026-10-30T17:55:09.863Z","level":"info","message":"request","method":"POST","path":"/api/tickets/scan","status":200,"ms":38}
+{"at":"2026-10-30T17:55:14.243Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4364}
+{"at":"2026-10-30T17:55:14.255Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:55:14.869Z","level":"info","message":"login","userId":"6ae4da0074466830b9854011","role":"DRIVER"}
+{"at":"2026-10-30T17:55:14.877Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":617}
+{"at":"2026-10-30T17:55:15.545Z","level":"info","message":"login","userId":"6ae4da0074466830b9854018","role":"DRIVER"}
+{"at":"2026-10-30T17:55:15.554Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":670}
+{"at":"2026-10-30T17:55:16.285Z","level":"info","message":"login","userId":"6ae4da0174466830b985401e","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:16.295Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":735}
+{"at":"2026-10-30T17:55:16.918Z","level":"info","message":"login","userId":"6ae4da0274466830b9854021","role":"ADMIN"}
+{"at":"2026-10-30T17:55:16.928Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":627}
+{"at":"2026-10-30T17:55:16.963Z","level":"info","message":"gate command","gateId":"6ae4da0274466830b9854025","command":"DISPLAY"}
+{"at":"2026-10-30T17:55:16.963Z","level":"info","message":"entry refused","gateId":"6ae4da0274466830b9854025","source":"QR","status":400}
+{"at":"2026-10-30T17:55:16.965Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":400,"ms":29}
+{"at":"2026-10-30T17:55:16.973Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":2}
+{"at":"2026-10-30T17:55:22.504Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4144}
+{"at":"2026-10-30T17:55:22.516Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:55:23.283Z","level":"info","message":"login","userId":"6ae4da0874466830b9854088","role":"DRIVER"}
+{"at":"2026-10-30T17:55:23.294Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":771}
+{"at":"2026-10-30T17:55:23.991Z","level":"info","message":"login","userId":"6ae4da0874466830b985408f","role":"DRIVER"}
+{"at":"2026-10-30T17:55:23.999Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":699}
+{"at":"2026-10-30T17:55:24.983Z","level":"info","message":"login","userId":"6ae4da0974466830b9854095","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:24.991Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":986}
+{"at":"2026-10-30T17:55:25.886Z","level":"info","message":"login","userId":"6ae4da0a74466830b9854098","role":"ADMIN"}
+{"at":"2026-10-30T17:55:25.895Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":898}
+{"at":"2026-10-30T17:55:26.776Z","level":"info","message":"driver registered","userId":"6ae4da0e74466830b98540cd"}
+{"at":"2026-10-30T17:55:26.798Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":201,"ms":896}
+{"at":"2026-10-30T17:55:27.619Z","level":"info","message":"login","userId":"6ae4da0e74466830b98540cd","role":"DRIVER"}
+{"at":"2026-10-30T17:55:27.627Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":817}
+{"at":"2026-10-30T17:55:27.665Z","level":"info","message":"request","method":"GET","path":"/api/users/me","status":200,"ms":33}
+{"at":"2026-10-30T17:55:32.065Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4383}
+{"at":"2026-10-30T17:55:32.077Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":1}
+{"at":"2026-10-30T17:55:32.694Z","level":"info","message":"login","userId":"6ae4da1274466830b985410b","role":"DRIVER"}
+{"at":"2026-10-30T17:55:32.713Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":631}
+{"at":"2026-10-30T17:55:33.381Z","level":"info","message":"login","userId":"6ae4da1274466830b9854112","role":"DRIVER"}
+{"at":"2026-10-30T17:55:33.390Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":671}
+{"at":"2026-10-30T17:55:34.115Z","level":"info","message":"login","userId":"6ae4da1374466830b9854118","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:34.124Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":729}
+{"at":"2026-10-30T17:55:34.849Z","level":"info","message":"login","userId":"6ae4da1374466830b985411b","role":"ADMIN"}
+{"at":"2026-10-30T17:55:34.859Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":728}
+{"at":"2026-10-30T17:55:34.902Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":409,"ms":36}
+{"at":"2026-10-30T17:55:34.987Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":409,"ms":78}
+{"at":"2026-10-30T17:55:34.997Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":400,"ms":3}
+{"at":"2026-10-30T17:55:38.805Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3799}
+{"at":"2026-10-30T17:55:38.815Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":1}
+{"at":"2026-10-30T17:55:39.347Z","level":"info","message":"login","userId":"6ae4da1974466830b9854183","role":"DRIVER"}
+{"at":"2026-10-30T17:55:39.354Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":533}
+{"at":"2026-10-30T17:55:39.829Z","level":"info","message":"login","userId":"6ae4da1974466830b985418a","role":"DRIVER"}
+{"at":"2026-10-30T17:55:39.837Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":476}
+{"at":"2026-10-30T17:55:40.351Z","level":"info","message":"login","userId":"6ae4da1a74466830b9854190","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:40.360Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":519}
+{"at":"2026-10-30T17:55:40.964Z","level":"info","message":"login","userId":"6ae4da1a74466830b9854193","role":"ADMIN"}
+{"at":"2026-10-30T17:55:40.972Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":605}
+{"at":"2026-10-30T17:55:41.581Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":401,"ms":600}
+{"at":"2026-10-30T17:55:45.174Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3583}
+{"at":"2026-10-30T17:55:45.185Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:55:46.012Z","level":"info","message":"login","userId":"6ae4da1f74466830b98541fb","role":"DRIVER"}
+{"at":"2026-10-30T17:55:46.021Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":829}
+{"at":"2026-10-30T17:55:46.672Z","level":"info","message":"login","userId":"6ae4da1f74466830b9854202","role":"DRIVER"}
+{"at":"2026-10-30T17:55:46.680Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":653}
+{"at":"2026-10-30T17:55:47.602Z","level":"info","message":"login","userId":"6ae4da2074466830b9854208","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:47.610Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":923}
+{"at":"2026-10-30T17:55:48.320Z","level":"info","message":"login","userId":"6ae4da2174466830b985420b","role":"ADMIN"}
+{"at":"2026-10-30T17:55:48.329Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":713}
+{"at":"2026-10-30T17:55:48.362Z","level":"info","message":"request","method":"GET","path":"/api/users/me","status":200,"ms":26}
+{"at":"2026-10-30T17:55:48.410Z","level":"info","message":"request","method":"PATCH","path":"/api/users/me","status":200,"ms":34}
+{"at":"2026-10-30T17:55:48.471Z","level":"info","message":"request","method":"POST","path":"/api/users/me/vehicles","status":201,"ms":53}
+{"at":"2026-10-30T17:55:48.501Z","level":"info","message":"request","method":"GET","path":"/api/users/me","status":200,"ms":24}
+{"at":"2026-10-30T17:55:48.540Z","level":"info","message":"request","method":"DELETE","path":"/api/users/me/vehicles/6ae4da1f74466830b9854205","status":404,"ms":33}
+{"at":"2026-10-30T17:55:48.568Z","level":"info","message":"request","method":"DELETE","path":"/api/users/me/vehicles/6ae4da2474466830b9854243","status":204,"ms":23}
+{"at":"2026-10-30T17:55:52.853Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4276}
+{"at":"2026-10-30T17:55:52.864Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:55:53.505Z","level":"info","message":"login","userId":"6ae4da2674466830b9854283","role":"DRIVER"}
+{"at":"2026-10-30T17:55:53.515Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":646}
+{"at":"2026-10-30T17:55:54.098Z","level":"info","message":"login","userId":"6ae4da2774466830b985428a","role":"DRIVER"}
+{"at":"2026-10-30T17:55:54.105Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":582}
+{"at":"2026-10-30T17:55:54.670Z","level":"info","message":"login","userId":"6ae4da2874466830b9854291","role":"ATTENDANT"}
+{"at":"2026-10-30T17:55:54.677Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":567}
+{"at":"2026-10-30T17:55:55.258Z","level":"info","message":"login","userId":"6ae4da2874466830b9854294","role":"ADMIN"}
+{"at":"2026-10-30T17:55:55.266Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":582}
+{"at":"2026-10-30T17:55:55.274Z","level":"info","message":"request","method":"GET","path":"/api/users/me","status":401,"ms":3}
+{"at":"2026-10-30T17:56:00.210Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3470}
+{"at":"2026-10-30T17:56:00.223Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:56:00.727Z","level":"info","message":"login","userId":"6ae4da2e74466830b98542f7","role":"DRIVER"}
+{"at":"2026-10-30T17:56:00.734Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":505}
+{"at":"2026-10-30T17:56:01.265Z","level":"info","message":"login","userId":"6ae4da2e74466830b98542fe","role":"DRIVER"}
+{"at":"2026-10-30T17:56:01.273Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":532}
+{"at":"2026-10-30T17:56:01.807Z","level":"info","message":"login","userId":"6ae4da2f74466830b9854304","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:01.815Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":536}
+{"at":"2026-10-30T17:56:02.347Z","level":"info","message":"login","userId":"6ae4da3074466830b9854307","role":"ADMIN"}
+{"at":"2026-10-30T17:56:02.354Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":533}
+{"at":"2026-10-30T17:56:02.447Z","level":"info","message":"reservation held","reservationId":"6ae4da3274466830b9854340","userId":"6ae4da2e74466830b98542f7"}
+{"at":"2026-10-30T17:56:02.448Z","level":"info","message":"notification queued","userId":"6ae4da2e74466830b98542f7","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:56:02.475Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":113}
+{"at":"2026-10-30T17:56:02.537Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":200,"ms":49}
+{"at":"2026-10-30T17:56:05.797Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3251}
+{"at":"2026-10-30T17:56:05.810Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:56:06.361Z","level":"info","message":"login","userId":"6ae4da3474466830b9854382","role":"DRIVER"}
+{"at":"2026-10-30T17:56:06.370Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":554}
+{"at":"2026-10-30T17:56:06.950Z","level":"info","message":"login","userId":"6ae4da3474466830b9854389","role":"DRIVER"}
+{"at":"2026-10-30T17:56:06.957Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":580}
+{"at":"2026-10-30T17:56:07.487Z","level":"info","message":"login","userId":"6ae4da3574466830b985438f","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:07.496Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":533}
+{"at":"2026-10-30T17:56:08.035Z","level":"info","message":"login","userId":"6ae4da3574466830b9854392","role":"ADMIN"}
+{"at":"2026-10-30T17:56:08.041Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":539}
+{"at":"2026-10-30T17:56:08.130Z","level":"info","message":"reservation held","reservationId":"6ae4da3874466830b98543cb","userId":"6ae4da3474466830b9854382"}
+{"at":"2026-10-30T17:56:08.130Z","level":"info","message":"notification queued","userId":"6ae4da3474466830b9854382","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:56:08.155Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":106}
+{"at":"2026-10-30T17:56:08.162Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:56:08.185Z","level":"info","message":"reservation holds expired","count":1}
+{"at":"2026-10-30T17:56:08.216Z","level":"info","message":"request","method":"GET","path":"/api/reservations/6ae4da3874466830b98543cb","status":200,"ms":51}
+{"at":"2026-10-30T17:56:08.269Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":200,"ms":47}
+{"at":"2026-10-30T17:56:11.682Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3402}
+{"at":"2026-10-30T17:56:11.693Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:56:12.184Z","level":"info","message":"login","userId":"6ae4da3974466830b9854417","role":"DRIVER"}
+{"at":"2026-10-30T17:56:12.192Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":493}
+{"at":"2026-10-30T17:56:12.672Z","level":"info","message":"login","userId":"6ae4da3a74466830b985441e","role":"DRIVER"}
+{"at":"2026-10-30T17:56:12.678Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":480}
+{"at":"2026-10-30T17:56:13.187Z","level":"info","message":"login","userId":"6ae4da3b74466830b9854424","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:13.193Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":510}
+{"at":"2026-10-30T17:56:13.687Z","level":"info","message":"login","userId":"6ae4da3b74466830b9854427","role":"ADMIN"}
+{"at":"2026-10-30T17:56:13.692Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":493}
+{"at":"2026-10-30T17:56:13.776Z","level":"info","message":"reservation held","reservationId":"6ae4da3d74466830b9854461","userId":"6ae4da3974466830b9854417"}
+{"at":"2026-10-30T17:56:13.776Z","level":"info","message":"notification queued","userId":"6ae4da3974466830b9854417","channel":"EMAIL","type":"RESERVATION_HELD"}
+{"at":"2026-10-30T17:56:13.797Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":201,"ms":97}
+{"at":"2026-10-30T17:56:13.862Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":409,"ms":58}
+{"at":"2026-10-30T17:56:13.904Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":422,"ms":34}
+{"at":"2026-10-30T17:56:17.178Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3268}
+{"at":"2026-10-30T17:56:17.189Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:56:17.710Z","level":"info","message":"login","userId":"6ae4da3f74466830b98544a9","role":"DRIVER"}
+{"at":"2026-10-30T17:56:17.718Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":523}
+{"at":"2026-10-30T17:56:18.240Z","level":"info","message":"login","userId":"6ae4da4074466830b98544b0","role":"DRIVER"}
+{"at":"2026-10-30T17:56:18.249Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":526}
+{"at":"2026-10-30T17:56:18.892Z","level":"info","message":"login","userId":"6ae4da4074466830b98544b6","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:18.902Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":646}
+{"at":"2026-10-30T17:56:19.496Z","level":"info","message":"login","userId":"6ae4da4174466830b98544b9","role":"ADMIN"}
+{"at":"2026-10-30T17:56:19.503Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":593}
+{"at":"2026-10-30T17:56:19.514Z","level":"info","message":"request","method":"POST","path":"/api/reservations","status":401,"ms":3}
+{"at":"2026-10-30T17:56:24.303Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3497}
+{"at":"2026-10-30T17:56:24.315Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:56:24.849Z","level":"info","message":"login","userId":"6ae4da4674466830b985451c","role":"DRIVER"}
+{"at":"2026-10-30T17:56:24.858Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":537}
+{"at":"2026-10-30T17:56:25.405Z","level":"info","message":"login","userId":"6ae4da4774466830b9854523","role":"DRIVER"}
+{"at":"2026-10-30T17:56:25.414Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":549}
+{"at":"2026-10-30T17:56:25.964Z","level":"info","message":"login","userId":"6ae4da4774466830b9854529","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:25.972Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":552}
+{"at":"2026-10-30T17:56:26.490Z","level":"info","message":"login","userId":"6ae4da4874466830b985452c","role":"ADMIN"}
+{"at":"2026-10-30T17:56:26.499Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":520}
+{"at":"2026-10-30T17:56:26.569Z","level":"info","message":"configuration changed","action":"FACILITY_CREATED","by":"6ae4da4874466830b985452c","facilityId":"6ae4da4a74466830b985455d"}
+{"at":"2026-10-30T17:56:26.592Z","level":"info","message":"request","method":"POST","path":"/api/admin/facilities","status":201,"ms":83}
+{"at":"2026-10-30T17:56:26.653Z","level":"info","message":"configuration changed","action":"SLOT_DEACTIVATED","by":"6ae4da4874466830b985452c","slotId":"6ae4da4874466830b9854537","fields":["active"]}
+{"at":"2026-10-30T17:56:26.655Z","level":"info","message":"request","method":"PATCH","path":"/api/admin/slots/6ae4da4874466830b9854537","status":200,"ms":53}
+{"at":"2026-10-30T17:56:26.747Z","level":"info","message":"gate command","gateId":"6ae4da4874466830b9854530","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:26.747Z","level":"info","message":"gate command","gateId":"6ae4da4874466830b9854530","command":"OPEN"}
+{"at":"2026-10-30T17:56:26.748Z","level":"info","message":"vehicle entered","sessionId":"6ae4da4a74466830b9854580","gateId":"6ae4da4874466830b9854530","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:56:26.757Z","level":"info","message":"notification queued","userId":"6ae4da4674466830b985451c","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:56:26.759Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":98}
+{"at":"2026-10-30T17:56:30.403Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3634}
+{"at":"2026-10-30T17:56:30.415Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:56:31.075Z","level":"info","message":"login","userId":"6ae4da4c74466830b98545b9","role":"DRIVER"}
+{"at":"2026-10-30T17:56:31.085Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":664}
+{"at":"2026-10-30T17:56:31.702Z","level":"info","message":"login","userId":"6ae4da4d74466830b98545c0","role":"DRIVER"}
+{"at":"2026-10-30T17:56:31.710Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":619}
+{"at":"2026-10-30T17:56:32.303Z","level":"info","message":"login","userId":"6ae4da4d74466830b98545c6","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:32.311Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":593}
+{"at":"2026-10-30T17:56:32.968Z","level":"info","message":"login","userId":"6ae4da4e74466830b98545c9","role":"ADMIN"}
+{"at":"2026-10-30T17:56:32.977Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":659}
+{"at":"2026-10-30T17:56:33.039Z","level":"info","message":"configuration changed","action":"RATE_SET","by":"6ae4da4e74466830b98545c9","facilityId":"6ae4da4e74466830b98545cb","zoneId":"6ae4da4e74466830b98545d1","vehicleType":"CAR","from":40,"to":60}
+{"at":"2026-10-30T17:56:33.042Z","level":"info","message":"request","method":"PUT","path":"/api/admin/rates","status":200,"ms":56}
+{"at":"2026-10-30T17:56:33.174Z","level":"info","message":"gate command","gateId":"6ae4da4e74466830b98545cd","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:33.174Z","level":"info","message":"gate command","gateId":"6ae4da4e74466830b98545cd","command":"OPEN"}
+{"at":"2026-10-30T17:56:33.174Z","level":"info","message":"vehicle entered","sessionId":"6ae4da5174466830b985460c","gateId":"6ae4da4e74466830b98545cd","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:56:33.184Z","level":"info","message":"notification queued","userId":"6ae4da4c74466830b98545b9","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:56:33.186Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":135}
+{"at":"2026-10-30T17:56:33.198Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:56:33.238Z","level":"info","message":"gate command","gateId":"6ae4da4e74466830b98545cf","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:33.239Z","level":"info","message":"exit: payment required","sessionId":"6ae4da5174466830b985460c","gateId":"6ae4da4e74466830b98545cf","due":120,"paymentStatus":"UNPAID"}
+{"at":"2026-10-30T17:56:33.241Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":402,"ms":37}
+{"at":"2026-10-30T17:56:37.473Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4221}
+{"at":"2026-10-30T17:56:37.491Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":4}
+{"at":"2026-10-30T17:56:38.198Z","level":"info","message":"login","userId":"6ae4da5374466830b9854649","role":"DRIVER"}
+{"at":"2026-10-30T17:56:38.208Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":709}
+{"at":"2026-10-30T17:56:38.841Z","level":"info","message":"login","userId":"6ae4da5374466830b9854650","role":"DRIVER"}
+{"at":"2026-10-30T17:56:38.850Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":636}
+{"at":"2026-10-30T17:56:39.430Z","level":"info","message":"login","userId":"6ae4da5474466830b9854656","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:39.439Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":584}
+{"at":"2026-10-30T17:56:40.053Z","level":"info","message":"login","userId":"6ae4da5574466830b9854659","role":"ADMIN"}
+{"at":"2026-10-30T17:56:40.062Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":616}
+{"at":"2026-10-30T17:56:40.666Z","level":"info","message":"attendant created","userId":"6ae4da5874466830b985468e","by":"6ae4da5574466830b9854659"}
+{"at":"2026-10-30T17:56:40.668Z","level":"info","message":"request","method":"POST","path":"/api/admin/attendants","status":201,"ms":593}
+{"at":"2026-10-30T17:56:41.264Z","level":"info","message":"login","userId":"6ae4da5874466830b985468e","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:41.273Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":597}
+{"at":"2026-10-30T17:56:41.371Z","level":"info","message":"gate command","gateId":"6ae4da5574466830b985465d","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:41.371Z","level":"info","message":"gate command","gateId":"6ae4da5574466830b985465d","command":"OPEN"}
+{"at":"2026-10-30T17:56:41.372Z","level":"info","message":"vehicle entered","sessionId":"6ae4da5974466830b98546a1","gateId":"6ae4da5574466830b985465d","source":"MANUAL","booked":false}
+{"at":"2026-10-30T17:56:41.385Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":107}
+{"at":"2026-10-30T17:56:41.392Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":2}
+{"at":"2026-10-30T17:56:41.420Z","level":"info","message":"gate command","gateId":"6ae4da5574466830b985465f","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:41.420Z","level":"info","message":"gate command","gateId":"6ae4da5574466830b985465f","command":"OPEN"}
+{"at":"2026-10-30T17:56:41.426Z","level":"warn","message":"manual gate override","gateId":"6ae4da5574466830b985465f","action":"OPEN","reason":"SCANNER_FAILURE","by":"6ae4da5874466830b985468e","delivered":true}
+{"at":"2026-10-30T17:56:41.429Z","level":"info","message":"request","method":"POST","path":"/api/gates/6ae4da5574466830b985465f/override","status":200,"ms":30}
+{"at":"2026-10-30T17:56:41.438Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":3}
+{"at":"2026-10-30T17:56:41.465Z","level":"info","message":"request","method":"GET","path":"/api/admin/audit-logs","status":200,"ms":23}
+{"at":"2026-10-30T17:56:45.553Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4078}
+{"at":"2026-10-30T17:56:45.570Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:56:46.240Z","level":"info","message":"login","userId":"6ae4da5b74466830b98546e1","role":"DRIVER"}
+{"at":"2026-10-30T17:56:46.246Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":670}
+{"at":"2026-10-30T17:56:46.837Z","level":"info","message":"login","userId":"6ae4da5c74466830b98546e8","role":"DRIVER"}
+{"at":"2026-10-30T17:56:46.845Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":592}
+{"at":"2026-10-30T17:56:47.418Z","level":"info","message":"login","userId":"6ae4da5c74466830b98546ee","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:47.424Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":573}
+{"at":"2026-10-30T17:56:47.964Z","level":"info","message":"login","userId":"6ae4da5d74466830b98546f1","role":"ADMIN"}
+{"at":"2026-10-30T17:56:47.973Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":543}
+{"at":"2026-10-30T17:56:48.064Z","level":"info","message":"gate command","gateId":"6ae4da5d74466830b98546f5","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:48.064Z","level":"info","message":"gate command","gateId":"6ae4da5d74466830b98546f5","command":"OPEN"}
+{"at":"2026-10-30T17:56:48.065Z","level":"info","message":"vehicle entered","sessionId":"6ae4da6074466830b985472d","gateId":"6ae4da5d74466830b98546f5","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:56:48.074Z","level":"info","message":"notification queued","userId":"6ae4da5b74466830b98546e1","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:56:48.076Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":95}
+{"at":"2026-10-30T17:56:48.082Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":1}
+{"at":"2026-10-30T17:56:48.114Z","level":"info","message":"gateway charge created","paymentId":"6ae4da6074466830b9854735","amount":80}
+{"at":"2026-10-30T17:56:48.121Z","level":"info","message":"payment created","paymentId":"6ae4da6074466830b9854735","session":"6ae4da6074466830b985472d","method":"AT_GATE","amount":80}
+{"at":"2026-10-30T17:56:48.123Z","level":"info","message":"request","method":"POST","path":"/api/payments","status":201,"ms":36}
+{"at":"2026-10-30T17:56:48.143Z","level":"info","message":"payment settled","paymentId":"6ae4da6074466830b9854735","status":"CONFIRMED"}
+{"at":"2026-10-30T17:56:48.145Z","level":"info","message":"request","method":"POST","path":"/api/payments/webhook","status":200,"ms":13}
+{"at":"2026-10-30T17:56:48.183Z","level":"info","message":"gate command","gateId":"6ae4da5d74466830b98546f7","command":"DISPLAY"}
+{"at":"2026-10-30T17:56:48.183Z","level":"info","message":"gate command","gateId":"6ae4da5d74466830b98546f7","command":"OPEN"}
+{"at":"2026-10-30T17:56:48.198Z","level":"info","message":"slot released","slotId":"6ae4da5d74466830b98546fc","sessionId":"6ae4da6074466830b985472d"}
+{"at":"2026-10-30T17:56:48.225Z","level":"info","message":"receipt issued","receiptId":"6ae4da6074466830b9854743","sessionId":"6ae4da6074466830b985472d"}
+{"at":"2026-10-30T17:56:48.232Z","level":"info","message":"notification queued","userId":"6ae4da5b74466830b98546e1","channel":"EMAIL","type":"EXIT_RECEIPT"}
+{"at":"2026-10-30T17:56:48.232Z","level":"info","message":"vehicle exited","sessionId":"6ae4da6074466830b985472d","gateId":"6ae4da5d74466830b98546f7","amount":80}
+{"at":"2026-10-30T17:56:48.235Z","level":"info","message":"request","method":"POST","path":"/api/exit","status":200,"ms":85}
+{"at":"2026-10-30T17:56:48.273Z","level":"info","message":"request","method":"GET","path":"/api/reports/revenue","status":200,"ms":32}
+{"at":"2026-10-30T17:56:48.330Z","level":"info","message":"request","method":"GET","path":"/api/reports/occupancy","status":200,"ms":51}
+{"at":"2026-10-30T17:56:48.366Z","level":"info","message":"request","method":"GET","path":"/api/reports/revenue","status":200,"ms":30}
+{"at":"2026-10-30T17:56:48.413Z","level":"info","message":"request","method":"GET","path":"/api/reports/usage","status":200,"ms":42}
+{"at":"2026-10-30T17:56:52.937Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3305}
+{"at":"2026-10-30T17:56:52.950Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:56:53.466Z","level":"info","message":"login","userId":"6ae4da6374466830b985478e","role":"DRIVER"}
+{"at":"2026-10-30T17:56:53.473Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":517}
+{"at":"2026-10-30T17:56:53.971Z","level":"info","message":"login","userId":"6ae4da6374466830b9854795","role":"DRIVER"}
+{"at":"2026-10-30T17:56:53.982Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":501}
+{"at":"2026-10-30T17:56:54.541Z","level":"info","message":"login","userId":"6ae4da6474466830b985479c","role":"ATTENDANT"}
+{"at":"2026-10-30T17:56:54.550Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":562}
+{"at":"2026-10-30T17:56:55.038Z","level":"info","message":"login","userId":"6ae4da6474466830b985479f","role":"ADMIN"}
+{"at":"2026-10-30T17:56:55.046Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":489}
+{"at":"2026-10-30T17:56:55.098Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":200,"ms":46}
+{"at":"2026-10-30T17:56:55.126Z","level":"info","message":"request","method":"POST","path":"/api/test/reservations","status":201,"ms":18}
+{"at":"2026-10-30T17:56:55.176Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":200,"ms":45}
+{"at":"2026-10-30T17:56:55.229Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":200,"ms":45}
+{"at":"2026-10-30T17:56:58.425Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":3185}
+{"at":"2026-10-30T17:56:58.434Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":1}
+{"at":"2026-10-30T17:56:59.195Z","level":"info","message":"login","userId":"6ae4da6874466830b9854816","role":"DRIVER"}
+{"at":"2026-10-30T17:56:59.207Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":769}
+{"at":"2026-10-30T17:56:59.852Z","level":"info","message":"login","userId":"6ae4da6974466830b985481d","role":"DRIVER"}
+{"at":"2026-10-30T17:56:59.866Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":651}
+{"at":"2026-10-30T17:57:00.702Z","level":"info","message":"login","userId":"6ae4da6974466830b9854823","role":"ATTENDANT"}
+{"at":"2026-10-30T17:57:00.720Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":844}
+{"at":"2026-10-30T17:57:01.628Z","level":"info","message":"login","userId":"6ae4da6a74466830b9854826","role":"ADMIN"}
+{"at":"2026-10-30T17:57:01.648Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":920}
+{"at":"2026-10-30T17:57:01.700Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":422,"ms":44}
+{"at":"2026-10-30T17:57:01.775Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":422,"ms":68}
+{"at":"2026-10-30T17:57:05.920Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4131}
+{"at":"2026-10-30T17:57:05.937Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":3}
+{"at":"2026-10-30T17:57:06.774Z","level":"info","message":"login","userId":"6ae4da6f74466830b9854891","role":"DRIVER"}
+{"at":"2026-10-30T17:57:06.795Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":850}
+{"at":"2026-10-30T17:57:07.727Z","level":"info","message":"login","userId":"6ae4da7074466830b9854898","role":"DRIVER"}
+{"at":"2026-10-30T17:57:07.745Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":928}
+{"at":"2026-10-30T17:57:08.746Z","level":"info","message":"login","userId":"6ae4da7174466830b985489e","role":"ATTENDANT"}
+{"at":"2026-10-30T17:57:08.760Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":993}
+{"at":"2026-10-30T17:57:09.589Z","level":"info","message":"login","userId":"6ae4da7174466830b98548a1","role":"ADMIN"}
+{"at":"2026-10-30T17:57:09.639Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":869}
+{"at":"2026-10-30T17:57:09.686Z","level":"info","message":"request","method":"GET","path":"/api/facilities","status":200,"ms":35}
+{"at":"2026-10-30T17:57:09.716Z","level":"warn","message":"access denied","userId":"6ae4da7174466830b985489e","role":"ATTENDANT","method":"GET","path":"/api/slots/available"}
+{"at":"2026-10-30T17:57:09.719Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":403,"ms":24}
+{"at":"2026-10-30T17:57:09.728Z","level":"info","message":"request","method":"GET","path":"/api/slots/available","status":401,"ms":3}
+{"at":"2026-10-30T17:57:16.569Z","level":"info","message":"request","method":"POST","path":"/api/test/reset","status":200,"ms":4206}
+{"at":"2026-10-30T17:57:16.582Z","level":"info","message":"request","method":"POST","path":"/api/test/clock","status":200,"ms":2}
+{"at":"2026-10-30T17:57:17.198Z","level":"info","message":"login","userId":"6ae4da7a74466830b985490c","role":"DRIVER"}
+{"at":"2026-10-30T17:57:17.215Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":627}
+{"at":"2026-10-30T17:57:17.832Z","level":"info","message":"login","userId":"6ae4da7b74466830b9854913","role":"DRIVER"}
+{"at":"2026-10-30T17:57:17.841Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":618}
+{"at":"2026-10-30T17:57:18.416Z","level":"info","message":"login","userId":"6ae4da7b74466830b9854919","role":"ATTENDANT"}
+{"at":"2026-10-30T17:57:18.424Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":576}
+{"at":"2026-10-30T17:57:19.022Z","level":"info","message":"login","userId":"6ae4da7c74466830b985491c","role":"ADMIN"}
+{"at":"2026-10-30T17:57:19.033Z","level":"info","message":"request","method":"POST","path":"/api/auth/login","status":200,"ms":604}
+{"at":"2026-10-30T17:57:19.045Z","level":"info","message":"request","method":"POST","path":"/api/test/hardware/link","status":200,"ms":2}
+{"at":"2026-10-30T17:57:19.147Z","level":"warn","message":"gate controller unreachable: command queued","gateId":"6ae4da7c74466830b9854920","command":"DISPLAY"}
+{"at":"2026-10-30T17:57:19.147Z","level":"info","message":"vehicle entered","sessionId":"6ae4da7f74466830b9854958","gateId":"6ae4da7c74466830b9854920","source":"ANPR","booked":false}
+{"at":"2026-10-30T17:57:19.157Z","level":"info","message":"notification queued","userId":"6ae4da7a74466830b985490c","channel":"EMAIL","type":"ENTRY_TICKET"}
+{"at":"2026-10-30T17:57:19.159Z","level":"info","message":"request","method":"POST","path":"/api/entry","status":201,"ms":108}
+{"at":"2026-10-30T17:57:19.169Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":3}
+{"at":"2026-10-30T17:57:19.178Z","level":"info","message":"request","method":"POST","path":"/api/test/hardware/link","status":200,"ms":3}
+{"at":"2026-10-30T17:57:19.385Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":2}
+{"at":"2026-10-30T17:57:19.407Z","level":"info","message":"gate command","gateId":"6ae4da7c74466830b9854920","command":"DISPLAY"}
+{"at":"2026-10-30T17:57:19.407Z","level":"info","message":"gate command","gateId":"6ae4da7c74466830b9854920","command":"OPEN"}
+{"at":"2026-10-30T17:57:19.591Z","level":"info","message":"request","method":"GET","path":"/api/test/hardware/commands","status":200,"ms":2}
+{"at":"2026-10-30T17:57:19.599Z","level":"info","message":"request","method":"POST","path":"/api/test/hardware/link","status":200,"ms":2}

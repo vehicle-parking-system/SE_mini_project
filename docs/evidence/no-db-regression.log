@@ -1,0 +1,15 @@
+PASS test/entry.api.test.js
+PASS test/tls.test.js
+PASS test/pricing.test.js
+PASS test/slotSearch.api.test.js
+PASS test/reservations.api.test.js
+PASS test/tokenization.api.test.js
+PASS test/permissions.test.js
+PASS test/validation.test.js
+
+Test Suites: 15 skipped, 8 passed, 8 of 23 total
+Tests:       186 skipped, 79 passed, 265 total
+Snapshots:   0 total
+Time:        51.974 s
+Ran all test suites.
+Test results written to: ..\docs\evidence\no-db-regression.json

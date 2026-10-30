@@ -6,3 +6,6 @@ backend.log
 .env
 .DS_Store
 backend/archive/
+/backend/coverage/
+__pycache__/
+!docs/evidence/backend.log

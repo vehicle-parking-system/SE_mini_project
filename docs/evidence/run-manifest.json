@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-10-30T18:01:24.471Z",
+  "node": "v22.18.0",
+  "platform": "win32",
+  "arch": "x64",
+  "baselineRevision": "9ea6b597a8d51b4070b80182b056575b8c183aeb",
+  "scope": "Local automated verification; working-tree changes included. Not UAT or deployment certification.",
+  "commands": [
+    {
+      "label": "unit",
+      "dir": "backend",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "test/validation.test.js",
+        "test/permissions.test.js",
+        "test/pricing.test.js",
+        "--json",
+        "--outputFile=../docs/evidence/unit-results.json"
+      ],
+      "started": "2026-10-30T17:42:54.742Z",
+      "finished": "2026-10-30T17:43:01.440Z",
+      "exitCode": 0
+    },
+    {
+      "label": "backend-tests",
+      "dir": "backend",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--coverage",
+        "--collectCoverageFrom=src/**/*.js",
+        "--coverageDirectory=../docs/coverage",
+        "--coverageReporters=json-summary",
+        "--coverageReporters=json",
+        "--coverageReporters=html",
+        "--coverageReporters=text",
+        "--json",
+        "--outputFile=../docs/evidence/backend-results.json"
+      ],
+      "started": "2026-10-30T17:43:01.441Z",
+      "finished": "2026-10-30T17:48:05.985Z",
+      "exitCode": 0
+    },
+    {
+      "label": "gate-benchmark",
+      "dir": "backend",
+      "args": [
+        "scripts/bench-gate.js",
+        "20",
+        "3",
+        "1000"
+      ],
+      "started": "2026-10-30T17:49:04.107Z",
+      "finished": "2026-10-30T17:49:41.005Z",
+      "exitCode": 0
+    },
+    {
+      "label": "acceptance",
+      "dir": "tests",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=../docs/evidence/acceptance-results.json"
+      ],
+      "started": "2026-10-30T17:49:52.316Z",
+      "finished": "2026-10-30T17:57:19.838Z",
+      "exitCode": 0
+    },
+    {
+      "label": "frontend-build",
+      "dir": "frontend",
+      "args": [
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "envOverrides": {
+        "NODE_ENV": "production"
+      },
+      "started": "2026-10-30T17:58:44.505Z",
+      "finished": "2026-10-30T17:59:03.760Z",
+      "exitCode": 0
+    },
+    {
+      "label": "coverage-scope",
+      "dir": "",
+      "args": [
+        "scripts/complete-coverage.cjs"
+      ],
+      "finished": "2026-10-30T18:01:24.471Z",
+      "exitCode": 0,
+      "kind": "postprocessing",
+      "suiteDiscoveryMatch": true
+    }
+  ],
+  "previousAttempt": {
+    "generatedAt": "2026-10-30T17:48:06.080Z",
+    "success": false,
+    "errors": [
+      {
+        "error": "EBUSY: resource busy or locked, open 'C:\\Users\\maruthi Prasad\\Documents\\Codex\\2026-10-30\\https-github-com-vehicle-parking-system\\work\\SE_mini_project\\docs\\evidence\\backend.log'"
+      }
+    ]
+  },
+  "success": true,
+  "supersededFrontendBuild": {
+    "label": "frontend-build",
+    "dir": "frontend",
+    "args": [
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "started": "2026-10-30T17:57:19.839Z",
+    "finished": "2026-10-30T17:57:55.908Z",
+    "exitCode": 0,
+    "reason": "Rebuilt explicitly with NODE_ENV=production instead of inheriting test mode."
+  }
+}

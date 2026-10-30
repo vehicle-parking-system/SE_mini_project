@@ -29,14 +29,15 @@ const daysAgo = (n, hour = 12) => new Date(Date.parse(`${new Date(NOW.getTime() 
 const day = (n) => daysAgo(n).toISOString().slice(0, 10);
 
 describeDb("log retention and archival", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   const tokens = {};
   let adminId;
   const as = (key) => ({ authorization: `Bearer ${tokens[key]}` });
   const search = (query) => api.get("/api/admin/logs").set(as("admin")).query(query);
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_archive";
     await mongoose.connect(url.toString());

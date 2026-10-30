@@ -1,6 +1,6 @@
 // SRS §4.3 Real-time slot search — VPS-F-021.
-// Reservations can't be booked through the API yet, so the overlapping reservation in
-// TC-Res-02 is inserted with the /api/test/reservations hook.
+// The fixture hook creates an overlapping booking without coupling search tests
+// to the reservation-creation implementation.
 const C = require("../contract");
 const { describeApi, api, OK, resetAndLogin } = require("../helpers/api");
 

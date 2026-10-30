@@ -33,8 +33,7 @@ const tiny = { key: "tiny", name: "Tiny Lot", openTime: "00:00", closeTime: "23:
 
 describeDb("online pre-booking", () => {
   // one listening server, so parallel requests don't each start their own
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -50,6 +49,8 @@ describeDb("online pre-booking", () => {
     .send({ vehicleId: ids[`${key}Car`], facilityId: ids.city, startTime: at("14:00"), endTime: at("16:00"), ...body });
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_reservations";
     await mongoose.connect(url.toString());

@@ -47,6 +47,6 @@ const fixture = {
 
 // Fee rule assumed by TC-Exit-01: every started hour is charged in full.
 // The SRS only says "within rounding rules" — change this once the rule is fixed.
-const expectedFee = (minutes, ratePerHour = RATE_PER_HOUR) => Math.ceil(minutes / 60) * ratePerHour;
+const expectedFee = (minutes, ratePerHour = RATE_PER_HOUR) => Math.max(1, Math.ceil(minutes / 60)) * ratePerHour;
 
 module.exports = { fixture, PASSWORD, RATE_PER_HOUR, expectedFee };

@@ -29,8 +29,7 @@ const lot = {
 };
 
 describeDb("payment verification at the exit", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -48,6 +47,8 @@ describeDb("payment verification at the exit", () => {
   const opens = () => hardware.sent().filter((c) => c.gateId === ids.out && c.command === "OPEN").length;
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_payments";
     await mongoose.connect(url.toString());

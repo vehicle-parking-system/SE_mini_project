@@ -18,7 +18,10 @@
     "testEnvironment": "node",
     "testTimeout": 30000,
     "roots": [
-      "<rootDir>/test"
+      "<rootDir>"
+    ],
+    "testMatch": [
+      "<rootDir>/test/**/*.test.js"
     ]
   },
   "dependencies": {

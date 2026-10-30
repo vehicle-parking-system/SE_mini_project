@@ -25,8 +25,7 @@ const lot = {
 };
 
 describeDb("exit receipts", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -42,6 +41,8 @@ describeDb("exit receipts", () => {
   }
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_receipts";
     await mongoose.connect(url.toString());

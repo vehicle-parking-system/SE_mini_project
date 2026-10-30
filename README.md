@@ -243,3 +243,7 @@ openssl req -x509 -newkey rsa:2048 -nodes -days 30 -subj /CN=localhost \
 TLS_CERT_FILE=cert.pem TLS_KEY_FILE=key.pem HTTP_REDIRECT_PORT=4080 npm start          # in backend/
 VITE_API_PROXY=https://localhost:4000 VITE_API_PROXY_SELF_SIGNED=true npm run dev        # in frontend/
 ```
+
+## Part-3 test deliverables
+
+See [docs/README.md](docs/README.md) for updated test cases, four required reports, printable PDFs, raw execution evidence, code/branch coverage and repeatable commands. Start with [the test summary](docs/Test_Summary.md). The reports distinguish local automated passes from pending external, manual and UAT activities.

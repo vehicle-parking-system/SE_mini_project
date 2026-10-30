@@ -31,8 +31,7 @@ const lot = {
 };
 
 describeDb("facility full check and occupancy", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -45,6 +44,8 @@ describeDb("facility full check and occupancy", () => {
     holdExpiresAt: new Date(Date.parse(at(start)) + 15 * 60000) });
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_occupancy";
     await mongoose.connect(url.toString());

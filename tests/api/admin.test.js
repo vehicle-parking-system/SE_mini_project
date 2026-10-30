@@ -35,14 +35,23 @@ describeApi("Admin, Attendant & Reporting", () => {
     const created = await api.post(C.adminAttendants, { name: "Shift B", email: "shiftb@test.vps", password: "Shift@12345" },
       { token: tokens.admin });
     expect(OK).toContain(created.status);
+    expect(created.body.user.role).toBe("ATTENDANT");
     const attendant = await login("shiftb@test.vps", "Shift@12345");
 
     const entry = await enterVehicle(attendant, { gateId: ids.gateIn, plateNumber: "KA07MN4321", source: "MANUAL" });
     expect(OK).toContain(entry.status);
     expect((await hardwareCommands(ids.gateIn)).some((c) => c.command === "OPEN")).toBe(true);
 
+    const override = await api.post(`/api/gates/${ids.gateOut}/override`,
+      { action: "OPEN", reason: "SCANNER_FAILURE", note: "Scanner unreadable during test" }, { token: attendant });
+    expect(override.status).toBe(200);
+    expect(override.body.delivered).toBe(true);
+    expect((await hardwareCommands(ids.gateOut)).some((c) => c.command === "OPEN")).toBe(true);
     const logs = await api.get(`${C.auditLogs}?event=MANUAL_OVERRIDE`, { token: tokens.admin });
-    expect(logs.body.logs.some((l) => l.actorId === created.body.id || l.actorEmail === "shiftb@test.vps")).toBe(true);
+    expect(logs.body.logs).toEqual(expect.arrayContaining([expect.objectContaining({
+      actorId: created.body.user.id, actorEmail: "shiftb@test.vps",
+      details: expect.objectContaining({ kind: "BARRIER", action: "OPEN", reason: "SCANNER_FAILURE", gateId: ids.gateOut }),
+    })]));
   });
 
   test("TC-Admin-04 [VPS-F-043]: occupancy, revenue and usage reports match the data and export as CSV", async () => {

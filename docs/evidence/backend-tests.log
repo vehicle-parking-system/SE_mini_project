@@ -1,0 +1,37 @@
+PASS test/archive.api.test.js (20.779 s)
+PASS test/payments.api.test.js (22.777 s)
+PASS test/configuration.api.test.js (17.608 s)
+(node:5544) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 listening listeners added to [Server]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5544) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added to [Server]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(node:5544) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [Server]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+PASS test/lockout.api.test.js (35.991 s)
+PASS test/reports.api.test.js
+PASS test/auth.api.test.js (11.732 s)
+PASS test/slotRelease.api.test.js (7.374 s)
+PASS test/gateOverride.api.test.js (7.6 s)
+PASS test/rbac.api.test.js (17.303 s)
+PASS test/gatePerformance.api.test.js (7.137 s)
+PASS test/occupancy.api.test.js (8.723 s)
+PASS test/allocation.api.test.js (9.274 s)
+PASS test/receipts.api.test.js (7.438 s)
+(node:5544) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 listening listeners added to [Server]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(node:5544) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added to [Server]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(node:5544) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 close listeners added to [Server]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+PASS test/ratelimit.api.test.js (28.057 s)
+PASS test/pricing.test.js
+PASS test/slotSearch.api.test.js (36.796 s)
+PASS test/tls.test.js
+PASS test/fees.api.test.js (5.06 s)
+PASS test/tokenization.api.test.js (11.213 s)
+PASS test/reservations.api.test.js (18.674 s)
+PASS test/entry.api.test.js (13.898 s)
+PASS test/permissions.test.js
+PASS test/validation.test.js
+
+Test Suites: 23 passed, 23 total
+Tests:       265 passed, 265 total
+Snapshots:   0 total
+Time:        302.552 s
+Ran all test suites.
+Test results written to: ..\docs\evidence\backend-results.json

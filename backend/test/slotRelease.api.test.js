@@ -30,8 +30,7 @@ const other = { key: "other", name: "Other", openTime: "00:00", closeTime: "23:5
   zones: [{ key: "zoneX", name: "Zone X", slots: [{ key: "x1", number: "X-01", vehicleType: "CAR" }] }] };
 
 describeDb("slot release on exit", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -67,6 +66,8 @@ describeDb("slot release on exit", () => {
   const settle = () => new Promise((r) => setTimeout(r, 100));
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_release";
     await mongoose.connect(url.toString());

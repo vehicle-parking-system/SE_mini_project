@@ -1,0 +1,78 @@
+{
+  "generatedAt": "2026-10-30T18:01:24.471Z",
+  "sourceFiles": 64,
+  "reportedFiles": 64,
+  "addedZeroHitFiles": [
+    "backend/src/routes/test.js",
+    "backend/src/server.js"
+  ],
+  "before": {
+    "lines": {
+      "total": 1966,
+      "covered": 1881,
+      "skipped": 0,
+      "pct": 95.67
+    },
+    "statements": {
+      "total": 2382,
+      "covered": 2209,
+      "skipped": 0,
+      "pct": 92.73
+    },
+    "functions": {
+      "total": 490,
+      "covered": 466,
+      "skipped": 0,
+      "pct": 95.1
+    },
+    "branches": {
+      "total": 1436,
+      "covered": 1171,
+      "skipped": 0,
+      "pct": 81.54
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": "Unknown"
+    }
+  },
+  "after": {
+    "lines": {
+      "total": 2031,
+      "covered": 1881,
+      "skipped": 0,
+      "pct": 92.61
+    },
+    "statements": {
+      "total": 2459,
+      "covered": 2209,
+      "skipped": 0,
+      "pct": 89.83
+    },
+    "functions": {
+      "total": 506,
+      "covered": 466,
+      "skipped": 0,
+      "pct": 92.09
+    },
+    "branches": {
+      "total": 1454,
+      "covered": 1171,
+      "skipped": 0,
+      "pct": 80.53
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": "Unknown"
+    }
+  },
+  "method": "Istanbul zero-hit instrumentation for source files absent from the Jest coverage map. No unobserved execution is credited.",
+  "testDiscoverySameAsRun": true,
+  "configuredSuiteCount": 23,
+  "recordedSuiteCount": 23,
+  "configChangeAfterRun": true
+}

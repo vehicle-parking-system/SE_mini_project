@@ -31,8 +31,7 @@ const other = { key: "other", name: "Other Lot", openTime: "00:00", closeTime: "
   zones: [{ key: "zoneX", name: "Zone X", slots: [{ key: "x1", number: "X-01", vehicleType: "CAR" }] }] };
 
 describeDb("vehicle entry", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -45,6 +44,8 @@ describeDb("vehicle entry", () => {
   const slotStatus = async (key) => (await Slot.findById(ids[key])).status;
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_entry";
     await mongoose.connect(url.toString());

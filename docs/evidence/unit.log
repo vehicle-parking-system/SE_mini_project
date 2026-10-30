@@ -1,0 +1,10 @@
+PASS test/pricing.test.js
+PASS test/validation.test.js
+PASS test/permissions.test.js
+
+Test Suites: 3 passed, 3 total
+Tests:       51 passed, 51 total
+Snapshots:   0 total
+Time:        4.806 s
+Ran all test suites within paths "test/validation.test.js", "test/permissions.test.js", "test/pricing.test.js".
+Test results written to: ..\docs\evidence\unit-results.json

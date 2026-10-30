@@ -34,8 +34,7 @@ const single = { key: "single", name: "Single", openTime: "00:00", closeTime: "2
   zones: [{ key: "zoneS", name: "Zone S", slots: [{ key: "only", number: "S-01", vehicleType: "CAR", distance: 1 }] }] };
 
 describeDb("nearest-slot allocation", () => {
-  const server = createApp().listen(0);
-  const api = request(server);
+  let server, api;
   let ids;
   const tokens = {};
 
@@ -45,6 +44,8 @@ describeDb("nearest-slot allocation", () => {
   const plate = (i) => `KA09ZZ${String(i).padStart(4, "0")}`;
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_allocation";
     await mongoose.connect(url.toString());
