@@ -1,85 +1,170 @@
+/* Road markings: asphalt, concrete, painted yellow lines and the blue parking sign.
+   Barlow (after highway signage) for text; its condensed cut for headings, numbers and plates. */
 :root {
-  --bg: #f4f6f9;
+  --asphalt: #25282d;
+  --asphalt-2: #30343a;
+  --bg: #ecedea;
   --surface: #ffffff;
-  --text: #17202e;
-  --muted: #5d6878;
-  --border: #d9dee6;
-  --primary: #1d5bd8;
-  --primary-hover: #1749b0;
-  --danger: #c4302b;
-  --success-bg: #e7f6ec;
-  --success-text: #1d6b3a;
-  --error-bg: #fdecec;
-  --radius: 10px;
+  --sunk: #f5f5f3;
+  --text: #1a1c1f;
+  --muted: #5b6068;
+  --border: #d5d7d3;
+  --line: #f2c230;
+  --line-hover: #e3b215;
+  --on-line: #1a1c1f;
+  --primary: #1f5fae;
+  --primary-hover: #184d8e;
+  --danger: #c6362f;
+  --success-bg: #e3f2e8;
+  --success-text: #23663f;
+  --error-bg: #fbe9e7;
+  --booked: #8fa9c9;
+  --radius: 8px;
+  --condensed: "Barlow Condensed", "Arial Narrow", sans-serif;
   color-scheme: light dark;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: Barlow, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #11151c;
-    --surface: #1a2029;
-    --text: #e7ebf1;
-    --muted: #9aa5b5;
-    --border: #2e3744;
-    --primary: #5b8cf0;
-    --primary-hover: #7ba2f3;
-    --danger: #f0716c;
-    --success-bg: #173322;
-    --success-text: #8fd9a8;
-    --error-bg: #3a1c1c;
+    --asphalt: #15171a;
+    --asphalt-2: #22252a;
+    --bg: #1b1d21;
+    --surface: #24272c;
+    --sunk: #1f2226;
+    --text: #e9eae6;
+    --muted: #a1a6ad;
+    --border: #3a3e45;
+    --primary: #7aa7e3;
+    --primary-hover: #9cbdea;
+    --danger: #f08a80;
+    --success-bg: #1c3426;
+    --success-text: #8fd6a8;
+    --error-bg: #3b2120;
+    --booked: #4f6a8c;
   }
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; }
-h1, h2 { line-height: 1.2; margin: 0 0 8px; }
-h1 { font-size: 1.6rem; }
-h2 { font-size: 1.15rem; margin-bottom: 16px; }
-a { color: var(--primary); }
+body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--condensed); font-weight: 700; line-height: 1.1; margin: 0 0 8px; letter-spacing: 0.005em; }
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.4rem; font-weight: 600; margin-bottom: 16px; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+a { color: var(--primary); text-underline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--line); outline-offset: 2px; }
+::selection { background: var(--line); color: var(--on-line); }
 
 .muted { color: var(--muted); }
 .center { text-align: center; }
 
-.nav {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
-}
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--text); text-decoration: none; }
+/* Brand: the blue parking sign */
+.brand { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
 .brand-mark {
-  display: grid; place-items: center; width: 30px; height: 30px; border-radius: 7px;
-  background: var(--primary); color: #fff; font-weight: 700;
+  display: grid; place-items: center; width: 34px; height: 34px; border-radius: 6px; flex: none;
+  background: #1f5fae; color: #fff; font-family: var(--condensed); font-weight: 700; font-size: 1.35rem;
+  box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px #1f5fae;
 }
-.nav-actions { display: flex; align-items: center; gap: 16px; white-space: nowrap; }
-@media (max-width: 560px) { .nav { padding: 12px 16px; } .nav-actions { gap: 12px; } }
-/* on phones the logo alone stands for the app name, so the links fit on one line */
-@media (max-width: 480px) { .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
-/* staff have many links: below desktop width they wrap onto more lines instead of running off the screen */
-@media (max-width: 1100px) {
-  .nav { flex-wrap: wrap; }
-  .nav-actions { flex-wrap: wrap; justify-content: flex-end; row-gap: 6px; white-space: normal; }
+.brand-name { font-family: var(--condensed); font-weight: 700; font-size: 1.25rem; letter-spacing: 0.01em; }
+
+/* App shell: asphalt sidebar with a solid yellow edge line */
+.app-shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100vh; }
+.sidebar {
+  position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 28px; padding: 22px 16px;
+  background: var(--asphalt); color: #e9eae6; overflow-y: auto; border-right: 3px solid var(--line);
+}
+.sidebar-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 8px; }
+.menu-toggle { display: none; }
+.side-nav { display: flex; flex-direction: column; gap: 22px; flex: 1; }
+.nav-group { display: flex; flex-direction: column; gap: 2px; }
+.nav-group-title { margin: 0 0 6px; padding: 0 12px; font-size: 0.82rem; color: #8d9299; }
+.side-nav a {
+  position: relative; display: block; padding: 8px 12px; border-radius: 6px; color: #d9dbd6; text-decoration: none; font-weight: 500;
+}
+.side-nav a:hover { background: var(--asphalt-2); color: #fff; }
+.side-nav a.active { background: var(--asphalt-2); color: #fff; font-weight: 600; }
+.side-nav a.active::before {
+  content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 4px; border-radius: 2px; background: var(--line);
+}
+.nav-account { margin-top: auto; padding-top: 16px; border-top: 1px solid #3c4047; display: flex; flex-direction: column; gap: 4px; }
+.side-nav .account-link { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
+.avatar {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; flex: none;
+  background: var(--line); color: var(--on-line); font-weight: 700;
+}
+.account-name { display: block; font-weight: 600; color: #fff; line-height: 1.2; }
+.account-role { display: block; font-size: 0.82rem; color: #8d9299; }
+.logout {
+  font: inherit; text-align: left; padding: 8px 12px; border: none; border-radius: 6px; background: none; color: #b9bcb7; cursor: pointer;
+}
+.logout:hover { background: var(--asphalt-2); color: #fff; }
+.shell-content { min-width: 0; }
+
+/* Phones and small tablets: a top bar with a menu button that opens the links */
+@media (max-width: 860px) {
+  .app-shell { display: block; }
+  .sidebar {
+    position: sticky; top: 0; z-index: 10; height: auto; padding: 12px 16px; gap: 0; overflow: visible;
+    border-right: none; border-bottom: 3px solid var(--line);
+  }
+  .sidebar-top { padding: 0; }
+  .menu-toggle {
+    display: block; font: inherit; font-weight: 600; padding: 7px 14px; border-radius: 6px; cursor: pointer;
+    border: 1px solid #4a4f57; background: var(--asphalt-2); color: #fff;
+  }
+  .side-nav { display: none; padding-top: 16px; }
+  .sidebar.open .side-nav { display: flex; max-height: calc(100vh - 70px); overflow-y: auto; }
+}
+
+/* Login and registration: the bay drawing on asphalt beside the form */
+.auth-layout { display: grid; grid-template-columns: minmax(320px, 5fr) 7fr; min-height: 100vh; }
+.auth-aside {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 40px; padding: 32px 40px;
+  background: var(--asphalt); color: #e9eae6;
+}
+.auth-pitch h2 { font-size: clamp(2rem, 3.4vw, 3rem); font-weight: 700; color: #fff; max-width: 15ch; margin-bottom: 14px; text-wrap: balance; }
+.auth-pitch p { max-width: 38ch; color: #b9bcb7; margin: 0; }
+.bay-art { width: 100%; max-width: 440px; }
+.bay-line { stroke: #e9eae6; stroke-width: 3; }
+.lane-line { stroke: var(--line); stroke-width: 4; stroke-dasharray: 26 18; }
+.lane-arrow { stroke: #e9eae6; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bay-number { fill: #8d9299; font-family: var(--condensed); font-size: 14px; text-anchor: middle; }
+.bay-car { fill: #50555d; }
+.bay-booked { fill: none; stroke: var(--line); stroke-width: 2.5; stroke-dasharray: 6 5; }
+.auth-layout .auth-page { align-items: center; padding: 48px 24px; }
+.auth-layout .auth-card { border: none; background: none; padding: 0; }
+.auth-layout .auth-card h1 { font-size: 2.6rem; }
+@media (max-width: 860px) {
+  .auth-layout { display: block; }
+  .auth-aside { padding: 18px 16px; gap: 0; border-bottom: 3px solid var(--line); }
+  .auth-pitch, .bay-art { display: none; }
+  .auth-layout .auth-page { padding: 32px 16px; }
 }
 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+@media (max-width: 560px) { .card { padding: 18px 16px; } }
 
 .auth-page { display: flex; justify-content: center; padding: 48px 16px; }
 .auth-card { width: 100%; max-width: 420px; }
 .auth-card.wide { max-width: 640px; }
 .auth-card > .muted:first-of-type { margin-top: 0; margin-bottom: 20px; }
 
-.page { max-width: 1080px; margin: 0 auto; padding: 32px 16px; }
-.page-header { margin-bottom: 24px; }
-.page-header p { margin: 0; }
+.page { max-width: 1120px; margin: 0 auto; padding: 40px 32px 64px; }
+@media (max-width: 560px) { .page { padding: 24px 16px 48px; } h1 { font-size: 2rem; } }
+.page-header { margin-bottom: 28px; }
+.page-header p { margin: 0; max-width: 65ch; color: var(--muted); }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start; }
 
 .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; flex: 1; min-width: 0; }
-.field label, legend { font-size: 0.9rem; font-weight: 600; }
+.field label, legend { font-size: 0.92rem; font-weight: 600; }
 .field input, .field select {
-  font: inherit; padding: 9px 11px; border: 1px solid var(--border); border-radius: 7px;
+  font: inherit; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px;
   background: var(--surface); color: var(--text);
 }
+.field input:hover, .field select:hover { border-color: var(--muted); }
 .field input:focus, .field select:focus { outline: 2px solid var(--primary); outline-offset: -1px; border-color: var(--primary); }
-.field input:disabled { color: var(--muted); background: var(--bg); }
+.field input:disabled { color: var(--muted); background: var(--sunk); }
 .field.has-error input { border-color: var(--danger); }
 .field-error { color: var(--danger); font-size: 0.85rem; margin: 0; }
 .field-hint { color: var(--muted); font-size: 0.85rem; margin: 0; }
@@ -103,19 +188,21 @@ legend { padding: 0 6px; }
 legend .muted { font-weight: 400; }
 
 .btn {
-  font: inherit; font-weight: 600; padding: 9px 16px; border-radius: 7px; cursor: pointer;
-  border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none;
+  display: inline-block; font: inherit; font-weight: 600; padding: 10px 18px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none; line-height: 1.25;
 }
-.btn:hover:not(:disabled) { border-color: var(--primary); }
-.btn:disabled { opacity: 0.6; cursor: default; }
-.btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
-.btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn:hover:not(:disabled) { border-color: var(--text); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.55; cursor: default; }
+/* the main action on a screen is painted like a road marking */
+.btn.primary { background: var(--line); border-color: var(--line); color: var(--on-line); }
+.btn.primary:hover:not(:disabled) { background: var(--line-hover); border-color: var(--line-hover); }
 .btn.block { width: 100%; margin: 6px 0 16px; }
-.btn.small { padding: 6px 12px; }
+.btn.small { padding: 6px 12px; font-size: 0.92rem; }
 .btn.link { border: none; background: none; padding: 4px 0; color: var(--primary); }
 .btn.link.danger { color: var(--danger); }
 
-.notice { padding: 10px 12px; border-radius: 7px; margin: 0 0 16px; font-size: 0.92rem; }
+.notice { padding: 10px 14px; border-radius: 6px; margin: 0 0 16px; font-size: 0.95rem; border-left: 4px solid currentColor; }
 .notice.error { background: var(--error-bg); color: var(--danger); }
 .notice.success { background: var(--success-bg); color: var(--success-text); }
 
@@ -124,14 +211,24 @@ legend .muted { font-weight: 400; }
   display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border);
 }
 .vehicle-list li .btn { margin-left: auto; }
+/* An Indian number plate: white, black border and lettering, with the blue strip on the left. Stays white in dark mode. */
 .plate {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; letter-spacing: 0.05em;
-  padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px;
+  display: inline-flex; align-items: stretch; vertical-align: middle; overflow: hidden; white-space: nowrap;
+  font-family: var(--condensed); font-weight: 700; font-size: 1.02em; letter-spacing: 0.08em; line-height: 1.5;
+  background: #fff; color: #111; border: 1.5px solid #111; border-radius: 4px; padding: 0 7px 0 0;
 }
+.plate::before { content: ""; width: 6px; margin-right: 7px; background: #1f5fae; }
+/* A slot number as it is painted at the head of a bay: yellow on asphalt */
+.slot-tag {
+  display: inline-block; vertical-align: middle; white-space: nowrap; padding: 0 8px; border-radius: 4px;
+  font-family: var(--condensed); font-weight: 700; font-size: 1.02em; letter-spacing: 0.04em; line-height: 1.5;
+  background: var(--asphalt); color: var(--line);
+}
+td strong, td .plate { white-space: nowrap; }
 
 .role-badge {
   display: inline-block; vertical-align: middle; margin-left: 6px; padding: 2px 8px; border-radius: 999px;
-  font-size: 0.75rem; font-weight: 600; background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+  font-size: 0.78rem; font-weight: 600; background: var(--sunk); border: 1px solid var(--border); color: var(--muted);
 }
 .staff-list { list-style: none; padding: 0; margin: 0; }
 .staff-list li { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid var(--border); }
@@ -139,8 +236,10 @@ legend .muted { font-weight: 400; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
-th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 600; }
-.event { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; font-weight: 600; }
+th { font-size: 0.85rem; color: var(--muted); font-weight: 600; background: var(--sunk); }
+tbody tr:hover td { background: var(--sunk); }
+th, td { padding: 10px 12px; }
+.event { font-family: var(--condensed); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.02em; }
 .event.ACCOUNT_LOCKED, .event.LOGIN_BLOCKED, .event.LOGIN_RATE_LIMITED { color: var(--danger); }
 .event.ACCOUNT_UNLOCKED { color: var(--success-text); }
 .card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
@@ -162,45 +261,58 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .slot:last-child { border-bottom: none; }
 .slot-book { margin-left: auto; }
 .book-for { max-width: 260px; }
-.notice:not(.error):not(.success) { background: var(--bg); border: 1px solid var(--border); }
+.notice:not(.error):not(.success) { background: var(--sunk); border: 1px solid var(--border); border-left: 4px solid var(--line); }
 .small { font-size: 0.85rem; }
 
 /* Bookings */
 .booking-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
 .booking { display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
-.booking.highlight { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.booking.highlight { border-color: var(--line); box-shadow: 0 0 0 2px var(--line); }
 .booking-main { flex: 1; min-width: 240px; }
 .booking-main .card-header { margin-bottom: 8px; flex-wrap: wrap; }
 .booking-main p { margin: 0 0 6px; }
 .booking-when { font-weight: 600; }
 .past-bookings { margin-top: 32px; }
 .status-badge {
-  padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; white-space: nowrap;
-  background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+  padding: 2px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+  background: var(--sunk); border: 1px solid var(--border); color: var(--muted);
 }
 .status-badge.HELD, .status-badge.ACTIVE { color: var(--primary); border-color: var(--primary); }
 .status-badge.CONFIRMED, .status-badge.REFUNDED, .status-badge.PAID { background: var(--success-bg); color: var(--success-text); border-color: transparent; }
 .status-badge.FAILED { background: var(--error-bg); color: var(--danger); border-color: transparent; }
 .qr { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .qr img, .qr-placeholder { background: #fff; padding: 6px; border-radius: 8px; border: 1px solid var(--border); }
-.qr-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; color: var(--muted); max-width: 200px; word-break: break-all; text-align: center; }
+.qr-code { font-size: 0.72rem; color: var(--muted); max-width: 200px; word-break: break-all; text-align: center; }
 
 /* Gate kiosk */
 .gate-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .gate-pick { min-width: min(100%, 560px); }
 @media (min-width: 561px) { .gate-pick .field { margin-bottom: 0; } }
-.segmented { display: flex; border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; margin-bottom: 16px; }
+.segmented { display: flex; border: 1px solid var(--border); border-radius: 8px; padding: 3px; gap: 3px; margin-bottom: 16px; background: var(--sunk); }
 .segmented button {
   flex: 1; font: inherit; font-size: 0.9rem; font-weight: 600; padding: 7px 8px; border: none; border-radius: 6px;
   background: none; color: var(--muted); cursor: pointer;
 }
-.segmented button.active { background: var(--primary); color: #fff; }
+.segmented button:hover:not(.active) { color: var(--text); }
+.segmented button.active { background: var(--asphalt); color: #fff; box-shadow: inset 0 -3px 0 var(--line); }
 .gate-result { margin: 16px 0 0; }
 .meter-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
 .meter-label { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; margin-bottom: 4px; }
-.meter { display: flex; height: 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); overflow: hidden; }
-.meter-occupied { background: var(--primary); }
-.meter-booked { background: var(--muted); opacity: 0.5; }
+.meter-name { font-weight: 600; }
+.meter { display: flex; height: 14px; border-radius: 3px; background: var(--sunk); border: 1px solid var(--border); overflow: hidden; }
+.meter-occupied { background: var(--asphalt); }
+.meter-booked { background: var(--booked); }
+.occupancy-free { color: var(--muted); }
+.occupancy-free strong { font-family: var(--condensed); font-size: 1.6rem; color: var(--text); margin-right: 2px; }
+/* Occupancy as painted bays: a dark car in a parked bay, a dashed outline for a booked one */
+.bays { display: grid; grid-template-columns: repeat(auto-fill, minmax(22px, 1fr)); gap: 4px; }
+.bay { display: inline-block; height: 38px; border: 2px solid var(--border); border-top: none; border-radius: 0 0 2px 2px; position: relative; }
+.bay.parked::after { content: ""; position: absolute; inset: 5px 4px 6px; border-radius: 4px; background: var(--asphalt); }
+.bay.booked::after { content: ""; position: absolute; inset: 5px 4px 6px; border-radius: 4px; border: 2px dashed var(--booked); }
+@media (prefers-color-scheme: dark) { .bay.parked::after { background: #c9ccc6; } }
+.bay-key { display: flex; align-items: center; gap: 6px 8px; flex-wrap: wrap; margin: -6px 0 16px; font-size: 0.85rem; color: var(--muted); }
+.bay-key .bay { width: 16px; height: 22px; margin-left: 8px; }
+.bay-key .bay:first-child { margin-left: 0; }
 .danger-text { color: var(--danger); font-weight: 600; }
 
 /* Entry ticket */
@@ -208,8 +320,8 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .gate-result + .ticket { border: 1px dashed var(--border); border-radius: var(--radius); padding: 16px; }
 .ticket-details { flex: 1; min-width: 200px; }
 .ticket-details p { margin: 0 0 8px; }
-.ticket-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; }
-.ticket-slot { font-size: 1.3rem; }
+.ticket-title { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+.ticket-slot { font-family: var(--condensed); font-size: 1.7rem; }
 .ticket dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0 0 10px; font-size: 0.92rem; }
 .ticket dt { color: var(--muted); }
 .ticket dd { margin: 0; }
@@ -224,7 +336,7 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 }
 .fee { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
 .fee p { margin: 0 0 4px; }
-.fee-amount { font-size: 1.8rem; font-weight: 700; }
+.fee-amount { font-family: var(--condensed); font-size: 2.4rem; font-weight: 700; line-height: 1.1; }
 .fee-amount .muted { font-size: 1rem; font-weight: 400; }
 .pay-online { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
 .pay-online .notice { flex-basis: 100%; margin: 0; }
@@ -236,7 +348,7 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .receipt dd { margin: 0; }
 .receipt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 14px; }
 .receipt-head p { margin: 0; }
-.receipt-number { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 600; }
+.receipt-number { font-family: var(--condensed); font-weight: 700; letter-spacing: 0.04em; }
 .gate-receipt { margin-top: 16px; border: 1px dashed var(--border); border-radius: var(--radius); padding: 16px; }
 .page.narrow { max-width: 640px; }
 .booking-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
@@ -259,7 +371,7 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .status-badge.OCCUPIED { color: var(--primary); border-color: var(--primary); }
 
 /* Monitor: gates and manual override */
-.meter-heading { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 20px 0 10px; }
+.meter-heading { font-size: 1.05rem; margin: 24px 0 12px; }
 .gate-list { list-style: none; padding: 0; margin: 0; }
 .gate-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
 .gate-row:last-child { border-bottom: none; }
@@ -271,15 +383,20 @@ th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color
 .override-form .field select { width: 100%; }
 
 /* Reports */
-.page.wide { max-width: 1280px; }
+.page.wide { max-width: 1320px; }
 .report-filters { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
 .report-filters .field { min-width: 160px; flex: 0 1 220px; margin-bottom: 0; }
 .report-filters > .btn { margin-top: 26px; margin-left: auto; }
 .report, .report-error { margin-top: 20px; }
 .report-summary { display: flex; gap: 32px; flex-wrap: wrap; margin: 0 0 20px; }
-.report-summary dt { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); font-weight: 600; }
-.report-summary dd { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.report-summary { gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.report-summary > div { flex: 1 1 160px; padding: 14px 18px; border-right: 1px solid var(--border); }
+.report-summary > div:last-child { border-right: none; }
+.report-summary dt { font-size: 0.88rem; color: var(--muted); font-weight: 600; }
+.report-summary dd { margin: 0; font-family: var(--condensed); font-size: 2rem; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums; }
 table.numeric td:first-child { white-space: nowrap; }
 table.numeric td:not(:first-child), table.numeric th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
-table.numeric tfoot th, table.numeric tfoot td { font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }
+table.numeric tfoot th, table.numeric tfoot td { background: none; font-weight: 700; border-top: 2px solid var(--border); border-bottom: none; }
 .log-details { display: block; max-width: 420px; white-space: pre-wrap; word-break: break-word; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

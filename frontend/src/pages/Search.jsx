@@ -204,7 +204,7 @@ export default function Search() {
               <ul className="slot-list">
                 {result.slots.map((s, i) => (
                   <li key={s.slotId} className="slot">
-                    <span className="plate">{s.number}</span>
+                    <span className="slot-tag">{s.number}</span>
                     <span>{s.zoneName}</span>
                     <span className="muted">{s.distance} m from the entrance</span>
                     {i === 0 && <span className="role-badge">Nearest</span>}

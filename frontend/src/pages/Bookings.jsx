@@ -54,7 +54,7 @@ function Booking({ booking, onChanged, highlight }) {
     <li className={`card booking${highlight ? " highlight" : ""}`}>
       <div className="booking-main">
         <div className="card-header">
-          <h2>{booking.facilityName} · <span className="plate">{booking.slotNumber}</span></h2>
+          <h2>{booking.facilityName} · <span className="slot-tag">{booking.slotNumber}</span></h2>
           <span className={`status-badge ${booking.status}`}>{status.label}</span>
         </div>
         <p className="booking-when">
