@@ -41,7 +41,8 @@ function run(label, dir, args, extra = {}) {
  try {
   if (!resume) {
   success = run('unit', 'backend', ['node_modules/jest/bin/jest.js', '--runInBand', '--runTestsByPath',
-   'test/validation.test.js', 'test/permissions.test.js', 'test/pricing.test.js', '--json', '--outputFile=../docs/evidence/unit-results.json'], { MONGO_URL: '' }) && success;
+   'test/validation.test.js', 'test/permissions.test.js', 'test/pricing.test.js',
+   'test/config.test.js', 'test/metrics.test.js', 'test/cache.test.js', 'test/loginThrottle.test.js', '--json', '--outputFile=../docs/evidence/unit-results.json'], { MONGO_URL: '' }) && success;
   success = run('backend-tests', 'backend', ['node_modules/jest/bin/jest.js', '--runInBand', '--coverage', '--collectCoverageFrom=src/**/*.js',
    '--coverageDirectory=../docs/coverage', '--coverageReporters=json-summary', '--coverageReporters=json', '--coverageReporters=html',
    '--coverageReporters=text', '--json', '--outputFile=../docs/evidence/backend-results.json']) && success;
