@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-11-13T06:21:50.966Z",
+  "node": "v24.22.1",
+  "platform": "darwin",
+  "arch": "arm64",
+  "baselineRevision": "badf5856dfe8847dd41fd1a853e297bc5e0559ce",
+  "scope": "Local automated verification; working-tree changes included. Not UAT or deployment certification.",
+  "commands": [
+    {
+      "label": "unit",
+      "dir": "backend",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "test/validation.test.js",
+        "test/permissions.test.js",
+        "test/pricing.test.js",
+        "test/config.test.js",
+        "test/metrics.test.js",
+        "test/cache.test.js",
+        "test/loginThrottle.test.js",
+        "--json",
+        "--outputFile=../docs/evidence/unit-results.json"
+      ],
+      "started": "2026-11-13T06:19:43.035Z",
+      "finished": "2026-11-13T06:19:43.775Z",
+      "exitCode": 0
+    },
+    {
+      "label": "backend-tests",
+      "dir": "backend",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--coverage",
+        "--collectCoverageFrom=src/**/*.js",
+        "--coverageDirectory=../docs/coverage",
+        "--coverageReporters=json-summary",
+        "--coverageReporters=json",
+        "--coverageReporters=html",
+        "--coverageReporters=text",
+        "--json",
+        "--outputFile=../docs/evidence/backend-results.json"
+      ],
+      "started": "2026-11-13T06:19:43.775Z",
+      "finished": "2026-11-13T06:21:11.521Z",
+      "exitCode": 0
+    },
+    {
+      "label": "coverage-scope",
+      "dir": "",
+      "args": [
+        "scripts/complete-coverage.cjs"
+      ],
+      "started": "2026-11-13T06:21:11.521Z",
+      "finished": "2026-11-13T06:21:11.640Z",
+      "exitCode": 0
+    },
+    {
+      "label": "gate-benchmark",
+      "dir": "backend",
+      "args": [
+        "scripts/bench-gate.js",
+        "20",
+        "3",
+        "1000"
+      ],
+      "started": "2026-11-13T06:21:11.640Z",
+      "finished": "2026-11-13T06:21:12.692Z",
+      "exitCode": 0
+    },
+    {
+      "label": "acceptance",
+      "dir": "tests",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--json",
+        "--outputFile=../docs/evidence/acceptance-results.json"
+      ],
+      "started": "2026-11-13T06:21:13.724Z",
+      "finished": "2026-11-13T06:21:50.198Z",
+      "exitCode": 0
+    },
+    {
+      "label": "frontend-build",
+      "dir": "frontend",
+      "args": [
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "started": "2026-11-13T06:21:50.198Z",
+      "finished": "2026-11-13T06:21:50.952Z",
+      "exitCode": 0
+    }
+  ],
+  "success": true
+}
