@@ -36,7 +36,7 @@ This report closes Sprint 3 testing. It supersedes the statuses in the generated
 | VPS-43 | Risk-based branch review (S3-05): 38 unit tests for production startup guards, gate metrics, config cache and login throttle. Mutation-checked | Branch coverage +3.1 points; the four modules 50-72% → 92-100%. PR #21 |
 | VPS-44 | UI walkthrough of `feature/ui-refresh` as driver, admin and attendant, with accessibility checks | 10 flows pass; 3 defects (all pre-existing on `main`); no regressions from the branch. [UAT_Report.md](UAT_Report.md) |
 | VPS-45 | PR checklist, bug report and test case request forms | PR #22 |
-| VPS-46 | Deviations from SRS/SAD, this report, Test Plan v2.0 and SRS v1.1 traceability update | [Design_Deviations.md](Design_Deviations.md), Docs repository PR |
+| VPS-46 | Deviations from SRS/SAD, this report, Test Plan v2.0 and SRS v1.1 traceability update | [Design_Deviations.md](Design_Deviations.md); [Docs PR #1](https://github.com/vehicle-parking-system/Docs/pull/1) |
 
 ## 3. Final traceability and status
 
