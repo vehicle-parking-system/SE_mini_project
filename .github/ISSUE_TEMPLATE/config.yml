@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Sprint board (Jira)
+    url: https://yvbhavanareddy.atlassian.net/jira/software/c/projects/VPS/boards/100
+    about: Stories, tasks and sprint planning live on the Jira board.
