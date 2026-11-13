@@ -21,7 +21,11 @@ const IP_A = "203.0.113.10";
 const IP_B = "198.51.100.20";
 
 describeDb("per-IP login throttling", () => {
-  const api = request(createApp());
+  // One server that is already listening before any request is sent. Handing supertest the bare app
+  // made it call listen() once per in-flight request, so the 25-request burst below stacked 25
+  // listening/error/close listeners on one Server (MaxListenersExceededWarning, OBS-001 / VPS-41).
+  let server;
+  let api;
 
   const login = (email, password, ip = IP_A) =>
     api.post("/api/auth/login").set("x-forwarded-for", ip).send({ email, password });
@@ -31,6 +35,8 @@ describeDb("per-IP login throttling", () => {
   };
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_ratelimit";
     await mongoose.connect(url.toString());
@@ -44,6 +50,7 @@ describeDb("per-IP login throttling", () => {
     await createAccount({ name: "Admin", email: "admin@example.com", password: PASSWORD, role: "ADMIN" });
   });
   afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
     await mongoose.connection.db.dropDatabase();
     await mongoose.disconnect();
   });
