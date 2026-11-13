@@ -1,0 +1,16 @@
+PASS security/security.test.js (11.643 s)
+PASS api/payment.test.js
+PASS api/entry.test.js
+PASS api/admin.test.js
+PASS api/exit.test.js (5.181 s)
+PASS api/auth.test.js
+PASS api/reservation.test.js
+PASS api/slots.test.js
+PASS api/hardware.test.js
+
+Test Suites: 9 passed, 9 total
+Tests:       50 passed, 50 total
+Snapshots:   0 total
+Time:        35.873 s
+Ran all test suites.
+Test results written to: ../docs/evidence/acceptance-results.json

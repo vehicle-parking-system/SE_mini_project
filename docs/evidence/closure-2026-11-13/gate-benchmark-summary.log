@@ -1,0 +1,6 @@
+20 lanes × 3 cycles, 1000 past stays, 600 slots: 0.3 s, 0 failed
+step      n     p50 ms   p90 ms   p99 ms
+Entry      60     41.2     84.3     99.3
+Payment    60     20.7     25.5     37.6
+Webhook    60      8.5     11.7     14.3
+Exit       60     29.0     35.7     41.4
