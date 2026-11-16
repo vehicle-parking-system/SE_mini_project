@@ -1,0 +1,14 @@
+PASS test/config.test.js
+PASS test/loginThrottle.test.js
+PASS test/cache.test.js
+PASS test/permissions.test.js
+PASS test/validation.test.js
+PASS test/metrics.test.js
+PASS test/pricing.test.js
+
+Test Suites: 7 passed, 7 total
+Tests:       89 passed, 89 total
+Snapshots:   0 total
+Time:        0.365 s
+Ran all test suites within paths "test/validation.test.js", "test/permissions.test.js", "test/pricing.test.js", "test/config.test.js", "test/metrics.test.js", "test/cache.test.js", "test/loginThrottle.test.js".
+Test results written to: ../docs/evidence/unit-results.json

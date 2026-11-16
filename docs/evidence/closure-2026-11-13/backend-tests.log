@@ -1,0 +1,34 @@
+PASS test/entry.api.test.js (6.681 s)
+PASS test/tokenization.api.test.js
+PASS test/reservations.api.test.js (7.514 s)
+PASS test/archive.api.test.js
+PASS test/payments.api.test.js (5.485 s)
+PASS test/configuration.api.test.js
+PASS test/slotSearch.api.test.js (14.69 s)
+PASS test/lockout.api.test.js (10.537 s)
+PASS test/reports.api.test.js
+PASS test/auth.api.test.js (5.452 s)
+PASS test/tls.test.js
+PASS test/rbac.api.test.js (6.62 s)
+PASS test/slotRelease.api.test.js
+PASS test/gateOverride.api.test.js
+PASS test/gatePerformance.api.test.js
+PASS test/fees.api.test.js
+PASS test/occupancy.api.test.js
+PASS test/allocation.api.test.js
+PASS test/receipts.api.test.js
+PASS test/ratelimit.api.test.js
+PASS test/config.test.js
+PASS test/loginThrottle.test.js
+PASS test/cache.test.js
+PASS test/pricing.test.js
+PASS test/validation.test.js
+PASS test/permissions.test.js
+PASS test/metrics.test.js
+
+Test Suites: 27 passed, 27 total
+Tests:       303 passed, 303 total
+Snapshots:   0 total
+Time:        87.614 s
+Ran all test suites.
+Test results written to: ../docs/evidence/backend-results.json

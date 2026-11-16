@@ -54,6 +54,10 @@ Jest may skip TLS certificate tests when OpenSSL is missing. Such skips must rem
 | Test Plan traceability | Requirements_Traceability_Matrix.md and ../tests/RTM.md |
 | Optional Sprint-3 spillover | Sprint_3_Backlog.md and PDF |
 | Evidence and outcome | Test_Summary.md, evidence/ and provenance.json |
+| **Sprint 3 closure (13 Nov)** | **Test_Closure_Report.md** (final status of all 32 cases; supersedes the 30 Oct RTM statuses), evidence/closure-2026-11-13/ |
+| UI walkthrough and accessibility | UAT_Report.md, evidence/uat/ |
+| Deviations from SRS/SAD for the demo | Design_Deviations.md |
+| Gate performance retest | evidence/gate-benchmark-retest.log |
 
 CI runs the same verifier against an ephemeral MongoDB service and uploads `docs/` as an Actions artifact. It does not commit report snapshots to GitHub automatically. These prepared files still need a normal commit/push from an account with write access.
 
