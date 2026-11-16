@@ -49,8 +49,8 @@ const RULES = [
   ["GET", "/api/gates/overrides", STAFF], //        recent manual overrides (shift log)
   ["POST", "/api/gates/:id/override", STAFF], //    manual barrier override (VPS-F-042)
 
-  // Payments: drivers pay online, attendants take at-gate payments
-  ["POST", "/api/payments", [DRIVER, ATTENDANT]],
+  // Payments: drivers pay online; gate staff (attendants and admins) take at-gate payments
+  ["POST", "/api/payments", ANY_USER],
   ["GET", "/api/payments/:id", ANY_USER], //   drivers: only their own
 
   // Admin Console and reports

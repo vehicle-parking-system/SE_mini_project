@@ -63,7 +63,8 @@ describeDb("payment verification at the exit", () => {
       vehicles: [{ plateNumber: "KA01AB1234", vehicleType: "CAR" }] });
     const { user: other } = await createAccount({ name: "Oth", email: "oth@example.com", password: "Secret123" });
     const { user: attendant } = await createAccount({ name: "Att", email: "att@example.com", password: "Secret123", role: "ATTENDANT" });
-    Object.assign(tokens, { driver: signToken(driver), other: signToken(other), attendant: signToken(attendant) });
+    const { user: admin } = await createAccount({ name: "Adm", email: "adm@example.com", password: "Secret123", role: "ADMIN" });
+    Object.assign(tokens, { driver: signToken(driver), other: signToken(other), attendant: signToken(attendant), admin: signToken(admin) });
   });
   afterAll(async () => {
     clock.reset();
@@ -168,6 +169,15 @@ describeDb("payment verification at the exit", () => {
     const results = await Promise.all([exit(sessionId), exit(sessionId), exit(sessionId)]);
     expect(results.map((r) => r.status).sort()).toEqual([200, 409, 409]);
     expect(opens()).toBe(1);
+  });
+
+  // VPS-47 (DEF-001): the Gate page offers "Take card payment" to admins too
+  test("an admin takes an at-gate payment like an attendant, and cannot pay online", async () => {
+    const { sessionId } = (await enter("KA01AB1234")).body;
+    expect((await pay(sessionId, "admin", "ONLINE")).status).toBe(400);
+    const res = await pay(sessionId, "admin");
+    expect(res.status).toBe(201);
+    expect(res.body).toEqual(expect.objectContaining({ sessionId, method: "AT_GATE", status: "PENDING" }));
   });
 
   test("drivers pay online for their own session only; attendants take payment at the gate", async () => {
