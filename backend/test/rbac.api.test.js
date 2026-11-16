@@ -14,7 +14,9 @@ const describeDb = MONGO_URL ? describe : describe.skip;
 const PASSWORD = "Secret123";
 
 describeDb("role-based access control", () => {
-  const api = request(createApp());
+  // Listening before the first request, so concurrent requests share one listener (see VPS-41)
+  let server;
+  let api;
   const tokens = {};
 
   const as = (role, req) => req.set("authorization", `Bearer ${tokens[role]}`);
@@ -22,6 +24,8 @@ describeDb("role-based access control", () => {
     (await api.post("/api/auth/login").send({ email, password })).body.token;
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_rbac";
     await mongoose.connect(url.toString());
@@ -36,6 +40,7 @@ describeDb("role-based access control", () => {
     }
   });
   afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
     await mongoose.connection.db.dropDatabase();
     await mongoose.disconnect();
   });

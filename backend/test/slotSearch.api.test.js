@@ -33,7 +33,9 @@ const other = { key: "other", name: "Other Lot", openTime: "00:00", closeTime: "
   zones: [{ key: "zoneX", name: "Zone X", slots: [{ key: "x1", number: "X-01", vehicleType: "CAR" }] }] };
 
 describeDb("real-time slot search", () => {
-  const api = request(createApp());
+  // Listening before the first request, so concurrent requests share one listener (see VPS-41)
+  let server;
+  let api;
   let ids;
   const tokens = {};
 
@@ -50,6 +52,8 @@ describeDb("real-time slot search", () => {
   });
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_slots";
     await mongoose.connect(url.toString());
@@ -66,6 +70,7 @@ describeDb("real-time slot search", () => {
     }
   });
   afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
     clock.reset();
     await mongoose.connection.db.dropDatabase();
     await mongoose.disconnect();

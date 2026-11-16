@@ -18,7 +18,9 @@ const PASSWORD = "Secret123";
 const EMAIL = "driver@example.com";
 
 describeDb("login security & account lockout", () => {
-  const api = request(createApp());
+  // Listening before the first request, so concurrent requests share one listener (see VPS-41)
+  let server;
+  let api;
   let adminToken;
 
   const login = (password, email = EMAIL) => api.post("/api/auth/login").send({ email, password });
@@ -27,6 +29,8 @@ describeDb("login security & account lockout", () => {
   const asAdmin = (req) => req.set("authorization", `Bearer ${adminToken}`);
 
   beforeAll(async () => {
+    server = createApp().listen(0);
+    api = request(server);
     const url = new URL(MONGO_URL);
     url.pathname = "/vps_backend_lockout";
     await mongoose.connect(url.toString());
@@ -41,6 +45,7 @@ describeDb("login security & account lockout", () => {
     adminToken = (await login(PASSWORD, "admin@example.com")).body.token;
   });
   afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
     await mongoose.connection.db.dropDatabase();
     await mongoose.disconnect();
   });
