@@ -4,9 +4,9 @@
 |---|---|
 | Project | Vehicle Parking System (VPS) |
 | Prepared by | Daruru Bhuvan Sai, QA Lead |
-| Date | 13 November 2026 |
+| Date | 13 November 2026; defect retest and sprint close 16 November 2026 (section 8) |
 | Jira | VPS-46 (closure), VPS-41 … VPS-45, defects VPS-47 … VPS-49 |
-| Test Plan | Vehicle_Parking_System_Test_Plan.docx v2.0 (Docs repository) |
+| Test Plan | Vehicle_Parking_System_Test_Plan.docx v2.0; requirements from Vehicle_Parking_System_SRS.docx v1.3 (Docs repository) |
 | Build verified | `main` @ `e1b1c88` + PR #20 (VPS-41) + PR #21 (VPS-43), merged locally as `badf585` |
 | Evidence | [`evidence/closure-2026-11-13/`](evidence/closure-2026-11-13/) (raw Jest JSON, logs, coverage summary, run manifest, `SHA256SUMS`), [`evidence/gate-benchmark-retest.log`](evidence/gate-benchmark-retest.log), [`evidence/uat/`](evidence/uat/) |
 
@@ -36,7 +36,7 @@ This report closes Sprint 3 testing. It supersedes the statuses in the generated
 | VPS-43 | Risk-based branch review (S3-05): 38 unit tests for production startup guards, gate metrics, config cache and login throttle. Mutation-checked | Branch coverage +3.1 points; the four modules 50-72% → 92-100%. PR #21 |
 | VPS-44 | UI walkthrough of `feature/ui-refresh` as driver, admin and attendant, with accessibility checks | 10 flows pass; 3 defects (all pre-existing on `main`); no regressions from the branch. [UAT_Report.md](UAT_Report.md) |
 | VPS-45 | PR checklist, bug report and test case request forms | PR #22 |
-| VPS-46 | Deviations from SRS/SAD, this report, Test Plan v2.0 and SRS v1.1 traceability update | [Design_Deviations.md](Design_Deviations.md); [Docs PR #1](https://github.com/vehicle-parking-system/Docs/pull/1) |
+| VPS-46 | Deviations from SRS/SAD, this report, Test Plan v2.0 and SRS traceability update (v1.1, merged into v1.3 on 16 Nov) | [Design_Deviations.md](Design_Deviations.md); [Docs PR #1](https://github.com/vehicle-parking-system/Docs/pull/1) |
 
 ## 3. Final traceability and status
 
@@ -69,9 +69,9 @@ PASS = every expected result observed. PARTIAL = executed locally but part of th
 | QA-001 … QA-006 | Test harness / reporting | — | Fixed in Part-3 | see Defect_Register.md |
 | OBS-001 | Test harness | Minor | **Fixed and retested** | VPS-41, PR #20 |
 | QA-007 (TC-Perf-01 FAIL) | Performance sample | — | **Not reproducible, closed** | VPS-42 |
-| DEF-001 | Product: RBAC/UI mismatch | Major | Open | VPS-47, issue #23 |
-| DEF-002 | Product: login redirect | Minor | Open | VPS-48, issue #24 |
-| DEF-003 | Product: accessibility | Minor | Open | VPS-49, issue #25 |
+| DEF-001 | Product: RBAC/UI mismatch | Major | **Fixed and retested 16 Nov** | VPS-47, issue #23, PR #27 |
+| DEF-002 | Product: login redirect | Minor | **Fixed and retested 16 Nov** | VPS-48, issue #24, PR #28 |
+| DEF-003 | Product: accessibility | Minor | **Fixed and retested 16 Nov** | VPS-49, issue #25, PR #29 |
 
 Product defect density: 3 defects / 5.7 KLOC (non-blank, non-comment JS/JSX in `backend/src` and `frontend/src`) ≈ **0.53 per KLOC**. All three were found by UI testing, none by the automated API suites. That points to the UI as the least-tested layer, which is why the walkthrough was worth running.
 
@@ -80,7 +80,6 @@ Product defect density: 3 defects / 5.7 KLOC (non-blank, non-comment JS/JSX in `
 | Item | Risk | Action |
 |---|---|---|
 | No staging deployment | Nightly JMeter, testssl.sh and ZAP have nothing to run against (the workflow passes as a no-op) | Deploy once and set `STAGING_URL`; the workflow is ready |
-| DEF-001 at the demo | An admin running a gate can't take payment | Demo exits as an attendant, or fix first |
 | Horizontal scale (D-06) | Live updates don't cross instances | Redis pub/sub before running more than one API instance |
 | General API rate limiting (D-05) | Only login is limited | Rate limit at the load balancer |
 | Real-user UAT | Usability judged by the QA lead only | 2–3 users per role and one screen-reader session |
@@ -90,6 +89,7 @@ Product defect density: 3 defects / 5.7 KLOC (non-blank, non-comment JS/JSX in `
 | Role | Name | Decision | Date |
 |---|---|---|---|
 | QA Lead | Daruru Bhuvan Sai | Testing complete for Sprint 3; ready for demo with the open items above | 13-11-2026 |
+| QA Lead | Daruru Bhuvan Sai | All Sprint 3 defects fixed and retested; Sprint 3 closed | 16-11-2026 |
 | Product Owner | Anirudh G Achar | Pending | |
 
 ## 7. How to reproduce
@@ -100,3 +100,29 @@ npm ci --prefix backend && npm ci --prefix tests && npm ci --prefix frontend
 MONGO_URL=mongodb://127.0.0.1:27017/vps_part3 node scripts/verify-part3.cjs --disposable-db
 MONGO_URL=mongodb://127.0.0.1:27017/vps_bench node backend/scripts/bench-gate.js 50 10 20000
 ```
+
+## 8. Defect retest and sprint close, 16 November 2026
+
+All Sprint 3 pull requests were merged to `main` (#20, #21, #22, #26), and the three product defects were fixed, each in its own pull request with CI green before merge.
+
+| Defect | Fix | Retest on `main` @ `c54412a` |
+|---|---|---|
+| DEF-001 / VPS-47 | PR #27: `POST /api/payments` allows admins at the gate (attendant rules); regression test added | Browser: admin takes a card payment, barrier opens, receipt issued. **PASS** |
+| DEF-002 / VPS-48 | PR #28: a deliberate logout clears the return address | Browser: after an admin logs out, the driver lands on their own profile. **PASS** |
+| DEF-003 / VPS-49 | PR #29: Book, Pay and Cancel buttons get unique accessible names | Accessibility tree: 10 Book buttons, 10 unique names. **PASS** |
+
+Full regression on the final build ([`evidence/retest-2026-11-16/`](evidence/retest-2026-11-16/README.md)):
+
+| Measure | 13 Nov | **16 Nov** |
+|---|---|---|
+| Isolated unit tests | 7 suites / 89 | **7 suites / 89**, 0 failed |
+| Backend suites / tests | 27 / 303 | **27 / 304**, 0 failed, 0 skipped |
+| API acceptance | 9 suites / 50 | **9 suites / 50**, 0 failed |
+| Coverage, lines / statements / functions / branches | 93.54 / 91.21 / 92.49 / 83.63% | **93.54 / 91.21 / 92.49 / 83.63%** |
+| Gate benchmark, entry p90 (budget 3000 ms) | 84.3 ms | **108.0 ms**, 0 failed |
+| Open product defects | 3 | **0** |
+
+**Status of the open items in section 5:** unchanged. Staging scans, real-user UAT, multi-instance scaling, real integrations and monthly availability still need environments the project does not have. They are tracked as validation work, not as defects.
+
+**Recommendation:** Sprint 3 is complete. The build on `main` is ready for the final demo with no known product defects.
+

@@ -50,6 +50,18 @@ This is a scripted QA walkthrough by the QA lead, not real-user acceptance. It v
 
 None of the three was introduced by `feature/ui-refresh`; they reproduce on `main`. **Verdict for the branch: no regressions found, recommend that its author raise the pull request.** The three defects are logged in the Defect Register and on Jira for the developer to fix and QA to retest.
 
+## Retest, 16 November 2026
+
+All three defects were fixed and retested in the browser on `main` @ `c54412a`. Details and screenshots: [`evidence/retest-2026-11-16/`](evidence/retest-2026-11-16/README.md).
+
+| Defect | Fix | Retest |
+|---|---|---|
+| DEF-001 (VPS-47) | PR #27: admins may take at-gate payments | **PASS**: admin took a card payment at the gate, barrier opened, receipt issued |
+| DEF-002 (VPS-48) | PR #28: logout clears the return address | **PASS**: after an admin logs out, the driver who logs in lands on their own profile |
+| DEF-003 (VPS-49) | PR #29: unique accessible names | **PASS**: every Book, Pay and Cancel button names its slot and facility |
+
+With these fixes the two FAIL rows in the Result table and the "Repeated control names" check now pass. TC-UAT-01 and TC-UAT-02 stay **PARTIAL** only because a real-user and screen-reader session has not been run.
+
 ## Not covered
 
 - Real-user sessions with drivers/attendants and a screen-reader run (VoiceOver/NVDA)
