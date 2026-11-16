@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { api, setToken } from "./api";
 
@@ -16,17 +16,25 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // True after the user logs out on purpose. The page they were on belongs to that session, so the
+  // next login must not be sent back to it (VPS-48); an expired session still returns to its page.
+  const loggedOut = useRef(false);
+
   const startSession = useCallback((token, sessionUser) => {
+    loggedOut.current = false;
     setToken(token);
     writeToken(token);
     setUser(sessionUser);
   }, []);
 
-  const logout = useCallback(() => {
+  const endSession = useCallback((byUser) => {
+    loggedOut.current = byUser;
     setToken(null);
     writeToken(null);
     setUser(null);
   }, []);
+
+  const logout = useCallback(() => endSession(true), [endSession]);
 
   // Restore the session from a saved token; drop it if the server no longer accepts it.
   useEffect(() => {
@@ -35,9 +43,9 @@ export function AuthProvider({ children }) {
     setToken(token);
     api.me()
       .then(({ user }) => setUser(user))
-      .catch(logout)
+      .catch(() => endSession(false))
       .finally(() => setLoading(false));
-  }, [logout]);
+  }, [endSession]);
 
   const login = useCallback(async (email, password) => {
     const { token, user } = await api.login(email, password);
@@ -50,7 +58,7 @@ export function AuthProvider({ children }) {
   }, [startSession]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading, login, register, logout, loggedOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -61,10 +69,10 @@ export const useAuth = () => useContext(AuthContext);
 // Guards a page: logged-out users go to /login; with `roles`, other roles see a
 // "not permitted" message. This only shapes the UI — the API enforces the same rules.
 export function RequireAuth({ roles, children }) {
-  const { user, loading } = useAuth();
+  const { user, loading, loggedOut } = useAuth();
   const location = useLocation();
   if (loading) return <p className="muted center">Loading…</p>;
-  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  if (!user) return <Navigate to="/login" replace state={loggedOut.current ? null : { from: location.pathname }} />;
   if (roles && !roles.includes(user.role)) {
     return (
       <main className="page">
