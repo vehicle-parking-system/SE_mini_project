@@ -1,0 +1,31 @@
+name: Test case request
+description: Ask QA to add or change a test case for a requirement or a sprint change.
+title: "TC: "
+labels: ["test", "QA"]
+body:
+  - type: input
+    id: requirement
+    attributes:
+      label: Requirement ID(s)
+      placeholder: VPS-F-021
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What changed or is not covered
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Acceptance criteria to verify
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Test level
+      options: [Unit, API / integration, Acceptance, Performance, Security, Manual UI / usability]
+    validations:
+      required: true

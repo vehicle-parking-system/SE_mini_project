@@ -1,0 +1,81 @@
+name: Bug report
+description: Something in the Vehicle Parking System does not behave as the SRS, SAD or test case says.
+title: "DEF: "
+labels: ["bug", "QA"]
+body:
+  - type: input
+    id: jira
+    attributes:
+      label: Jira key
+      description: The Jira bug for this defect, if one exists.
+      placeholder: VPS-123
+  - type: input
+    id: requirement
+    attributes:
+      label: Requirement / test case
+      placeholder: VPS-F-011 / TC-Exit-02
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Driver web app, Gate (entry/exit), Admin console, Payments, Reservations, Reports/logs, Security, API only, Tests/CI]
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps, accounts by role (never real passwords), and test data.
+      placeholder: |
+        1. Log in as an admin
+        2. Open Gate, admit a walk-in vehicle, then Calculate fee at exit
+        3. Click "Take card payment"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include the HTTP status and error code for API problems.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How bad the effect is when it happens.
+      options:
+        - Critical - data loss, security breach, or the core flow is blocked for everyone
+        - Major - a core flow fails for a role or case, with no reasonable workaround
+        - Minor - wrong or awkward behaviour with a workaround
+        - Trivial - cosmetic or wording
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How soon it should be fixed.
+      options: [High - this sprint, Medium - next sprint, Low - backlog]
+    validations:
+      required: true
+  - type: input
+    id: build
+    attributes:
+      label: Build / environment
+      placeholder: "main @ e1b1c88, local API + Vite, Chrome 131, MongoDB 7"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Screenshots, log lines (no secrets), failing test output.
