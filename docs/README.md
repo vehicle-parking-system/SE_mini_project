@@ -56,6 +56,7 @@ Jest may skip TLS certificate tests when OpenSSL is missing. Such skips must rem
 | Evidence and outcome | Test_Summary.md, evidence/ and provenance.json |
 | **Sprint 3 closure (13 Nov)** | **Test_Closure_Report.md** (final status of all 32 cases; supersedes the 30 Oct RTM statuses), evidence/closure-2026-11-13/ |
 | UI walkthrough and accessibility | UAT_Report.md, evidence/uat/ |
+| **Defect retest and sprint close (16 Nov)** | Test_Closure_Report.md section 8, evidence/retest-2026-11-16/ |
 | Deviations from SRS/SAD for the demo | Design_Deviations.md |
 | Gate performance retest | evidence/gate-benchmark-retest.log |
 
