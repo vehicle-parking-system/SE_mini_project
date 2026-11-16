@@ -209,7 +209,8 @@ export default function Search() {
                     <span className="muted">{s.distance} m from the entrance</span>
                     {i === 0 && <span className="role-badge">Nearest</span>}
                     {vehicleId && (
-                      <button className="btn small slot-book" onClick={() => book(s)} disabled={Boolean(booking)}>
+                      <button className="btn small slot-book" onClick={() => book(s)} disabled={Boolean(booking)}
+                        aria-label={booking === s.slotId ? undefined : `Book slot ${s.number}, ${s.zoneName}, ${s.distance} m from the entrance`}>
                         {booking === s.slotId ? "Booking…" : "Book"}
                       </button>
                     )}

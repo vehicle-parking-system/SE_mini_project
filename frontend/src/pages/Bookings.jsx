@@ -77,9 +77,15 @@ function Booking({ booking, onChanged, highlight }) {
         )}
         <div className="booking-actions">
           {booking.status === "HELD" && booking.price > 0 && (
-            <button className="btn primary small" onClick={pay} disabled={busy}>{busy ? "Please wait…" : `Pay ${formatMoney(booking.price)} online`}</button>
+            <button className="btn primary small" onClick={pay} disabled={busy}
+              aria-label={busy ? undefined : `Pay ${formatMoney(booking.price)} online for slot ${booking.slotNumber} at ${booking.facilityName}`}>
+              {busy ? "Please wait…" : `Pay ${formatMoney(booking.price)} online`}
+            </button>
           )}
-          {active && <button className="btn link danger" onClick={cancel} disabled={busy}>Cancel booking</button>}
+          {active && (
+            <button className="btn link danger" onClick={cancel} disabled={busy}
+              aria-label={`Cancel booking for slot ${booking.slotNumber} at ${booking.facilityName}`}>Cancel booking</button>
+          )}
         </div>
       </div>
       {active && booking.qrCode && (
