@@ -92,8 +92,8 @@ async function charge({ target, facility, method, amount, quotedAt, token, user 
   return payment.toPublic();
 }
 
-// Drivers pay online for their own vehicle's session or booking; attendants take payment for
-// sessions at the gate.
+// Drivers pay online for their own vehicle's session or booking; gate staff (attendants and
+// admins) take payment for sessions at the gate.
 async function createPayment(user, body) {
   const input = parsePayment(body);
   const expected = user.role === "DRIVER" ? "ONLINE" : "AT_GATE";

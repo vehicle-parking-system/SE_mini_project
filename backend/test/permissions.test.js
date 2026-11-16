@@ -30,7 +30,7 @@ describe("RBAC policy", () => {
     ["GET", "/api/gates/status", ["ATTENDANT", "ADMIN"]],
     ["GET", "/api/gates/overrides", ["ATTENDANT", "ADMIN"]],
     ["POST", "/api/gates/g1/override", ["ATTENDANT", "ADMIN"]],
-    ["POST", "/api/payments", ["DRIVER", "ATTENDANT"]],
+    ["POST", "/api/payments", ["DRIVER", "ATTENDANT", "ADMIN"]],
     ["GET", "/api/admin/transactions", ["ADMIN"]],
     ["GET", "/api/admin/audit-logs", ["ADMIN"]],
     ["PUT", "/api/admin/rates", ["ADMIN"]],

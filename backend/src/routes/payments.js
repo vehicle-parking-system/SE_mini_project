@@ -1,5 +1,5 @@
 // Payment processing (VPS-F-011, VPS-F-030). See permissions.js: drivers pay online for their
-// own sessions, attendants take payment at the gate, and the webhook is authenticated by its signature.
+// own sessions, gate staff (attendants and admins) take payment at the gate, and the webhook is authenticated by its signature.
 const express = require("express");
 const payments = require("../payments");
 
