@@ -28,4 +28,6 @@ QA-006: the original Jest discovery roots only indexed test/ and its coverage ma
 
 Closure totals (13 Nov): 6 harness/reporting issues and 1 observation fixed, 1 performance FAIL not reproducible, 3 product defects open (0 Critical, 1 Major with a workaround, 2 Minor). Details and release recommendation: Test_Closure_Report.md.
 
-**Sprint 3 close, 16 November 2026:** all three product defects fixed (PRs #27, #28, #29) and retested. Full regression on `main` @ `c54412a`: 89 unit, 304 backend and 50 acceptance tests pass; see evidence/retest-2026-11-16/. **Open product defects: 0.**
+| DEF-004 | CI on `main` @ `722d27b`: TC-Sec-06 credential-stuffing check got 200 instead of 429, intermittently. The per-IP throttle document's TTL expiry used the business clock (2 Nov in the acceptance suite), so MongoDB's TTL monitor, which uses real time, could delete the counter mid-window. | **Fixed and retested 16 Nov 2026.** Minor / High. Jira VPS-50, fix PR #31: expiry on the real clock, window key still on the business clock; unit test added. With the TTL monitor forced to every 1 s the test failed 15/15 before and passed 15/15 after (evidence/retest-2026-11-16/vps-50-ttl-repro.log). No production impact: in production both clocks are the same. |
+
+**Sprint 3 close, 16 November 2026:** all four product defects fixed (PRs #27, #28, #29, #31) and retested. Full regression on the final code: 90 unit, 305 backend and 50 acceptance tests pass; see evidence/retest-2026-11-16/. **Open product defects: 0.**

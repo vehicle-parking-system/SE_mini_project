@@ -22,6 +22,9 @@ function windowFor(ip, now) {
 async function reserveAttempt(ip, now, onLimited) {
   if (!ip) return null;
   const { key, endsAt } = windowFor(ip, now);
+  // MongoDB's TTL monitor deletes by real time, so the expiry must be on the real clock even when
+  // the business clock is moved (tests); otherwise the count could vanish mid-window (VPS-50).
+  const expiresAt = new Date(Date.now() + (endsAt - now));
 
   // A duplicate-key error means the window's document exists with no slots left —
   // or that a parallel request created it first, so the upsert is tried once more.
@@ -29,7 +32,7 @@ async function reserveAttempt(ip, now, onLimited) {
     try {
       await LoginThrottle.findOneAndUpdate(
         { _id: key, count: { $lt: config.loginIpMaxFailures } },
-        { $inc: { count: 1 }, $setOnInsert: { ip, expiresAt: endsAt } },
+        { $inc: { count: 1 }, $setOnInsert: { ip, expiresAt } },
         { upsert: true },
       );
       return key;

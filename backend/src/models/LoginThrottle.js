@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 // Per-IP count of login attempts in one fixed time window ("<ip>|<window number>").
 // Kept in MongoDB rather than memory so the limit holds across server instances;
-// MongoDB deletes each document once its window is over (TTL index on expiresAt).
+// MongoDB deletes each document once its window is over (TTL index on expiresAt, which is
+// on the real clock because the TTL monitor uses real time).
 const loginThrottleSchema = new mongoose.Schema({
   _id: { type: String },
   ip: { type: String, required: true },

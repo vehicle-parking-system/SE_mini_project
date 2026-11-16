@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-11-16T16:00:07.197Z",
+  "generatedAt": "2026-11-16T16:23:13.533Z",
   "node": "v24.22.1",
   "platform": "darwin",
   "arch": "arm64",
-  "baselineRevision": "c54412ac4d2934217e23e89e0e213fc7bccf4cf9",
+  "baselineRevision": "722d27bfc750d442932379b1dde0967cd87b1e11",
   "scope": "Local automated verification; working-tree changes included. Not UAT or deployment certification.",
   "commands": [
     {
@@ -23,8 +23,8 @@
         "--json",
         "--outputFile=../docs/evidence/unit-results.json"
       ],
-      "started": "2026-11-16T15:58:01.639Z",
-      "finished": "2026-11-16T15:58:02.341Z",
+      "started": "2026-11-16T16:21:05.093Z",
+      "finished": "2026-11-16T16:21:05.730Z",
       "exitCode": 0
     },
     {
@@ -43,8 +43,8 @@
         "--json",
         "--outputFile=../docs/evidence/backend-results.json"
       ],
-      "started": "2026-11-16T15:58:02.341Z",
-      "finished": "2026-11-16T15:59:28.499Z",
+      "started": "2026-11-16T16:21:05.730Z",
+      "finished": "2026-11-16T16:22:35.648Z",
       "exitCode": 0
     },
     {
@@ -53,8 +53,8 @@
       "args": [
         "scripts/complete-coverage.cjs"
       ],
-      "started": "2026-11-16T15:59:28.499Z",
-      "finished": "2026-11-16T15:59:28.643Z",
+      "started": "2026-11-16T16:22:35.648Z",
+      "finished": "2026-11-16T16:22:35.773Z",
       "exitCode": 0
     },
     {
@@ -66,8 +66,8 @@
         "3",
         "1000"
       ],
-      "started": "2026-11-16T15:59:28.643Z",
-      "finished": "2026-11-16T15:59:29.783Z",
+      "started": "2026-11-16T16:22:35.773Z",
+      "finished": "2026-11-16T16:22:36.863Z",
       "exitCode": 0
     },
     {
@@ -79,8 +79,8 @@
         "--json",
         "--outputFile=../docs/evidence/acceptance-results.json"
       ],
-      "started": "2026-11-16T15:59:30.306Z",
-      "finished": "2026-11-16T16:00:06.692Z",
+      "started": "2026-11-16T16:22:37.384Z",
+      "finished": "2026-11-16T16:23:13.022Z",
       "exitCode": 0
     },
     {
@@ -90,8 +90,8 @@
         "node_modules/vite/bin/vite.js",
         "build"
       ],
-      "started": "2026-11-16T16:00:06.692Z",
-      "finished": "2026-11-16T16:00:07.182Z",
+      "started": "2026-11-16T16:23:13.022Z",
+      "finished": "2026-11-16T16:23:13.514Z",
       "exitCode": 0
     }
   ],

@@ -1,0 +1,12 @@
+VPS-50 / DEF-004 reproduction, 16-11-2026
+MongoDB 7 with the TTL monitor forced to run every second:
+  db.adminCommand({ setParameter: 1, ttlMonitorSleepSecs: 1 })
+API in NODE_ENV=test; acceptance test run 15 times on each build:
+  tests: node node_modules/jest/bin/jest.js security/security.test.js -t "credential stuffing"
+
+main @ 722d27b (before fix):  pass=0  fail=15   (21st login returns 200 instead of 429)
+fix/VPS-50 (after fix):       pass=15 fail=0
+
+Cause: expiresAt was the window end on the business clock (2026-11-02 in the suite), which
+the TTL monitor (real clock) treats as already expired, so it deleted the IP's counter mid-test.
+With the default 60 s TTL interval this showed up as an intermittent CI failure (run 43903862159).
