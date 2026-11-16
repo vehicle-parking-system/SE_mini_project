@@ -26,6 +26,19 @@ test("an attempt reserves a slot in the IP's current window", async () => {
   expect(options).toEqual({ upsert: true });
 });
 
+// VPS-50: the TTL monitor uses real time. With the business clock two weeks behind (as in the
+// acceptance suite) the document must still live until the window's remaining time has passed.
+test("the window document expires on the real clock, even when the business clock is behind", async () => {
+  const find = jest.spyOn(LoginThrottle, "findOneAndUpdate").mockResolvedValue({});
+  const realNow = NOW.getTime() + 14 * 24 * 3600 * 1000;
+  jest.spyOn(Date, "now").mockReturnValue(realNow);
+  await reserveAttempt("203.0.113.7", NOW, jest.fn());
+  const { expiresAt } = find.mock.calls[0][1].$setOnInsert;
+  const windowEnd = (Math.floor(NOW.getTime() / windowMs) + 1) * windowMs;
+  expect(expiresAt.getTime()).toBe(realNow + (windowEnd - NOW.getTime()));
+  expect(expiresAt.getTime()).toBeGreaterThan(realNow);
+});
+
 test("losing a race to create the window document retries once and succeeds", async () => {
   jest.spyOn(LoginThrottle, "findOneAndUpdate").mockRejectedValueOnce(duplicate()).mockResolvedValueOnce({});
   await expect(reserveAttempt("203.0.113.7", NOW, jest.fn())).resolves.toBe(KEY);

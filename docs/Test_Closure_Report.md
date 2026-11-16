@@ -72,6 +72,7 @@ PASS = every expected result observed. PARTIAL = executed locally but part of th
 | DEF-001 | Product: RBAC/UI mismatch | Major | **Fixed and retested 16 Nov** | VPS-47, issue #23, PR #27 |
 | DEF-002 | Product: login redirect | Minor | **Fixed and retested 16 Nov** | VPS-48, issue #24, PR #28 |
 | DEF-003 | Product: accessibility | Minor | **Fixed and retested 16 Nov** | VPS-49, issue #25, PR #29 |
+| DEF-004 | Product: throttle expiry on the wrong clock (flaky TC-Sec-06 in CI) | Minor | **Fixed and retested 16 Nov** | VPS-50, PR #31 |
 
 Product defect density: 3 defects / 5.7 KLOC (non-blank, non-comment JS/JSX in `backend/src` and `frontend/src`) ≈ **0.53 per KLOC**. All three were found by UI testing, none by the automated API suites. That points to the UI as the least-tested layer, which is why the walkthrough was worth running.
 
@@ -103,23 +104,24 @@ MONGO_URL=mongodb://127.0.0.1:27017/vps_bench node backend/scripts/bench-gate.js
 
 ## 8. Defect retest and sprint close, 16 November 2026
 
-All Sprint 3 pull requests were merged to `main` (#20, #21, #22, #26), and the three product defects were fixed, each in its own pull request with CI green before merge.
+All Sprint 3 pull requests were merged to `main` (#20, #21, #22, #26), and the product defects were fixed, each in its own pull request with CI green before merge.
 
 | Defect | Fix | Retest on `main` @ `c54412a` |
 |---|---|---|
 | DEF-001 / VPS-47 | PR #27: `POST /api/payments` allows admins at the gate (attendant rules); regression test added | Browser: admin takes a card payment, barrier opens, receipt issued. **PASS** |
 | DEF-002 / VPS-48 | PR #28: a deliberate logout clears the return address | Browser: after an admin logs out, the driver lands on their own profile. **PASS** |
 | DEF-003 / VPS-49 | PR #29: Book, Pay and Cancel buttons get unique accessible names | Accessibility tree: 10 Book buttons, 10 unique names. **PASS** |
+| DEF-004 / VPS-50 | PR #31: the login-throttle TTL expiry uses the real clock. Found by CI on `main` @ `722d27b` after the merge of #30 | With MongoDB's TTL monitor forced to every 1 s, TC-Sec-06 failed 15/15 before and passed 15/15 after; new unit test. **PASS** |
 
-Full regression on the final build ([`evidence/retest-2026-11-16/`](evidence/retest-2026-11-16/README.md)):
+Full regression on the final code, `main` @ `722d27b` plus PR #31 ([`evidence/retest-2026-11-16/`](evidence/retest-2026-11-16/README.md)):
 
 | Measure | 13 Nov | **16 Nov** |
 |---|---|---|
-| Isolated unit tests | 7 suites / 89 | **7 suites / 89**, 0 failed |
-| Backend suites / tests | 27 / 303 | **27 / 304**, 0 failed, 0 skipped |
+| Isolated unit tests | 7 suites / 89 | **7 suites / 90**, 0 failed |
+| Backend suites / tests | 27 / 303 | **27 / 305**, 0 failed, 0 skipped |
 | API acceptance | 9 suites / 50 | **9 suites / 50**, 0 failed |
-| Coverage, lines / statements / functions / branches | 93.54 / 91.21 / 92.49 / 83.63% | **93.54 / 91.21 / 92.49 / 83.63%** |
-| Gate benchmark, entry p90 (budget 3000 ms) | 84.3 ms | **108.0 ms**, 0 failed |
+| Coverage, lines / statements / functions / branches | 93.54 / 91.21 / 92.49 / 83.63% | **93.55 / 91.21 / 92.49 / 83.63%** |
+| Gate benchmark, entry p90 (budget 3000 ms) | 84.3 ms | **89.6 ms**, 0 failed |
 | Open product defects | 3 | **0** |
 
 **Status of the open items in section 5:** unchanged. Staging scans, real-user UAT, multi-instance scaling, real integrations and monthly availability still need environments the project does not have. They are tracked as validation work, not as defects.
